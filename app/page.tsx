@@ -7,7 +7,7 @@ export default function Page() {
       <GigaHero
         backgroundImage="/DJI_aerial_hero.JPG"
         backgroundImageAlt="Aerial view of coastal tides"
-        title="AI that talks like a human. Handles millions of calls."
+        title="My Island Life."
         subtitle="AI agents for enterprise support"
         badge={{
           text: 'Where should we go next?',
