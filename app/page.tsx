@@ -2,7 +2,6 @@ import { GigaLayout } from '@/components/giga-layout'
 import { GigaHero } from '@/components/giga-hero'
 import { ServicesSection } from '@/components/services-section'
 import { OceanQuote } from '@/components/ocean-quote'
-import { CarouselGallery } from '@/components/carousel-gallery'
 import { PortfolioSection } from '@/components/portfolio-section'
 import { AboutSection } from '@/components/about-section'
 import { VideoLoopSection } from '@/components/video-loop-section'
@@ -48,46 +47,11 @@ export default function Page() {
         ctaText="Let's Connect"
         ctaHref="#contact"
         logos={[]}
+        useHoverEffect={true}
+        hoverEffectText="THU TIDES"
       />
       <ServicesSection />
       <OceanQuote />
-      <CarouselGallery
-        title="Gallery"
-        description="Explore our collection of coastal adventures"
-        itemsPerView={3}
-        images={[
-          {
-            src: '/uw_pulau_papan.webp',
-            alt: 'Underwater view of Pulau Papan',
-            title: 'Pulau Papan',
-          },
-          {
-            src: '/uw_mariona.webp',
-            alt: 'Underwater exploration at Mariona',
-            title: 'Mariona Depths',
-          },
-          {
-            src: '/reconnect_buka_buka.webp',
-            alt: 'Reconnect at Buka Buka',
-            title: 'Buka Buka',
-          },
-          {
-            src: '/dji_aerial_top_reef_atoll.webp',
-            alt: 'Aerial view of top reef atoll',
-            title: 'Top Reef Atoll',
-          },
-          {
-            src: '/uw_top_reef_atoll.webp',
-            alt: 'Underwater view of top reef atoll',
-            title: 'Atoll Underwater',
-          },
-          {
-            src: '/sunset6_reconnect_buka_buka.webp',
-            alt: 'Sunset at Buka Buka',
-            title: 'Buka Buka Sunset',
-          },
-        ]}
-      />
       <PortfolioSection />
       <AboutSection />
       <VideoLoopSection />
