@@ -1,3 +1,5 @@
+import { H2, H3, P } from '@/components/typography'
+
 export function ServicesSection() {
   const services = [
     {
@@ -18,39 +20,39 @@ export function ServicesSection() {
   ]
 
   return (
-    <section className="relative py-24 px-4 bg-gray-50">
+    <section className="relative section-padding bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+          <H2 className="text-gray-900 mb-4">
             What We Offer
-          </h2>
-          <p className="text-xl text-gray-600 font-light mb-6">
+          </H2>
+          <P className="text-xl text-gray-600 font-light mb-6">
             Photography • Video • Instagram Promotion
-          </p>
-          <p className="text-lg text-gray-600 font-light max-w-3xl mx-auto">
+          </P>
+          <P className="text-lg text-gray-600 font-light max-w-3xl mx-auto">
             Professional content creation that captures the natural beauty and authentic experiences
             of your coastal hospitality brand. We help boutique properties stand out with visual
             storytelling that resonates with travelers.
-          </p>
+          </P>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
           {services.map((service) => (
             <div
               key={service.title}
-              className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white card-padding-lg rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-center w-16 h-16 mb-6 mx-auto bg-blue-50 rounded-full">
                 <span className="material-symbols-outlined text-4xl text-blue-600">
                   {service.icon}
                 </span>
               </div>
-              <h3 className="text-2xl font-light text-gray-900 mb-4 text-center">
+              <H3 className="text-gray-900 mb-4 text-center">
                 {service.title}
-              </h3>
-              <p className="text-gray-600 font-light text-center leading-relaxed">
+              </H3>
+              <P className="text-gray-600 font-light text-center leading-relaxed">
                 {service.description}
-              </p>
+              </P>
             </div>
           ))}
         </div>

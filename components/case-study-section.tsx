@@ -26,24 +26,24 @@ const typeConfig = {
   challenge: {
     icon: '⚠️',
     color: 'text-brand-cerulean',
-    bgColor: 'bg-[#0B7AA1]/5',
+    bgColor: 'bg-brand-accent-light',
   },
   goal: {
     icon: '🎯',
     color: 'text-brand-olive',
-    bgColor: 'bg-[#7A8F4A]/5',
+    bgColor: 'bg-brand-olive-light',
   },
   outcome: {
     icon: '✨',
     color: 'text-brand-sage',
-    bgColor: 'bg-[#8FA998]/5',
+    bgColor: 'bg-brand-sage-light',
   },
 }
 
 const accentColors = {
-  cerulean: 'border-l-4 border-[#0B7AA1]',
-  sage: 'border-l-4 border-[#8FA998]',
-  olive: 'border-l-4 border-[#7A8F4A]',
+  cerulean: 'border-l-4 border-brand-cerulean',
+  sage: 'border-l-4 border-brand-sage',
+  olive: 'border-l-4 border-brand-olive',
 }
 
 const bgColors = {
@@ -147,7 +147,7 @@ export function CaseStudySection({
 
         {/* Two-column layout */}
         {!isFullWidth && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-space-lg md:gap-space-xl items-start">
             {/* Content Column */}
             <div
               className={cn(
@@ -224,7 +224,7 @@ export function CaseStudyFlow({ children }: { children: React.ReactNode }) {
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="h-px bg-gradient-to-r from-transparent via-[#8FA998]/30 to-transparent my-12 md:my-16"
+              className="h-px bg-gradient-to-r from-transparent via-brand-sage/30 to-transparent my-12 md:my-16"
             />
             {child}
           </React.Fragment>

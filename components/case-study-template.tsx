@@ -154,7 +154,7 @@ export function CaseStudyTemplate({
       {/* Project Metadata */}
       <section className="section-space-lg px-6 md:px-12 max-w-6xl mx-auto">
         <ScrollReveal trigger="slideUp">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-space-md md:gap-space-lg">
             {/* Project Info Cards */}
             <Card className="border-0 shadow-none bg-transparent">
               <CardHeader className="pb-3">
@@ -268,11 +268,11 @@ export function CaseStudyTemplate({
       {/* Results Metrics */}
       <section className="section-space-lg px-6 md:px-12 max-w-6xl mx-auto">
         <ScrollRevealStagger staggerDelay={0.2}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
             {caseStudy.metrics.map((metric) => (
               <Card
                 key={metric.label}
-                className="border-0 shadow-none bg-[#0B7AA1]/5 rounded-lg"
+                className="border-0 shadow-none bg-brand-accent-light rounded-lg"
               >
                 <CardContent className="pt-8">
                   <Typography
@@ -334,7 +334,7 @@ export function CaseStudyTemplate({
       {/* Call to Action */}
       <section className="section-space-xl px-6 md:px-12 max-w-6xl mx-auto">
         <ScrollReveal trigger="slideUp">
-          <Card className="border-0 shadow-sm bg-[#0B7AA1]/5">
+          <Card className="border-0 shadow-sm bg-brand-accent-light">
             <CardHeader className="text-center">
               <CardTitle>Ready to start your project?</CardTitle>
               <CardDescription className="text-base">
@@ -342,7 +342,7 @@ export function CaseStudyTemplate({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center gap-4">
-              <Button size="lg" className="bg-[#0B7AA1] hover:bg-[#1E9BCC]">
+              <Button size="lg" className="bg-brand-cerulean hover:bg-brand-cerulean-2">
                 Get Started
               </Button>
               <Button variant="outline" size="lg">

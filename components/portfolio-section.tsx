@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import Image from 'next/image'
+import { H2, H3, P } from '@/components/typography'
 
 type PortfolioItem = {
   id: string
@@ -309,15 +310,15 @@ export function PortfolioSection() {
   const filteredItems = portfolioItems.filter(item => item.propertyType === filter)
 
   return (
-    <section className="relative py-24 px-4">
+    <section className="relative section-padding">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+          <H2 className="text-gray-900 mb-4">
             Our Work
-          </h2>
-          <p className="text-xl text-white font-light mb-8">
+          </H2>
+          <P className="text-xl text-white font-light mb-8">
             Portfolio Showcase
-          </p>
+          </P>
 
           {/* Filter Buttons */}
           <div className="flex flex-wrap justify-center gap-3">
@@ -338,7 +339,7 @@ export function PortfolioSection() {
         </div>
 
         {/* Portfolio Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
           {filteredItems.map((item) => (
             <div
               key={item.id}
@@ -365,10 +366,10 @@ export function PortfolioSection() {
                     <span className="mx-2">•</span>
                     <span>{item.propertyType}</span>
                   </div>
-                  <h3 className="text-2xl font-light mb-2">{item.title}</h3>
-                  <p className="text-sm text-gray-200 font-light">
+                  <H3 className="mb-2">{item.title}</H3>
+                  <P className="text-sm text-gray-200 font-light">
                     {item.description}
-                  </p>
+                  </P>
                 </div>
               </div>
             </div>
@@ -378,9 +379,9 @@ export function PortfolioSection() {
         {/* Empty State */}
         {filteredItems.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-500 font-light">
+            <P className="text-gray-500 font-light">
               No projects found for this property type.
-            </p>
+            </P>
           </div>
         )}
       </div>

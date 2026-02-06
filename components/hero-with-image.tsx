@@ -30,7 +30,7 @@ const heightClasses = {
 const overlayClasses = {
   dark: 'bg-black',
   light: 'bg-white',
-  cerulean: 'bg-[#0B7AA1]',
+  cerulean: 'bg-brand-cerulean',
   none: '',
 }
 
@@ -238,7 +238,7 @@ export function HeroWithImageAndCTA({
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="inline-block mt-8 px-8 py-3 bg-[#0B7AA1] hover:bg-[#1E9BCC] text-white rounded-lg font-medium transition-colors duration-300"
+          className="inline-block mt-8 px-8 py-3 bg-brand-cerulean hover:bg-brand-cerulean-2 text-white rounded-lg font-medium transition-colors duration-300"
         >
           {ctaText}
         </motion.a>

@@ -5,7 +5,7 @@ import { TextHoverEffect } from '@/components/ui/text-hover-effect'
 
 export function OceanQuote() {
   return (
-    <section className="relative py-24 px-4">
+    <section className="relative section-padding">
       <div className="max-w-6xl mx-auto text-center">
         <blockquote className="space-y-4">
           <div className="w-full h-[200px] md:h-[300px]">

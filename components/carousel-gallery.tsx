@@ -55,7 +55,7 @@ export function CarouselGallery({
   }
 
   return (
-    <section className={cn('w-full bg-slate-900 py-16 md:py-24', className)}>
+    <section className={cn('w-full bg-slate-900 section-padding', className)}>
       <div className="container mx-auto px-4">
         {(title || description) && (
           <div className="mb-12 text-center">
@@ -97,7 +97,7 @@ export function CarouselGallery({
                       />
                     </div>
                     {image.title && (
-                      <div className="p-4">
+                      <div className="card-padding-sm">
                         <h3 className="text-lg font-semibold text-white">
                           {image.title}
                         </h3>

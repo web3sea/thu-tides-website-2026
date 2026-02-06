@@ -200,29 +200,120 @@
     @apply my-[var(--space-lg)];
   }
 
+  /* Section Padding - Standard pattern for sections */
+  .section-padding {
+    padding-top: var(--space-2xl);    /* 96px / py-24 */
+    padding-bottom: var(--space-2xl); /* 96px / py-24 */
+    padding-left: var(--space-sm);    /* 16px / px-4 */
+    padding-right: var(--space-sm);   /* 16px / px-4 */
+  }
+
+  /* Card Padding Utilities */
+  .card-padding-lg {
+    padding: var(--space-lg); /* 32px / p-8 */
+  }
+
+  .card-padding-md {
+    padding: var(--space-md); /* 24px / p-6 */
+  }
+
+  .card-padding-sm {
+    padding: var(--space-sm); /* 16px / p-4 */
+  }
+
+  /* Gap Utilities */
+  .gap-space-xs {
+    gap: var(--space-xs); /* 8px / gap-2 */
+  }
+
+  .gap-space-sm {
+    gap: var(--space-sm); /* 16px / gap-4 */
+  }
+
+  .gap-space-md {
+    gap: var(--space-md); /* 24px / gap-6 */
+  }
+
+  .gap-space-lg {
+    gap: var(--space-lg); /* 32px / gap-8 */
+  }
+
+  .gap-space-xl {
+    gap: var(--space-xl); /* 64px / gap-16 */
+  }
+
   /* Brand Color Utilities */
   .text-brand-cerulean {
-    @apply text-[#0B7AA1];
+    color: var(--brand-cerulean);
+  }
+
+  .text-brand-cerulean-2 {
+    color: var(--brand-cerulean-2);
   }
 
   .text-brand-sage {
-    @apply text-[#8FA998];
+    color: var(--brand-sage-dry);
   }
 
   .text-brand-olive {
-    @apply text-[#7A8F4A];
+    color: var(--brand-olive-leaf);
   }
 
-  .border-brand-sage {
-    @apply border-[#8FA998];
+  .bg-brand-cerulean {
+    background-color: var(--brand-cerulean);
+  }
+
+  .bg-brand-cerulean-2 {
+    background-color: var(--brand-cerulean-2);
+  }
+
+  .bg-brand-sage {
+    background-color: var(--brand-sage-dry);
+  }
+
+  .bg-brand-olive {
+    background-color: var(--brand-olive-leaf);
   }
 
   .border-brand-cerulean {
-    @apply border-[#0B7AA1];
+    border-color: var(--brand-cerulean);
+  }
+
+  .border-brand-sage {
+    border-color: var(--brand-sage-dry);
+  }
+
+  .border-brand-olive {
+    border-color: var(--brand-olive-leaf);
   }
 
   .bg-brand-accent-light {
-    @apply bg-[#0B7AA1]/5;
+    background-color: color-mix(in srgb, var(--brand-cerulean) 5%, transparent);
+  }
+
+  .bg-brand-sage-light {
+    background-color: color-mix(in srgb, var(--brand-sage-dry) 5%, transparent);
+  }
+
+  .bg-brand-olive-light {
+    background-color: color-mix(in srgb, var(--brand-olive-leaf) 5%, transparent);
+  }
+
+  /* Hover variants */
+  .hover\:bg-brand-cerulean:hover {
+    background-color: var(--brand-cerulean);
+  }
+
+  .hover\:bg-brand-cerulean-2:hover {
+    background-color: var(--brand-cerulean-2);
+  }
+
+  .hover\:bg-brand-sage:hover {
+    background-color: var(--brand-sage-dry);
+  }
+
+  .hover\:bg-brand-olive:hover {
+    background-color: var(--brand-olive-leaf);
   }
 
   /* Typography Spacing */
@@ -232,11 +323,13 @@
 
   /* Focus States for Accessibility */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-[#0B7AA1] focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    --tw-ring-color: var(--brand-cerulean);
   }
 
   .dark .focus-ring {
-    @apply focus:ring-[#1E9BCC] focus:ring-offset-[#13141b];
+    --tw-ring-color: var(--brand-cerulean-2);
+    --tw-ring-offset-color: #13141b;
   }
 }
 

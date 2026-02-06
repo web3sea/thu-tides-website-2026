@@ -159,12 +159,12 @@ export function ImageCarousel({
             <motion.button
               onClick={handlePrev}
               initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1, backgroundColor: 'rgba(11, 122, 161, 0.1)' }}
+              whileHover={{ opacity: 1, backgroundColor: 'color-mix(in srgb, var(--brand-cerulean) 10%, transparent)' }}
               className={cn(
                 'absolute left-4 top-1/2 -translate-y-1/2 z-10',
                 'p-2 rounded-full backdrop-blur-sm transition-all duration-300',
                 'opacity-0 group-hover:opacity-100',
-                'focus:ring-2 focus:ring-[#0B7AA1] focus:outline-none'
+                'focus:ring-2 focus-ring focus:outline-none'
               )}
               aria-label="Previous image"
             >
@@ -174,12 +174,12 @@ export function ImageCarousel({
             <motion.button
               onClick={handleNext}
               initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1, backgroundColor: 'rgba(11, 122, 161, 0.1)' }}
+              whileHover={{ opacity: 1, backgroundColor: 'color-mix(in srgb, var(--brand-cerulean) 10%, transparent)' }}
               className={cn(
                 'absolute right-4 top-1/2 -translate-y-1/2 z-10',
                 'p-2 rounded-full backdrop-blur-sm transition-all duration-300',
                 'opacity-0 group-hover:opacity-100',
-                'focus:ring-2 focus:ring-[#0B7AA1] focus:outline-none'
+                'focus:ring-2 focus-ring focus:outline-none'
               )}
               aria-label="Next image"
             >
@@ -226,7 +226,7 @@ export function ImageCarousel({
               className={cn(
                 'h-2 rounded-full transition-all duration-300',
                 index === current
-                  ? 'w-8 bg-[#0B7AA1]'
+                  ? 'w-8 bg-brand-cerulean'
                   : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60'
               )}
               aria-label={`Go to image ${index + 1}`}
