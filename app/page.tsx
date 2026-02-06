@@ -15,6 +15,7 @@ export default function Page() {
         }}
         ctaText="Let's Connect"
         ctaHref="#contact"
+        logos={[]}
       />
     </GigaLayout>
   )
