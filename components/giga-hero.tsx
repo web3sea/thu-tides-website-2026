@@ -138,13 +138,14 @@ export function GigaHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <Button
-            size="lg"
-            className="bg-white hover:bg-gray-100 text-slate-900 px-8 py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-white/20 transform hover:-translate-y-0.5 transition-all h-auto"
-            asChild
-          >
-            <Link href={ctaHref}>{ctaText}</Link>
-          </Button>
+          <Link href={ctaHref}>
+            <Button
+              size="lg"
+              className="bg-white hover:bg-gray-100 text-slate-900 px-8 py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-white/20 transform hover:-translate-y-0.5 transition-all h-auto"
+            >
+              {ctaText}
+            </Button>
+          </Link>
         </motion.div>
       </main>
 

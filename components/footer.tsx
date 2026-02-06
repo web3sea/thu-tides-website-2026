@@ -5,9 +5,9 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Github01Icon,
-  Discord01Icon,
+  DiscordIcon,
   NewTwitterIcon,
-  Youtube01Icon,
+  YoutubeIcon,
   Linkedin01Icon,
   Mail01Icon,
   ArrowUpRightIcon,
@@ -71,9 +71,9 @@ const defaultSections: FooterSection[] = [
 
 const defaultSocialLinks: SocialLink[] = [
   { icon: Github01Icon, label: "GitHub", href: "#" },
-  { icon: Discord01Icon, label: "Discord", href: "#" },
+  { icon: DiscordIcon, label: "Discord", href: "#" },
   { icon: NewTwitterIcon, label: "Twitter/X", href: "#" },
-  { icon: Youtube01Icon, label: "YouTube", href: "#" },
+  { icon: YoutubeIcon, label: "YouTube", href: "#" },
   { icon: Linkedin01Icon, label: "LinkedIn", href: "#" },
 ]
 

@@ -3,7 +3,7 @@
 import { Footer } from "./footer"
 import {
   Github01Icon,
-  Discord01Icon,
+  DiscordIcon,
   NewTwitterIcon,
 } from "@hugeicons/core-free-icons"
 
@@ -33,7 +33,7 @@ export function FooterExample() {
         ]}
         socialLinks={[
           { icon: Github01Icon, label: "GitHub", href: "https://github.com/..." },
-          { icon: Discord01Icon, label: "Discord", href: "https://discord.gg/..." },
+          { icon: DiscordIcon, label: "Discord", href: "https://discord.gg/..." },
           { icon: NewTwitterIcon, label: "Twitter", href: "https://twitter.com/..." },
         ]}
         newsletterEnabled={true}

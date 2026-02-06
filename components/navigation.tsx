@@ -36,8 +36,8 @@ const productMenuItems = [
 export function Navigation({ className }: NavigationProps) {
   const [isProductOpen, setIsProductOpen] = React.useState(false)
   const [isCompanyOpen, setIsCompanyOpen] = React.useState(false)
-  const productTimeoutRef = React.useRef<NodeJS.Timeout>()
-  const companyTimeoutRef = React.useRef<NodeJS.Timeout>()
+  const productTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const companyTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
 
   const handleProductMouseEnter = () => {
     if (productTimeoutRef.current) clearTimeout(productTimeoutRef.current)
