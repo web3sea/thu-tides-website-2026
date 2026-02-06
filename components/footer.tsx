@@ -9,6 +9,7 @@ import {
   NewTwitterIcon,
   YoutubeIcon,
   Linkedin01Icon,
+  InstagramIcon,
   Mail01Icon,
   ArrowUpRightIcon,
 } from "@hugeicons/core-free-icons"
@@ -42,37 +43,34 @@ interface FooterProps {
 
 const defaultSections: FooterSection[] = [
   {
-    title: "Product",
+    title: "Expeditions",
     links: [
-      { label: "What is Letta", href: "#" },
-      { label: "Customers", href: "#" },
-      { label: "Research", href: "#" },
-      { label: "News", href: "#" },
+      { label: "Reconnect", href: "/reconnect" },
+      { label: "Evolution", href: "/evolution" },
+      { label: "Munduk Heaven", href: "/munduk-heaven" },
     ],
   },
   {
-    title: "Developers",
+    title: "Photographs",
     links: [
-      { label: "GitHub", href: "#" },
-      { label: "Documentation", href: "#" },
-      { label: "Community", href: "#" },
-      { label: "Demos", href: "#" },
+      { label: "Aerials", href: "/aerials" },
+      { label: "Underwater", href: "/underwater" },
+      { label: "Top Side", href: "/topside" },
     ],
   },
   {
-    title: "Company",
+    title: "About",
     links: [
-      { label: "About us", href: "#" },
-      { label: "Open positions", href: "#" },
-      { label: "Privacy policy", href: "#" },
-      { label: "Terms of service", href: "#" },
+      { label: "Our Story", href: "/about" },
+      { label: "Values", href: "/values" },
+      { label: "Testimonials", href: "/testimonials" },
     ],
   },
 ]
 
 const defaultSocialLinks: SocialLink[] = [
+  { icon: InstagramIcon, label: "Instagram", href: "#" },
   { icon: Github01Icon, label: "GitHub", href: "#" },
-  { icon: DiscordIcon, label: "Discord", href: "#" },
   { icon: NewTwitterIcon, label: "Twitter/X", href: "#" },
   { icon: YoutubeIcon, label: "YouTube", href: "#" },
   { icon: Linkedin01Icon, label: "LinkedIn", href: "#" },
@@ -159,11 +157,11 @@ export function Footer({
             </div>
           ))}
 
-          {/* Newsletter Section */}
+          {/* Email Section */}
           {newsletterEnabled && (
             <div className="lg:col-span-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-6">
-                Newsletter
+                Drop us an email
               </h3>
               <form className="flex items-center gap-2 max-w-sm">
                 <div className="relative flex-grow">

@@ -30,7 +30,7 @@ export function GigaLayout({
     <div className={cn('w-full min-h-screen bg-slate-900 text-white', className)}>
       {showNavigation && <Navigation />}
       {children}
-      <Footer />
+      <Footer brandName="THU TIDES" />
     </div>
   )
 }
