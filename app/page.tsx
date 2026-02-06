@@ -4,6 +4,7 @@ import { ServicesSection } from '@/components/services-section'
 import { OceanQuote } from '@/components/ocean-quote'
 import { PortfolioSection } from '@/components/portfolio-section'
 import { AboutSection } from '@/components/about-section'
+import { TestimonialsSection } from '@/components/testimonials-section'
 import { VideoLoopSection } from '@/components/video-loop-section'
 import { CollabSection } from '@/components/collab-section'
 import { CarouselGallery } from '@/components/carousel-gallery'
@@ -289,6 +290,7 @@ export default function Page() {
 
       <PortfolioSection />
       <AboutSection />
+      <TestimonialsSection />
       <VideoLoopSection />
       <CollabSection />
     </GigaLayout>
