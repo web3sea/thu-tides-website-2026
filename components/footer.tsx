@@ -15,6 +15,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
+import { TextHoverEffect } from "@/components/ui/text-hover-effect"
 
 interface FooterLink {
   label: string
@@ -191,14 +192,12 @@ export function Footer({
       </div>
 
       {/* Decorative Brand Banner */}
-      <div className="w-full border-t border-b border-border overflow-hidden py-4 bg-background relative">
-        <div className="whitespace-nowrap opacity-10 select-none">
-          <span className="text-[80px] md:text-[120px] font-display font-black tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-b from-foreground to-muted-foreground"
-            style={{ WebkitTextStroke: "1px currentColor" }}
-          >
-            {brandName.toUpperCase()} FOLLOW {brandName.toUpperCase()} FOLLOW {brandName.toUpperCase()} FOLLOW {brandName.toUpperCase()}
-          </span>
-        </div>
+      <div className="w-full border-t border-b border-border overflow-hidden bg-background relative h-[200px] md:h-[300px]">
+        <TextHoverEffect
+          text={`FOLLOW ${brandName.toUpperCase()}`}
+          textSize="text-6xl md:text-8xl"
+          viewBox="0 0 1200 200"
+        />
       </div>
 
       {/* Bottom Bar - Social Links and Theme Switcher */}

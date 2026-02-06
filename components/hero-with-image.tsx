@@ -3,7 +3,9 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Typography } from '@/components/typography'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export interface HeroWithImageProps {
@@ -228,20 +230,27 @@ export function HeroWithImageAndCTA({
       subtitle={subtitle}
       {...props}
       content={
-        <motion.a
-          href={ctaHref}
-          onClick={(e) => {
-            if (onCtaClick) {
-              e.preventDefault()
-              onCtaClick()
-            }
-          }}
+        <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="inline-block mt-8 px-8 py-3 bg-brand-cerulean hover:bg-brand-cerulean-2 text-white rounded-lg font-medium transition-colors duration-300"
+          className="mt-8"
         >
-          {ctaText}
-        </motion.a>
+          <Button
+            variant="brand"
+            size="lg"
+            onClick={(e) => {
+              if (onCtaClick) {
+                e.preventDefault()
+                onCtaClick()
+              }
+            }}
+            render={(props) => (
+              <Link href={ctaHref} {...props}>
+                {ctaText}
+              </Link>
+            )}
+          />
+        </motion.div>
       }
     />
   )

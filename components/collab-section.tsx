@@ -1,4 +1,5 @@
 import { H2, H3, P, Typography } from '@/components/typography'
+import { GlassCard } from '@/components/ui/glass-card'
 
 export function CollabSection() {
   return (
@@ -24,7 +25,7 @@ export function CollabSection() {
             Partnership Models
           </Typography>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 card-padding-lg rounded-2xl hover:bg-white/10 transition-all duration-300">
+            <GlassCard>
               <div className="flex items-center justify-center w-20 h-20 mb-6 mx-auto bg-white/10 rounded-full">
                 <span className="material-symbols-outlined text-4xl text-white">
                   handshake
@@ -36,8 +37,8 @@ export function CollabSection() {
                 and Instagram promotion. Perfect for properties looking to build their visual
                 content library.
               </P>
-            </div>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 card-padding-lg rounded-2xl hover:bg-white/10 transition-all duration-300">
+            </GlassCard>
+            <GlassCard>
               <div className="flex items-center justify-center w-20 h-20 mb-6 mx-auto bg-white/10 rounded-full">
                 <span className="material-symbols-outlined text-4xl text-white">
                   payments
@@ -48,7 +49,7 @@ export function CollabSection() {
                 Professional content creation services at rates that work for boutique properties.
                 Get high-quality visual storytelling without traditional agency costs.
               </P>
-            </div>
+            </GlassCard>
           </div>
         </div>
       </div>
