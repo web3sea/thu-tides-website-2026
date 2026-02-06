@@ -7,7 +7,7 @@ export function OceanQuote() {
   return (
     <section className="relative py-24 px-4">
       <div className="max-w-6xl mx-auto text-center">
-        <blockquote className="space-y-8">
+        <blockquote className="space-y-4">
           <div className="w-full h-[200px] md:h-[300px]">
             <TextHoverEffect
               text="The ocean stirs the heart, inspires the imagination, and brings eternal joy to the soul."
@@ -15,7 +15,7 @@ export function OceanQuote() {
               viewBox="0 0 2400 200"
             />
           </div>
-          <footer className="text-lg text-gray-600 font-light">
+          <footer className="text-lg text-white font-light">
             — Robert Wyland
           </footer>
         </blockquote>

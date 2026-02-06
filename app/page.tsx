@@ -39,7 +39,6 @@ export default function Page() {
         backgroundImage="/DJI_aerial_hero.webp"
         backgroundImageAlt="Aerial view of coastal tides"
         title="Creative collaboration for coastal hospitality brands."
-        subtitle="Expeditions in shades of blue."
         badge={{
           text: 'Where should we go next?',
           href: '#',
@@ -52,6 +51,85 @@ export default function Page() {
       />
       <ServicesSection />
       <OceanQuote />
+
+      {/* Underwater Gallery */}
+      <CarouselGallery
+        title="Underwater"
+        description="Dive into the depths"
+        itemsPerView={3}
+        images={[
+          {
+            src: '/uw_buka_buka.webp',
+            alt: 'Underwater at Buka Buka',
+            title: 'Buka Buka',
+          },
+          {
+            src: '/uw_malapascua.webp',
+            alt: 'Underwater at Malapascua',
+            title: 'Malapascua',
+          },
+          {
+            src: '/uw_moalboal.webp',
+            alt: 'Underwater at Moalboal',
+            title: 'Moalboal',
+          },
+          {
+            src: '/uw_dauin.webp',
+            alt: 'Underwater at Dauin',
+            title: 'Dauin',
+          },
+          {
+            src: '/uw_jellyfish_mariona.webp',
+            alt: 'Jellyfish at Mariona',
+            title: 'Mariona Jellyfish',
+          },
+          {
+            src: '/uw_napalin.webp',
+            alt: 'Underwater at Napalin',
+            title: 'Napalin',
+          },
+        ]}
+      />
+
+      {/* Aerial Gallery */}
+      <CarouselGallery
+        title="Aerial"
+        description="Bird's eye view"
+        itemsPerView={3}
+        images={[
+          {
+            src: '/dji_aerial_beach_kalanggaman.webp',
+            alt: 'Aerial view of Kalanggaman Beach',
+            title: 'Kalanggaman Beach',
+          },
+          {
+            src: '/DJI_arial_island_balicasa.webp',
+            alt: 'Aerial view of Balicasa Island',
+            title: 'Balicasa Island',
+          },
+          {
+            src: '/DJI_arial_waterfall_casaroro.webp',
+            alt: 'Aerial view of Casaroro Waterfall',
+            title: 'Casaroro Waterfall',
+          },
+          {
+            src: '/DJI_arial_waterfall_pasalan.webp',
+            alt: 'Aerial view of Pasalan Waterfall',
+            title: 'Pasalan Waterfall',
+          },
+          {
+            src: '/dji_aerial_top_reef_atoll.webp',
+            alt: 'Aerial view of top reef atoll',
+            title: 'Top Reef Atoll',
+          },
+          {
+            src: '/DJI_aerial_hero.webp',
+            alt: 'Aerial coastal view',
+            title: 'Coastal Tides',
+          },
+        ]}
+      />
+
       <PortfolioSection />
       <AboutSection />
       <VideoLoopSection />

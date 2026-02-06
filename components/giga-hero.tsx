@@ -49,7 +49,7 @@ export function GigaHero({
     href: '#',
   },
   title = 'AI that talks like a human. Handles millions of calls.',
-  subtitle = 'AI agents for enterprise support',
+  subtitle = '',
   ctaText = 'Talk to us',
   ctaHref = '#',
   logos = defaultLogos,
@@ -89,7 +89,7 @@ export function GigaHero({
           >
             <Link
               href={badge.href || '#'}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/10 mb-4 hover:bg-white/20 transition-colors group"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 dark:text-white/80 uppercase">
