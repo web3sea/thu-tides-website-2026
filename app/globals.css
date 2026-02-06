@@ -140,6 +140,11 @@
   --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+
+  /* Brand colors adapt for dark mode - use lighter variant */
+  --accent-primary: var(--brand-cerulean-2);
+  --accent-secondary: #A8B868;
+  --text-muted: #A8B868;
 }
 
 @layer base {
