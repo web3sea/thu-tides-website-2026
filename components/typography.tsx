@@ -69,20 +69,20 @@ type TypographyVariant = NonNullable<VariantProps<typeof typographyVariants>['va
 export interface TypographyProps
   extends React.HTMLAttributes<HTMLElement>,
   VariantProps<typeof typographyVariants> {
-  asChild?: boolean
+  as?: keyof JSX.IntrinsicElements
 }
 
 /**
  * Typography Component
- * 
+ *
  * @example
  * <Typography variant="hero-title">Welcome</Typography>
  * <Typography variant="section-title" align="center">Featured Work</Typography>
  * <Typography variant="case-body">Project description...</Typography>
  */
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
-  ({ className, variant, align, color, ...props }, ref) => {
-    const element = getElementForVariant(variant)
+  ({ className, variant, align, color, as, ...props }, ref) => {
+    const element = as || getElementForVariant(variant)
 
     return React.createElement(
       element,
