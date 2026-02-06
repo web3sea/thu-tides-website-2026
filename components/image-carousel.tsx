@@ -3,7 +3,6 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowLeft02Icon, ArrowRight02Icon } from '@hugeicons/core-free-icons'
 import { cn } from '@/lib/utils'
@@ -82,7 +81,6 @@ export function ImageCarousel({
   className = '',
 }: ImageCarouselProps) {
   const [current, setCurrent] = React.useState(0)
-  const [direction, setDirection] = React.useState<'next' | 'prev'>('next')
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null)
 
   // Auto-play logic
@@ -112,19 +110,16 @@ export function ImageCarousel({
   const aspectRatio = currentImage.aspectRatio || 'landscape'
 
   const handleNext = () => {
-    setDirection('next')
     setCurrent((prev) => (prev + 1) % images.length)
     if (intervalRef.current) clearInterval(intervalRef.current)
   }
 
   const handlePrev = () => {
-    setDirection('prev')
     setCurrent((prev) => (prev - 1 + images.length) % images.length)
     if (intervalRef.current) clearInterval(intervalRef.current)
   }
 
   const handleDotClick = (index: number) => {
-    setDirection(index > current ? 'next' : 'prev')
     setCurrent(index)
     if (intervalRef.current) clearInterval(intervalRef.current)
   }

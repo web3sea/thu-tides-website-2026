@@ -284,10 +284,9 @@ export function MasonryGallery({
   images,
   gap = 'md',
   quality = 85,
-  showCaptions = false,
   className = '',
   onImageClick,
-}: Omit<ImageGalleryProps, 'columns'>) {
+}: Omit<ImageGalleryProps, 'columns' | 'showCaptions'>) {
   const [selectedImage, setSelectedImage] = React.useState<number | null>(null)
 
   // Sort images into columns for masonry effect

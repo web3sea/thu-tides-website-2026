@@ -168,7 +168,8 @@ describe('Giga Components Responsive Tests', () => {
           });
 
           if (productButton) {
-            await productButton.asElement()?.hover();
+            const element = productButton.asElement();
+            if (element) await element.hover();
             await new Promise(resolve => setTimeout(resolve, 300)); // Wait for dropdown animation
 
             const dropdown = await page.evaluate(() => {
@@ -197,7 +198,8 @@ describe('Giga Components Responsive Tests', () => {
           });
 
           if (productButton) {
-            await productButton.asElement()?.hover();
+            const element = productButton.asElement();
+            if (element) await element.hover();
             await new Promise(resolve => setTimeout(resolve, 300));
 
             const menuItems = await page.evaluate(() => {
