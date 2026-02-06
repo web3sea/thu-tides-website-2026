@@ -39,7 +39,7 @@ export default function Page() {
             title: 'Buka Buka',
           },
           {
-            src: '/dji_aerial_top_reef_atoll.jpg',
+            src: '/dji_aerial_top_reef_atoll.JPG',
             alt: 'Aerial view of top reef atoll',
             title: 'Top Reef Atoll',
           },
