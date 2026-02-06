@@ -1,3 +1,5 @@
+import { Logo } from '@/components/logo'
+
 export function VideoLoopSection() {
   return (
     <section className="relative w-full overflow-hidden">
@@ -13,16 +15,16 @@ export function VideoLoopSection() {
           Your browser does not support the video tag.
         </video>
 
-        {/* Optional overlay gradient for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/40" />
+        {/* Optional overlay gradient for logo visibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/20" />
 
-        {/* Optional text overlay */}
+        {/* Thu Tides Logo Centered */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <p className="text-2xl md:text-3xl font-light">
-              Capturing the beauty of coastal hospitality
-            </p>
-          </div>
+          <Logo
+            className="scale-150 md:scale-200"
+            iconClassName="w-16 h-16 md:w-20 md:h-20"
+            textClassName="text-4xl md:text-5xl font-light tracking-wide text-white"
+          />
         </div>
       </div>
     </section>

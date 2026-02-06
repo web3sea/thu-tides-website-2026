@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { TextHoverEffect } from '@/components/ui/text-hover-effect'
 import { cn } from '@/lib/utils'
 
 export interface GigaHeroProps {
@@ -23,6 +24,8 @@ export interface GigaHeroProps {
     icon?: React.ReactNode
   }>
   className?: string
+  useHoverEffect?: boolean
+  hoverEffectText?: string
 }
 
 const defaultLogos = [
@@ -51,6 +54,8 @@ export function GigaHero({
   ctaHref = '#',
   logos = defaultLogos,
   className,
+  useHoverEffect = false,
+  hoverEffectText,
 }: GigaHeroProps) {
   return (
     <div
@@ -84,7 +89,7 @@ export function GigaHero({
           >
             <Link
               href={badge.href || '#'}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/10 mb-8 hover:bg-white/20 transition-colors group"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/10 mb-4 hover:bg-white/20 transition-colors group"
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 dark:text-white/80 uppercase">
@@ -98,27 +103,48 @@ export function GigaHero({
         )}
 
         {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight md:leading-tight lg:leading-[1.1] text-white dark:text-gray-50 mb-6 drop-shadow-sm"
-        >
-          {title.split('. ').map((line, i, arr) => (
-            <React.Fragment key={i}>
-              {line}
-              {i < arr.length - 1 && '.'}
-              {i < arr.length - 1 && (
-                <>
-                  <br className="hidden md:block" />
-                  <span className="opacity-90 dark:opacity-80">
-                    {i === arr.length - 2 ? '' : ' '}
-                  </span>
-                </>
-              )}
-            </React.Fragment>
-          ))}
-        </motion.h1>
+        {useHoverEffect ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="w-full max-w-4xl h-[300px] md:h-[400px] mb-4"
+            >
+              <TextHoverEffect text={hoverEffectText || title} />
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-xl md:text-2xl text-white font-light mb-6 max-w-3xl mx-auto"
+            >
+              {title}
+            </motion.p>
+          </>
+        ) : (
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight md:leading-tight lg:leading-[1.1] text-white dark:text-gray-50 mb-6 drop-shadow-sm"
+          >
+            {title.split('. ').map((line, i, arr) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && '.'}
+                {i < arr.length - 1 && (
+                  <>
+                    <br className="hidden md:block" />
+                    <span className="opacity-90 dark:opacity-80">
+                      {i === arr.length - 2 ? '' : ' '}
+                    </span>
+                  </>
+                )}
+              </React.Fragment>
+            ))}
+          </motion.h1>
+        )}
 
         {/* Subtitle */}
         {subtitle && (
