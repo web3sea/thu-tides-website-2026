@@ -158,14 +158,8 @@ export function Navigation({ className }: NavigationProps) {
         </div>
       </div>
 
-      {/* Right Section - Auth and CTA */}
+      {/* Right Section - CTA */}
       <div className="flex items-center gap-6">
-        <Link
-          href="#"
-          className="text-sm font-medium text-white hover:text-gray-200 transition-colors"
-        >
-          Sign in
-        </Link>
         <Button
           size="lg"
           className="bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
