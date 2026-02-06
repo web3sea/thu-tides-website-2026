@@ -195,4 +195,13 @@ const Quote = ({ className, ...props }: React.HTMLAttributes<HTMLQuoteElement>) 
 )
 Quote.displayName = 'Quote'
 
-export { Typography, typographyVariants }
+export {
+  Typography,
+  typographyVariants,
+  H1,
+  H2,
+  H3,
+  P,
+  Caption,
+  Quote,
+}
