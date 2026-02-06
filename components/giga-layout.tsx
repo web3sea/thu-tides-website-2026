@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { Navigation } from '@/components/navigation'
+import { Footer } from '@/components/footer'
 import { cn } from '@/lib/utils'
 
 export interface GigaLayoutProps {
@@ -29,6 +30,7 @@ export function GigaLayout({
     <div className={cn('w-full min-h-screen bg-slate-900 text-white', className)}>
       {showNavigation && <Navigation />}
       {children}
+      <Footer />
     </div>
   )
 }
