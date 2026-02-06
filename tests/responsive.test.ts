@@ -7,7 +7,7 @@
 
 import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 // Configuration
@@ -554,8 +554,7 @@ describe('Giga Components Responsive Tests', () => {
       }
 
       // Verify screenshots were created
-      const fs = require('fs');
-      const screenshots = fs.readdirSync(SCREENSHOT_DIR);
+      const screenshots = readdirSync(SCREENSHOT_DIR);
       expect(screenshots.length).toBeGreaterThan(0);
     });
   });

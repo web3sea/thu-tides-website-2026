@@ -85,16 +85,9 @@ export function ImageCarousel({
   const [direction, setDirection] = React.useState<'next' | 'prev'>('next')
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null)
 
-  if (!images || images.length === 0) {
-    return <div className="w-full h-96 bg-muted rounded-lg flex items-center justify-center">No images provided</div>
-  }
-
-  const currentImage = images[current]
-  const aspectRatio = currentImage.aspectRatio || 'landscape'
-
   // Auto-play logic
   React.useEffect(() => {
-    if (!autoPlay) return
+    if (!autoPlay || !images || images.length === 0) return
 
     intervalRef.current = setInterval(() => {
       setDirection('next')
@@ -104,12 +97,19 @@ export function ImageCarousel({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [autoPlay, autoPlayInterval, images.length])
+  }, [autoPlay, autoPlayInterval, images])
 
   // Notify parent of image change
   React.useEffect(() => {
     onImageChange?.(current)
   }, [current, onImageChange])
+
+  if (!images || images.length === 0) {
+    return <div className="w-full h-96 bg-muted rounded-lg flex items-center justify-center">No images provided</div>
+  }
+
+  const currentImage = images[current]
+  const aspectRatio = currentImage.aspectRatio || 'landscape'
 
   const handleNext = () => {
     setDirection('next')

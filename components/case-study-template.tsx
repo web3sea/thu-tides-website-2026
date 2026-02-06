@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { HeroWithImage } from '@/components/hero-with-image'
 import { CaseStudySection, CaseStudyFlow } from '@/components/case-study-section'
 import { ImageCarousel, type CarouselImage } from '@/components/image-carousel'
-import { ImageGallery, MasonryGallery, type GalleryImage } from '@/components/image-gallery'
-import { Typography, H2, H3, P, Caption, Quote } from '@/components/typography'
+import { ImageGallery, type GalleryImage } from '@/components/image-gallery'
+import { Typography, H2, P, Quote } from '@/components/typography'
 import { ScrollReveal, ScrollRevealStagger } from '@/components/scroll-reveal'
 import { cn } from '@/lib/utils'
 
@@ -316,7 +316,7 @@ export function CaseStudyTemplate({
           <ScrollReveal trigger="slideUp">
             <div className="text-center space-y-4">
               <Quote className="text-xl md:text-2xl border-0">
-                "{caseStudy.testimonial.text}"
+                &ldquo;{caseStudy.testimonial.text}&rdquo;
               </Quote>
               <div>
                 <Typography variant="label" className="font-semibold">
@@ -338,7 +338,7 @@ export function CaseStudyTemplate({
             <CardHeader className="text-center">
               <CardTitle>Ready to start your project?</CardTitle>
               <CardDescription className="text-base">
-                Let's collaborate to bring your vision to life with compelling photography and design.
+                Let&apos;s collaborate to bring your vision to life with compelling photography and design.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center gap-4">

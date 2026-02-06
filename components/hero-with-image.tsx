@@ -75,7 +75,6 @@ export function HeroWithImage({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [parallax])
 
-  const imageTransform = parallax ? { y: scrollY * 0.5 } : {}
   const contentVariant =
     animationTrigger === 'load'
       ? {

@@ -1,11 +1,6 @@
 "use client"
 
 import { Footer } from "./footer"
-import {
-  Github01Icon,
-  DiscordIcon,
-  NewTwitterIcon,
-} from "@hugeicons/core-free-icons"
 
 export function FooterExample() {
   return (
