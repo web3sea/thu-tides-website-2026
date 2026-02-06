@@ -121,7 +121,7 @@ export function Navigation({ className }: NavigationProps) {
   return (
     <nav
       className={cn(
-        'relative z-50 px-6 py-6 md:px-10 flex items-center justify-between',
+        'absolute top-0 left-0 right-0 z-50 px-6 py-6 md:px-10 flex items-center justify-between bg-transparent',
         className
       )}
     >
