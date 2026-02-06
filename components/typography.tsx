@@ -67,9 +67,9 @@ const typographyVariants = cva('w-full', {
 type TypographyVariant = NonNullable<VariantProps<typeof typographyVariants>['variant']>
 
 export interface TypographyProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'color'>,
   VariantProps<typeof typographyVariants> {
-  as?: keyof JSX.IntrinsicElements
+  as?: keyof React.JSX.IntrinsicElements
 }
 
 /**
@@ -99,7 +99,7 @@ Typography.displayName = 'Typography'
 /**
  * Helper function to determine semantic HTML element based on variant
  */
-function getElementForVariant(variant?: TypographyVariant): string {
+function getElementForVariant(variant?: TypographyVariant | null): string {
   if (!variant) return 'p'
 
   if (variant.includes('hero-title')) return 'h1'
@@ -120,7 +120,7 @@ function getElementForVariant(variant?: TypographyVariant): string {
 /**
  * H1 - Hero title
  */
-const H1 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+const H1 = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'>) => (
   <Typography
     as="h1"
     variant="hero-title"
@@ -133,7 +133,7 @@ H1.displayName = 'H1'
 /**
  * H2 - Section title
  */
-const H2 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+const H2 = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'>) => (
   <Typography
     as="h2"
     variant="section-title"
@@ -146,7 +146,7 @@ H2.displayName = 'H2'
 /**
  * H3 - Subsection title
  */
-const H3 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+const H3 = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'>) => (
   <Typography
     as="h3"
     variant="subsection-title"
@@ -159,7 +159,7 @@ H3.displayName = 'H3'
 /**
  * P - Body text
  */
-const P = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
+const P = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLParagraphElement>, 'color'>) => (
   <Typography
     as="p"
     variant="body"
@@ -172,7 +172,7 @@ P.displayName = 'P'
 /**
  * Caption - Small caption text
  */
-const Caption = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+const Caption = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLElement>, 'color'>) => (
   <Typography
     as="figcaption"
     variant="caption"
@@ -185,7 +185,7 @@ Caption.displayName = 'Caption'
 /**
  * Quote - Blockquote element
  */
-const Quote = ({ className, ...props }: React.HTMLAttributes<HTMLQuoteElement>) => (
+const Quote = ({ className, ...props }: Omit<React.HTMLAttributes<HTMLQuoteElement>, 'color'>) => (
   <Typography
     as="blockquote"
     variant="quote"

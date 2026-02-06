@@ -63,7 +63,7 @@ export function ScrollReveal({
   const { ref, inView } = useInView({
     threshold,
     triggerOnce: once,
-    margin: '0px 0px -100px 0px',
+    rootMargin: '0px 0px -100px 0px',
   })
 
   const variants = animationVariants[trigger]
@@ -108,7 +108,7 @@ export function ScrollRevealStagger({
   const { ref, inView } = useInView({
     threshold,
     triggerOnce: once,
-    margin: '0px 0px -100px 0px',
+    rootMargin: '0px 0px -100px 0px',
   })
 
   const variants = animationVariants[trigger]
