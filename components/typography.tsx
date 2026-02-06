@@ -120,103 +120,79 @@ function getElementForVariant(variant?: TypographyVariant): string {
 /**
  * H1 - Hero title
  */
-export const H1 = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+const H1 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <Typography
-    ref={ref as any}
     as="h1"
     variant="hero-title"
     className={className}
     {...props}
   />
-))
+)
 H1.displayName = 'H1'
 
 /**
  * H2 - Section title
  */
-export const H2 = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+const H2 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <Typography
-    ref={ref as any}
     as="h2"
     variant="section-title"
     className={className}
     {...props}
   />
-))
+)
 H2.displayName = 'H2'
 
 /**
  * H3 - Subsection title
  */
-export const H3 = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+const H3 = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <Typography
-    ref={ref as any}
     as="h3"
     variant="subsection-title"
     className={className}
     {...props}
   />
-))
+)
 H3.displayName = 'H3'
 
 /**
  * P - Body text
  */
-export const P = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+const P = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
   <Typography
-    ref={ref as any}
     as="p"
     variant="body"
     className={className}
     {...props}
   />
-))
+)
 P.displayName = 'P'
 
 /**
  * Caption - Small caption text
  */
-export const Caption = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement>
->(({ className, ...props }, ref) => (
+const Caption = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
   <Typography
-    ref={ref as any}
     as="figcaption"
     variant="caption"
     className={className}
     {...props}
   />
-))
+)
 Caption.displayName = 'Caption'
 
 /**
  * Quote - Blockquote element
  */
-export const Quote = React.forwardRef<
-  HTMLQuoteElement,
-  React.HTMLAttributes<HTMLQuoteElement>
->(({ className, ...props }, ref) => (
+const Quote = ({ className, ...props }: React.HTMLAttributes<HTMLQuoteElement>) => (
   <Typography
-    ref={ref as any}
     as="blockquote"
     variant="quote"
     className={cn('border-l-4 border-brand-cerulean pl-6 py-4', className)}
     {...props}
   />
-))
+)
 Quote.displayName = 'Quote'
 
 export { Typography, typographyVariants }
