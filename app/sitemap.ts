@@ -5,8 +5,7 @@ import { MetadataRoute } from 'next'
  * Next.js will automatically generate this at /sitemap.xml
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  // TODO: Update to production domain once confirmed
-  const baseUrl = 'https://thu-tides.com'
+  const baseUrl = 'https://thutides.com'
   const currentDate = new Date()
 
   return [

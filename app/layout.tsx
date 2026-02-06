@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Thu Tides' }],
   creator: 'Thu Tides',
   publisher: 'Thu Tides',
-  metadataBase: new URL('https://thu-tides.com'),
+  metadataBase: new URL('https://thutides.com'),
   alternates: {
     canonical: '/',
   },
@@ -78,12 +78,12 @@ export default function RootLayout({
       // Organization schema
       {
         '@type': 'Organization',
-        '@id': 'https://thu-tides.com/#organization',
+        '@id': 'https://thutides.com/#organization',
         name: 'Thu Tides',
-        url: 'https://thu-tides.com',
+        url: 'https://thutides.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://thu-tides.com/DJI_aerial_hero.webp',
+          url: 'https://thutides.com/DJI_aerial_hero.webp',
         },
         sameAs: [
           'https://instagram.com/thu.tides',
@@ -97,10 +97,10 @@ export default function RootLayout({
       // Professional Service schema
       {
         '@type': 'ProfessionalService',
-        '@id': 'https://thu-tides.com/#service',
+        '@id': 'https://thutides.com/#service',
         name: 'Thu Tides',
         description: 'Professional photography and video content creation for coastal hospitality brands, specializing in underwater and aerial photography across Indonesia and the Philippines.',
-        url: 'https://thu-tides.com',
+        url: 'https://thutides.com',
         priceRange: '$$',
         areaServed: [
           {
@@ -121,7 +121,7 @@ export default function RootLayout({
           'Content Creation',
           'Travel Photography',
         ],
-        image: 'https://thu-tides.com/DJI_aerial_hero.webp',
+        image: 'https://thutides.com/DJI_aerial_hero.webp',
       },
     ],
   }

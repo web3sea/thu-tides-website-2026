@@ -19,11 +19,11 @@ export function CollabSection() {
           </P>
           <div className="flex flex-col items-center gap-4 mt-8">
             <a
-              href="mailto:hello@thu-tides.com"
+              href="mailto:hello@thutides.com"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold transition-all hover:scale-105 shadow-lg"
             >
               <span className="material-symbols-outlined">mail</span>
-              hello@thu-tides.com
+              hello@thutides.com
             </a>
             <P className="text-white/60 text-sm">
               Get in touch to discuss your project

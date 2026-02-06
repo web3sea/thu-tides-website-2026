@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://thu-tides.com/sitemap.xml
+Sitemap: https://thutides.com/sitemap.xml
 
 # Block test/demo pages from indexing
 User-agent: *
