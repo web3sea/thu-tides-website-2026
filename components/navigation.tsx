@@ -10,39 +10,39 @@ export interface NavigationProps {
   className?: string
 }
 
-const stayMenuItems = [
+const expeditionsMenuItems = [
   {
-    title: 'Accommodations',
-    description: 'Beachfront villas and cozy rooms with ocean views.',
-    href: '/stay',
+    title: 'Reconnect',
+    description: 'Dive resort in Togean, Sulawesi.',
+    href: '/reconnect',
   },
   {
-    title: 'Amenities',
-    description: 'Pool, beach access, restaurant, and wellness facilities.',
-    href: '/stay#amenities',
+    title: 'Evolution',
+    description: 'Dive center in Malapascua, Philippines.',
+    href: '/evolution',
   },
   {
-    title: 'Packages',
-    description: 'Special retreat packages and extended stay options.',
-    href: '/stay#packages',
+    title: 'Munduk Heaven',
+    description: 'Discover the magic of Bali\'s hidden mountain paradise.',
+    href: '/munduk-heaven',
   },
 ]
 
-const experienceMenuItems = [
+const photographsMenuItems = [
   {
-    title: 'Yoga',
-    description: 'Daily classes, workshops, and private sessions by the sea.',
-    href: '/yoga',
+    title: 'Aerials',
+    description: 'Stunning drone photography and aerial perspectives.',
+    href: '/aerials',
   },
   {
-    title: 'Events',
-    description: 'Retreats, workshops, and special gatherings.',
-    href: '/events',
+    title: 'Underwater',
+    description: 'Capturing the beauty beneath the waves.',
+    href: '/underwater',
   },
   {
-    title: 'Activities',
-    description: 'Diving, surfing, island tours, and local experiences.',
-    href: '/activities',
+    title: 'Top Side',
+    description: 'Surface and coastal photography collections.',
+    href: '/topside',
   },
 ]
 
@@ -70,32 +70,32 @@ const aboutMenuItems = [
 ]
 
 export function Navigation({ className }: NavigationProps) {
-  const [isStayOpen, setIsStayOpen] = React.useState(false)
-  const [isExperienceOpen, setIsExperienceOpen] = React.useState(false)
+  const [isExpeditionsOpen, setIsExpeditionsOpen] = React.useState(false)
+  const [isPhotographsOpen, setIsPhotographsOpen] = React.useState(false)
   const [isAboutOpen, setIsAboutOpen] = React.useState(false)
-  const stayTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
-  const experienceTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const expeditionsTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const photographsTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
   const aboutTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
 
-  const handleStayMouseEnter = () => {
-    if (stayTimeoutRef.current) clearTimeout(stayTimeoutRef.current)
-    setIsStayOpen(true)
+  const handleExpeditionsMouseEnter = () => {
+    if (expeditionsTimeoutRef.current) clearTimeout(expeditionsTimeoutRef.current)
+    setIsExpeditionsOpen(true)
   }
 
-  const handleStayMouseLeave = () => {
-    stayTimeoutRef.current = setTimeout(() => {
-      setIsStayOpen(false)
+  const handleExpeditionsMouseLeave = () => {
+    expeditionsTimeoutRef.current = setTimeout(() => {
+      setIsExpeditionsOpen(false)
     }, 200)
   }
 
-  const handleExperienceMouseEnter = () => {
-    if (experienceTimeoutRef.current) clearTimeout(experienceTimeoutRef.current)
-    setIsExperienceOpen(true)
+  const handlePhotographsMouseEnter = () => {
+    if (photographsTimeoutRef.current) clearTimeout(photographsTimeoutRef.current)
+    setIsPhotographsOpen(true)
   }
 
-  const handleExperienceMouseLeave = () => {
-    experienceTimeoutRef.current = setTimeout(() => {
-      setIsExperienceOpen(false)
+  const handlePhotographsMouseLeave = () => {
+    photographsTimeoutRef.current = setTimeout(() => {
+      setIsPhotographsOpen(false)
     }, 200)
   }
 
@@ -112,8 +112,8 @@ export function Navigation({ className }: NavigationProps) {
 
   React.useEffect(() => {
     return () => {
-      if (stayTimeoutRef.current) clearTimeout(stayTimeoutRef.current)
-      if (experienceTimeoutRef.current) clearTimeout(experienceTimeoutRef.current)
+      if (expeditionsTimeoutRef.current) clearTimeout(expeditionsTimeoutRef.current)
+      if (photographsTimeoutRef.current) clearTimeout(photographsTimeoutRef.current)
       if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current)
     }
   }, [])
@@ -134,17 +134,17 @@ export function Navigation({ className }: NavigationProps) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
-          {/* Stay Dropdown */}
+          {/* Expeditions Dropdown */}
           <div
             className="relative"
-            onMouseEnter={handleStayMouseEnter}
-            onMouseLeave={handleStayMouseLeave}
+            onMouseEnter={handleExpeditionsMouseEnter}
+            onMouseLeave={handleExpeditionsMouseLeave}
           >
             <button className="flex items-center gap-1 text-sm font-medium text-white/90 hover:text-white transition-colors group">
-              Stay
+              Expeditions
               <motion.span
                 className="material-symbols-outlined text-lg"
-                animate={{ rotate: isStayOpen ? 180 : 0 }}
+                animate={{ rotate: isExpeditionsOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
                 expand_more
@@ -152,7 +152,7 @@ export function Navigation({ className }: NavigationProps) {
             </button>
 
             <AnimatePresence>
-              {isStayOpen && (
+              {isExpeditionsOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -161,7 +161,7 @@ export function Navigation({ className }: NavigationProps) {
                   className="absolute top-full left-0 mt-2 w-80 rounded-lg backdrop-blur-xl bg-slate-800/90 border border-white/10 shadow-2xl p-2"
                 >
                   <div className="flex flex-col gap-1">
-                    {stayMenuItems.map((item) => (
+                    {expeditionsMenuItems.map((item) => (
                       <Link
                         key={item.title}
                         href={item.href}
@@ -181,17 +181,17 @@ export function Navigation({ className }: NavigationProps) {
             </AnimatePresence>
           </div>
 
-          {/* Experience Dropdown */}
+          {/* Photographs Dropdown */}
           <div
             className="relative"
-            onMouseEnter={handleExperienceMouseEnter}
-            onMouseLeave={handleExperienceMouseLeave}
+            onMouseEnter={handlePhotographsMouseEnter}
+            onMouseLeave={handlePhotographsMouseLeave}
           >
             <button className="flex items-center gap-1 text-sm font-medium text-white/90 hover:text-white transition-colors group">
-              Experience
+              Photographs
               <motion.span
                 className="material-symbols-outlined text-lg"
-                animate={{ rotate: isExperienceOpen ? 180 : 0 }}
+                animate={{ rotate: isPhotographsOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
                 expand_more
@@ -199,7 +199,7 @@ export function Navigation({ className }: NavigationProps) {
             </button>
 
             <AnimatePresence>
-              {isExperienceOpen && (
+              {isPhotographsOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -208,7 +208,7 @@ export function Navigation({ className }: NavigationProps) {
                   className="absolute top-full left-0 mt-2 w-80 rounded-lg backdrop-blur-xl bg-slate-800/90 border border-white/10 shadow-2xl p-2"
                 >
                   <div className="flex flex-col gap-1">
-                    {experienceMenuItems.map((item) => (
+                    {photographsMenuItems.map((item) => (
                       <Link
                         key={item.title}
                         href={item.href}
@@ -276,10 +276,10 @@ export function Navigation({ className }: NavigationProps) {
           </div>
 
           <Link
-            href="/faq"
+            href="/"
             className="text-sm font-medium text-white/90 hover:text-white transition-colors"
           >
-            FAQ
+            Home
           </Link>
         </div>
       </div>
@@ -287,7 +287,7 @@ export function Navigation({ className }: NavigationProps) {
       {/* Right Section - CTA */}
       <Link
         href="/book"
-        className="bg-white hover:bg-gray-100 text-slate-900 px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl"
+        className="border border-white/90 hover:bg-white/10 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
       >
         Let&apos;s Connect
       </Link>
