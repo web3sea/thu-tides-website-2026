@@ -86,6 +86,26 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+
+  /* Brand Color Tokens - Photography Palette */
+  --brand-cerulean: #0B7AA1;
+  --brand-cerulean-2: #1E9BCC;
+  --brand-sage-dry: #8FA998;
+  --brand-olive-leaf: #7A8F4A;
+
+  /* Semantic Color Tokens */
+  --accent-primary: var(--brand-cerulean);
+  --accent-secondary: var(--brand-olive-leaf);
+  --text-muted: var(--brand-sage-dry);
+
+  /* Spacing Scale (8px base) */
+  --space-xs: 0.5rem;     /* 8px */
+  --space-sm: 1rem;       /* 16px */
+  --space-md: 1.5rem;     /* 24px */
+  --space-lg: 2rem;       /* 32px */
+  --space-xl: 4rem;       /* 64px */
+  --space-2xl: 6rem;      /* 96px */
+  --space-3xl: 8rem;      /* 128px */
 }
 
 .dark {
