@@ -91,7 +91,9 @@ export function GigaHero({
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 dark:text-white/80 uppercase">
                 {badge.text}
               </span>
-              <ArrowRight01Icon className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" />
+              <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
           </motion.div>
         )}
