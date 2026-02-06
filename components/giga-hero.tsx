@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 export interface GigaHeroProps {
   backgroundImage?: string
@@ -90,9 +91,7 @@ export function GigaHero({
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 dark:text-white/80 uppercase">
                 {badge.text}
               </span>
-              <span className="material-symbols-outlined text-xs text-white/70 group-hover:translate-x-1 transition-transform">
-                chevron_right
-              </span>
+              <ArrowRight01Icon className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         )}
