@@ -1,5 +1,6 @@
 import { GigaLayout } from '@/components/giga-layout'
 import { GigaHero } from '@/components/giga-hero'
+import { OceanQuote } from '@/components/ocean-quote'
 import { CarouselGallery } from '@/components/carousel-gallery'
 import { Metadata } from 'next'
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     description: 'Expeditions in shades of blue. Explore stunning underwater and aerial photography from the Philippines.',
     images: [
       {
-        url: '/DJI_aerial_hero.JPG',
+        url: '/DJI_aerial_hero.webp',
         width: 1200,
         height: 630,
         alt: 'Aerial view of Philippine coastal islands and reefs',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Thu Tides - My Island Life',
     description: 'Expeditions in shades of blue.',
-    images: ['/DJI_aerial_hero.JPG'],
+    images: ['/DJI_aerial_hero.webp'],
   },
 }
 
@@ -31,7 +32,7 @@ export default function Page() {
   return (
     <GigaLayout>
       <GigaHero
-        backgroundImage="/DJI_aerial_hero.JPG"
+        backgroundImage="/DJI_aerial_hero.webp"
         backgroundImageAlt="Aerial view of coastal tides"
         title="Island Photography & Coastal Adventures."
         subtitle="Expeditions in shades of blue."
@@ -43,38 +44,39 @@ export default function Page() {
         ctaHref="#contact"
         logos={[]}
       />
+      <OceanQuote />
       <CarouselGallery
         title="Gallery"
         description="Explore our collection of coastal adventures"
         itemsPerView={3}
         images={[
           {
-            src: '/uw_pulau_papan.jpg',
+            src: '/uw_pulau_papan.webp',
             alt: 'Underwater view of Pulau Papan',
             title: 'Pulau Papan',
           },
           {
-            src: '/uw_mariona.jpg',
+            src: '/uw_mariona.webp',
             alt: 'Underwater exploration at Mariona',
             title: 'Mariona Depths',
           },
           {
-            src: '/reconnect_buka_buka.jpg',
+            src: '/reconnect_buka_buka.webp',
             alt: 'Reconnect at Buka Buka',
             title: 'Buka Buka',
           },
           {
-            src: '/dji_aerial_top_reef_atoll.JPG',
+            src: '/dji_aerial_top_reef_atoll.webp',
             alt: 'Aerial view of top reef atoll',
             title: 'Top Reef Atoll',
           },
           {
-            src: '/uw_top_reef_atoll.jpg',
+            src: '/uw_top_reef_atoll.webp',
             alt: 'Underwater view of top reef atoll',
             title: 'Atoll Underwater',
           },
           {
-            src: '/sunset6_reconnect_buka_buka.jpg',
+            src: '/sunset6_reconnect_buka_buka.webp',
             alt: 'Sunset at Buka Buka',
             title: 'Buka Buka Sunset',
           },

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: 'Explore the Philippines through stunning underwater and aerial photography.',
     images: [
       {
-        url: '/DJI_aerial_hero.JPG',
+        url: '/DJI_aerial_hero.webp',
         width: 1200,
         height: 630,
         alt: 'Aerial view of Philippine coastal tides',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Thu Tides - Island Photography & Coastal Adventures',
     description: 'Explore the Philippines through stunning underwater and aerial photography.',
-    images: ['/DJI_aerial_hero.JPG'],
+    images: ['/DJI_aerial_hero.webp'],
   },
   robots: {
     index: true,
