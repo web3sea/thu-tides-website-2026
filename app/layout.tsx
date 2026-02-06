@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: 'Professional photography and video content for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines.',
     images: [
       {
-        url: '/DJI_aerial_hero.webp',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Aerial coastal photography by Thu Tides',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Thu Tides - Professional Travel & Underwater Photography',
     description: 'Professional photography and video content for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines.',
-    images: ['/DJI_aerial_hero.webp'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -83,7 +83,9 @@ export default function RootLayout({
         url: 'https://thutides.com',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://thutides.com/DJI_aerial_hero.webp',
+          url: 'https://thutides.com/logo.svg',
+          width: 512,
+          height: 512,
         },
         sameAs: [
           'https://instagram.com/thu.tides',
@@ -121,7 +123,7 @@ export default function RootLayout({
           'Content Creation',
           'Travel Photography',
         ],
-        image: 'https://thutides.com/DJI_aerial_hero.webp',
+        image: 'https://thutides.com/og-image.png',
       },
     ],
   }
