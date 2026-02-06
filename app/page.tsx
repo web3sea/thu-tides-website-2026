@@ -1,11 +1,16 @@
 import { GigaLayout } from '@/components/giga-layout'
 import { GigaHero } from '@/components/giga-hero'
+import { ServicesSection } from '@/components/services-section'
 import { OceanQuote } from '@/components/ocean-quote'
 import { CarouselGallery } from '@/components/carousel-gallery'
+import { PortfolioSection } from '@/components/portfolio-section'
+import { AboutSection } from '@/components/about-section'
+import { VideoLoopSection } from '@/components/video-loop-section'
+import { CollabSection } from '@/components/collab-section'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Island Photography & Coastal Adventures',
+  title: 'Creative collaboration for coastal hospitality brands',
   description: 'Dive into stunning underwater and aerial photography from the Philippines. Explore Buka Buka, Pulau Papan, Mariona, and hidden coral reefs through immersive coastal imagery.',
   keywords: ['Philippines islands', 'Buka Buka', 'Pulau Papan', 'underwater photography Philippines', 'coral reef photography', 'travel photography', 'aerial photography Philippines'],
   openGraph: {
@@ -34,7 +39,7 @@ export default function Page() {
       <GigaHero
         backgroundImage="/DJI_aerial_hero.webp"
         backgroundImageAlt="Aerial view of coastal tides"
-        title="Island Photography & Coastal Adventures."
+        title="Creative collaboration for coastal hospitality brands."
         subtitle="Expeditions in shades of blue."
         badge={{
           text: 'Where should we go next?',
@@ -44,6 +49,7 @@ export default function Page() {
         ctaHref="#contact"
         logos={[]}
       />
+      <ServicesSection />
       <OceanQuote />
       <CarouselGallery
         title="Gallery"
@@ -82,6 +88,10 @@ export default function Page() {
           },
         ]}
       />
+      <PortfolioSection />
+      <AboutSection />
+      <VideoLoopSection />
+      <CollabSection />
     </GigaLayout>
   )
 }

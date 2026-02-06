@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     template: '%s | Thu Tides',
-    default: 'Thu Tides - Island Photography & Coastal Adventures',
+    default: 'Thu Tides - Creative collaboration for coastal hospitality brands',
   },
   description: 'Explore the Philippines through stunning underwater and aerial photography. Join Thu Tides on expeditions discovering hidden islands, vibrant reefs, and coastal beauty in shades of blue.',
   keywords: ['Philippines photography', 'underwater photography', 'travel photography', 'island adventures', 'coastal photography', 'aerial photography', 'dive photography', 'Philippines travel'],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'Thu Tides',
-    title: 'Thu Tides - Island Photography & Coastal Adventures',
+    title: 'Thu Tides - Creative collaboration for coastal hospitality brands',
     description: 'Explore the Philippines through stunning underwater and aerial photography.',
     images: [
       {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Thu Tides - Island Photography & Coastal Adventures',
+    title: 'Thu Tides - Creative collaboration for coastal hospitality brands',
     description: 'Explore the Philippines through stunning underwater and aerial photography.',
     images: ['/DJI_aerial_hero.webp'],
   },
