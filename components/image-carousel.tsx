@@ -88,7 +88,6 @@ export function ImageCarousel({
     if (!autoPlay || !images || images.length === 0) return
 
     intervalRef.current = setInterval(() => {
-      setDirection('next')
       setCurrent((prev) => (prev + 1) % images.length)
     }, autoPlayInterval)
 
