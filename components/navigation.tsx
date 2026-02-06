@@ -58,14 +58,9 @@ const aboutMenuItems = [
     href: '/values',
   },
   {
-    title: 'Team',
-    description: 'Meet the people who make Thu Tides special.',
-    href: '/team',
-  },
-  {
-    title: 'Reviews',
+    title: 'Testimonials',
     description: 'What our guests are saying.',
-    href: '/reviews',
+    href: '/testimonials',
   },
 ]
 
@@ -134,6 +129,13 @@ export function Navigation({ className }: NavigationProps) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
+          <Link
+            href="/"
+            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
+          >
+            Home
+          </Link>
+
           {/* Expeditions Dropdown */}
           <div
             className="relative"
@@ -274,13 +276,6 @@ export function Navigation({ className }: NavigationProps) {
               )}
             </AnimatePresence>
           </div>
-
-          <Link
-            href="/"
-            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
-          >
-            Home
-          </Link>
         </div>
       </div>
 
