@@ -13,6 +13,7 @@ import {
   ArrowUpRightIcon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
+import { Logo } from "@/components/logo"
 
 interface FooterLink {
   label: string
@@ -113,16 +114,8 @@ export function Footer({
       <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
         {/* Brand Logo */}
         <div className="mb-12">
-          <Link
-            href="#"
-            className="flex items-center gap-3 group w-fit"
-          >
-            <div className="w-10 h-10 border-2 border-foreground flex items-center justify-center rounded-sm transition-transform group-hover:scale-105">
-              <div className="w-4 h-4 bg-foreground rounded-sm" />
-            </div>
-            <span className="text-3xl font-display font-bold tracking-tight">
-              {brandName}
-            </span>
+          <Link href="/" className="w-fit block text-foreground hover:opacity-90 transition-opacity">
+            <Logo />
           </Link>
         </div>
 
