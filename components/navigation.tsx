@@ -3,54 +3,85 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export interface NavigationProps {
   className?: string
 }
 
-const workMenuItems = [
+const productMenuItems = [
   {
-    title: 'Portfolio',
-    description: 'View our collection of photography and creative work.',
-    href: '/work/portfolio',
+    title: 'Agent Canvas',
+    description: 'Build your ideal agent and solve support issues faster.',
+    href: '/product/agent-canvas',
   },
   {
-    title: 'Case Studies',
-    description: 'In-depth looks at featured projects and campaigns.',
-    href: '/work/case-studies',
+    title: 'Insights',
+    description: 'Insights identify and recommend policy changes to improve performance.',
+    href: '/product/insights',
   },
   {
-    title: 'Services',
-    description: 'Photography, videography, and creative services we offer.',
-    href: '/work/services',
+    title: 'Voice Experience',
+    description: 'Emotionally aware agents that keep conversations natural.',
+    href: '/product/voice',
   },
   {
-    title: 'Client Gallery',
-    description: 'Browse work by client and industry.',
-    href: '/work/clients',
+    title: 'Browser Agent',
+    description: 'Execute workflows directly inside browser-based systems without APIs.',
+    href: '/product/browser-agent',
+  },
+]
+
+const companyMenuItems = [
+  {
+    title: 'About Us',
+    description: 'Learn about our mission and team.',
+    href: '/about',
+  },
+  {
+    title: 'Careers',
+    description: 'Join our growing team.',
+    href: '/careers',
+  },
+  {
+    title: 'Blog',
+    description: 'Read our latest insights and updates.',
+    href: '/blog',
   },
 ]
 
 export function Navigation({ className }: NavigationProps) {
-  const [isWorkOpen, setIsWorkOpen] = React.useState(false)
-  const workTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const [isProductOpen, setIsProductOpen] = React.useState(false)
+  const [isCompanyOpen, setIsCompanyOpen] = React.useState(false)
+  const productTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const companyTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
 
-  const handleWorkMouseEnter = () => {
-    if (workTimeoutRef.current) clearTimeout(workTimeoutRef.current)
-    setIsWorkOpen(true)
+  const handleProductMouseEnter = () => {
+    if (productTimeoutRef.current) clearTimeout(productTimeoutRef.current)
+    setIsProductOpen(true)
   }
 
-  const handleWorkMouseLeave = () => {
-    workTimeoutRef.current = setTimeout(() => {
-      setIsWorkOpen(false)
+  const handleProductMouseLeave = () => {
+    productTimeoutRef.current = setTimeout(() => {
+      setIsProductOpen(false)
+    }, 200)
+  }
+
+  const handleCompanyMouseEnter = () => {
+    if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current)
+    setIsCompanyOpen(true)
+  }
+
+  const handleCompanyMouseLeave = () => {
+    companyTimeoutRef.current = setTimeout(() => {
+      setIsCompanyOpen(false)
     }, 200)
   }
 
   React.useEffect(() => {
     return () => {
-      if (workTimeoutRef.current) clearTimeout(workTimeoutRef.current)
+      if (productTimeoutRef.current) clearTimeout(productTimeoutRef.current)
+      if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current)
     }
   }, [])
 
@@ -63,85 +94,28 @@ export function Navigation({ className }: NavigationProps) {
     >
       {/* Left Section - Logo and Menu */}
       <div className="flex items-center gap-12">
-        {/* Logo */}
+        {/* Logo - Simplified gradient circle */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white hover:opacity-90 transition-opacity group"
+          className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white hover:opacity-90 transition-opacity"
         >
-          <motion.div
-            className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5 text-white"
-            >
-              <motion.path
-                d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                animate={{
-                  x: [0, 3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.path
-                d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                animate={{
-                  x: [0, -3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.2,
-                }}
-              />
-              <motion.path
-                d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                animate={{
-                  x: [0, 3, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.4,
-                }}
-              />
-            </svg>
-          </motion.div>
-          Thu Tides
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-gray-200 to-gray-400" />
+          Giga
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
-          <Link
-            href="/"
-            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
-          >
-            Home
-          </Link>
-
-          {/* Work Dropdown */}
+          {/* Product Dropdown */}
           <div
             className="relative"
-            onMouseEnter={handleWorkMouseEnter}
-            onMouseLeave={handleWorkMouseLeave}
+            onMouseEnter={handleProductMouseEnter}
+            onMouseLeave={handleProductMouseLeave}
           >
             <button className="flex items-center gap-1 text-sm font-medium text-white/90 hover:text-white transition-colors group">
-              Work
+              Product
               <motion.span
                 className="material-symbols-outlined text-lg"
-                animate={{ rotate: isWorkOpen ? 180 : 0 }}
+                animate={{ rotate: isProductOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
                 expand_more
@@ -149,22 +123,26 @@ export function Navigation({ className }: NavigationProps) {
             </button>
 
             <AnimatePresence>
-              {isWorkOpen && (
+              {isProductOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 mt-2 w-80 rounded-lg backdrop-blur-xl bg-slate-800/90 border border-white/10 shadow-2xl p-2"
+                  className="absolute top-full left-0 mt-2 w-80 rounded-lg bg-slate-800/85 backdrop-blur-xl border border-white/10 shadow-2xl p-2"
+                  style={{
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                  }}
                 >
                   <div className="flex flex-col gap-1">
-                    {workMenuItems.map((item) => (
+                    {productMenuItems.map((item) => (
                       <Link
                         key={item.title}
                         href={item.href}
                         className="group/item block p-3 rounded-md hover:bg-white/10 transition-colors"
                       >
-                        <h3 className="text-sm font-semibold text-white group-hover/item:text-gray-200">
+                        <h3 className="text-sm font-semibold text-white group-hover/item:text-white">
                           {item.title}
                         </h3>
                         <p className="text-xs text-gray-300 mt-0.5 leading-relaxed">
@@ -178,30 +156,73 @@ export function Navigation({ className }: NavigationProps) {
             </AnimatePresence>
           </div>
 
-          <Link
-            href="/about"
-            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
+          {/* Company Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={handleCompanyMouseEnter}
+            onMouseLeave={handleCompanyMouseLeave}
           >
-            About
-          </Link>
+            <button className="flex items-center gap-1 text-sm font-medium text-white/70 hover:text-white transition-colors group">
+              Company
+              <motion.span
+                className="material-symbols-outlined text-lg"
+                animate={{ rotate: isCompanyOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                expand_more
+              </motion.span>
+            </button>
 
-          <Link
-            href="/contact"
-            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
-          >
-            Contact
-          </Link>
+            <AnimatePresence>
+              {isCompanyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full left-0 mt-2 w-80 rounded-lg bg-slate-800/85 backdrop-blur-xl border border-white/10 shadow-2xl p-2"
+                  style={{
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                  }}
+                >
+                  <div className="flex flex-col gap-1">
+                    {companyMenuItems.map((item) => (
+                      <Link
+                        key={item.title}
+                        href={item.href}
+                        className="group/item block p-3 rounded-md hover:bg-white/10 transition-colors"
+                      >
+                        <h3 className="text-sm font-semibold text-white group-hover/item:text-white">
+                          {item.title}
+                        </h3>
+                        <p className="text-xs text-gray-300 mt-0.5 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
-      {/* Right Section - CTA */}
+      {/* Right Section - Sign in + CTA */}
       <div className="flex items-center gap-6">
-        <Button
-          size="lg"
-          className="bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+        <Link
+          href="/signin"
+          className="text-sm font-medium text-white hover:text-gray-200 transition-colors"
         >
-          Let's Connect
-        </Button>
+          Sign in
+        </Link>
+        <Link
+          href="/contact"
+          className="bg-white hover:bg-gray-100 text-slate-900 px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg hover:shadow-xl"
+        >
+          Talk to us
+        </Link>
       </div>
     </nav>
   )
