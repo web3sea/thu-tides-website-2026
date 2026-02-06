@@ -10,7 +10,7 @@ export default function Page() {
         title="AI that talks like a human. Handles millions of calls."
         subtitle="AI agents for enterprise support"
         badge={{
-          text: 'Giga Launches Browser Agent',
+          text: 'Where should we go next?',
           href: '#',
         }}
         ctaText="Talk to us"
