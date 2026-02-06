@@ -13,7 +13,7 @@ export default function Page() {
           text: 'Where should we go next?',
           href: '#',
         }}
-        ctaText="Talk to us"
+        ctaText="Let's Connect"
         ctaHref="#contact"
       />
     </GigaLayout>

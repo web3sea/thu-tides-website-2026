@@ -200,7 +200,7 @@ export function Navigation({ className }: NavigationProps) {
           size="lg"
           className="bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
         >
-          Talk to us
+          Let's Connect
         </Button>
       </div>
     </nav>
