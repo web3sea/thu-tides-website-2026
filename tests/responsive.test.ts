@@ -168,7 +168,8 @@ describe('Giga Components Responsive Tests', () => {
           });
 
           if (productButton) {
-            const element = productButton.asElement() as any;
+            const element = productButton.asElement();
+            // @ts-expect-error - Puppeteer type mismatch between Node and Element
             if (element) await element.hover();
             await new Promise(resolve => setTimeout(resolve, 300)); // Wait for dropdown animation
 
@@ -198,7 +199,8 @@ describe('Giga Components Responsive Tests', () => {
           });
 
           if (productButton) {
-            const element = productButton.asElement() as any;
+            const element = productButton.asElement();
+            // @ts-expect-error - Puppeteer type mismatch between Node and Element
             if (element) await element.hover();
             await new Promise(resolve => setTimeout(resolve, 300));
 
