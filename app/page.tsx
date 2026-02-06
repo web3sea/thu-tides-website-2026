@@ -1,6 +1,31 @@
 import { GigaLayout } from '@/components/giga-layout'
 import { GigaHero } from '@/components/giga-hero'
 import { CarouselGallery } from '@/components/carousel-gallery'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Island Photography & Coastal Adventures',
+  description: 'Dive into stunning underwater and aerial photography from the Philippines. Explore Buka Buka, Pulau Papan, Mariona, and hidden coral reefs through immersive coastal imagery.',
+  keywords: ['Philippines islands', 'Buka Buka', 'Pulau Papan', 'underwater photography Philippines', 'coral reef photography', 'travel photography', 'aerial photography Philippines'],
+  openGraph: {
+    title: 'Thu Tides - My Island Life',
+    description: 'Expeditions in shades of blue. Explore stunning underwater and aerial photography from the Philippines.',
+    images: [
+      {
+        url: '/DJI_aerial_hero.JPG',
+        width: 1200,
+        height: 630,
+        alt: 'Aerial view of Philippine coastal islands and reefs',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Thu Tides - My Island Life',
+    description: 'Expeditions in shades of blue.',
+    images: ['/DJI_aerial_hero.JPG'],
+  },
+}
 
 export default function Page() {
   return (
