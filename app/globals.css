@@ -316,6 +316,47 @@
     background-color: var(--brand-olive-leaf);
   }
 
+  /* Standardized Transition Utilities */
+  .transition-fast {
+    transition-duration: 300ms;
+    transition-timing-function: ease-out;
+  }
+
+  .transition-normal {
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+  }
+
+  .transition-slow {
+    transition-duration: 700ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Standard Hover Effects */
+  .hover-lift {
+    @apply transition-normal;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .hover-scale {
+    @apply transition-fast;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .hover-scale-small {
+    @apply transition-fast;
+  }
+
+  .hover-scale-small:hover {
+    transform: scale(1.02);
+  }
+
   /* Typography Spacing */
   .text-leading-relaxed {
     @apply leading-relaxed;
@@ -325,11 +366,6 @@
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
     --tw-ring-color: var(--brand-cerulean);
-  }
-
-  .dark .focus-ring {
-    --tw-ring-color: var(--brand-cerulean-2);
-    --tw-ring-offset-color: #13141b;
   }
 }
 

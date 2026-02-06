@@ -1,20 +1,28 @@
 import { MetadataRoute } from 'next'
 
+/**
+ * Dynamic sitemap for Thu Tides
+ * Next.js will automatically generate this at /sitemap.xml
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://thu-tides-website-2026-8zuawrgms-coraltriangle-uat.vercel.app'
+  // TODO: Update to production domain once confirmed
+  const baseUrl = 'https://thu-tides.com'
+  const currentDate = new Date()
 
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 1,
+      priority: 1.0,
     },
-    {
-      url: `${baseUrl}/giga`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+    // Add more pages as they're created
+    // Example for future service pages:
+    // {
+    //   url: `${baseUrl}/services/photography`,
+    //   lastModified: currentDate,
+    //   changeFrequency: 'monthly',
+    //   priority: 0.8,
+    // },
   ]
 }

@@ -10,25 +10,25 @@ import { CarouselGallery } from '@/components/carousel-gallery'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Creative collaboration for coastal hospitality brands',
-  description: 'Dive into stunning underwater and aerial photography from the Philippines. Explore Buka Buka, Pulau Papan, Mariona, and hidden coral reefs through immersive coastal imagery.',
-  keywords: ['Philippines islands', 'Buka Buka', 'Pulau Papan', 'underwater photography Philippines', 'coral reef photography', 'travel photography', 'aerial photography Philippines'],
+  title: 'Home',
+  description: 'Professional travel and underwater photography for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines. View our portfolio of underwater, aerial, and hospitality photography.',
+  keywords: ['travel photography', 'underwater photography Indonesia', 'hotel photography', 'dive resort photography', 'aerial photography', 'coastal hospitality', 'Indonesia travel photography', 'Philippines photography'],
   openGraph: {
-    title: 'Thu Tides - My Island Life',
-    description: 'Expeditions in shades of blue. Explore stunning underwater and aerial photography from the Philippines.',
+    title: 'Thu Tides - Professional Travel & Underwater Photography',
+    description: 'Professional photography and video content for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines.',
     images: [
       {
         url: '/DJI_aerial_hero.webp',
         width: 1200,
         height: 630,
-        alt: 'Aerial view of Philippine coastal islands and reefs',
+        alt: 'Aerial coastal photography by Thu Tides',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Thu Tides - My Island Life',
-    description: 'Expeditions in shades of blue.',
+    title: 'Thu Tides - Professional Travel & Underwater Photography',
+    description: 'Professional photography and video content for coastal hotels and resorts.',
     images: ['/DJI_aerial_hero.webp'],
   },
 }

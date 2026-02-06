@@ -56,7 +56,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
         className={cn(
           variantStyles[variant],
           paddingStyles[padding],
-          'rounded-2xl transition-all duration-300',
+          'rounded-2xl transition-fast',
           hover && 'hover:bg-white/10 hover:border-white/20',
           className
         )}

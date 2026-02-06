@@ -5,6 +5,14 @@ import { GigaHero } from '@/components/giga-hero'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ScrollReveal } from '@/components/scroll-reveal'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 export default function GigaDemoPage() {
   return (

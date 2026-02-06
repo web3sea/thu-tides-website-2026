@@ -3,13 +3,16 @@
 import * as React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import { ANIMATION_DURATION, ANIMATION_EASING } from '@/lib/animations'
 
 export type AnimationType = 'fade' | 'slideUp' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'zoomIn'
+export type AnimationSpeed = keyof typeof ANIMATION_DURATION
 
 export interface ScrollRevealProps {
   children: React.ReactNode
   trigger?: AnimationType
-  duration?: number
+  speed?: AnimationSpeed
+  duration?: number // Deprecated: use speed instead
   delay?: number
   once?: boolean
   threshold?: number
@@ -45,16 +48,18 @@ const animationVariants = {
 
 /**
  * ScrollReveal - Triggers animations when element enters viewport
- * 
+ * Now uses standardized animation constants from lib/animations
+ *
  * @example
- * <ScrollReveal trigger="slideUp" duration={0.8}>
+ * <ScrollReveal trigger="slideUp" speed="normal">
  *   <h2>Animated heading</h2>
  * </ScrollReveal>
  */
 export function ScrollReveal({
   children,
   trigger = 'slideUp',
-  duration = 0.8,
+  speed = 'normal',
+  duration, // Deprecated but kept for backwards compatibility
   delay = 0,
   once = true,
   threshold = 0.1,
@@ -68,6 +73,9 @@ export function ScrollReveal({
 
   const variants = animationVariants[trigger]
 
+  // Use speed constant or fallback to legacy duration prop
+  const animationDuration = duration ?? ANIMATION_DURATION[speed]
+
   return (
     <motion.div
       ref={ref}
@@ -75,9 +83,9 @@ export function ScrollReveal({
       animate={inView ? 'visible' : 'hidden'}
       variants={variants}
       transition={{
-        duration,
+        duration: animationDuration,
         delay,
-        ease: 'easeOut',
+        ease: ANIMATION_EASING.easeOut,
       }}
       className={className}
     >
@@ -88,9 +96,10 @@ export function ScrollReveal({
 
 /**
  * ScrollRevealStagger - Staggered animation for multiple children
- * 
+ * Now uses standardized animation constants from lib/animations
+ *
  * @example
- * <ScrollRevealStagger>
+ * <ScrollRevealStagger speed="normal" staggerDelay={0.1}>
  *   <div>Item 1</div>
  *   <div>Item 2</div>
  *   <div>Item 3</div>
@@ -99,7 +108,8 @@ export function ScrollReveal({
 export function ScrollRevealStagger({
   children,
   trigger = 'slideUp',
-  duration = 0.8,
+  speed = 'normal',
+  duration, // Deprecated but kept for backwards compatibility
   staggerDelay = 0.1,
   once = true,
   threshold = 0.1,
@@ -113,6 +123,9 @@ export function ScrollRevealStagger({
 
   const variants = animationVariants[trigger]
   const childrenArray = React.Children.toArray(children)
+
+  // Use speed constant or fallback to legacy duration prop
+  const animationDuration = duration ?? ANIMATION_DURATION[speed]
 
   return (
     <motion.div
@@ -133,7 +146,10 @@ export function ScrollRevealStagger({
         <motion.div
           key={index}
           variants={variants}
-          transition={{ duration, ease: 'easeOut' }}
+          transition={{
+            duration: animationDuration,
+            ease: ANIMATION_EASING.easeOut
+          }}
         >
           {child}
         </motion.div>

@@ -73,9 +73,9 @@ export function GigaHero({
           sizes="100vw"
           quality={90}
           priority
-          className="w-full h-full object-cover opacity-90 dark:opacity-80"
+          className="w-full h-full object-cover opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/10 to-slate-900/90 dark:from-black/40 dark:to-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/10 to-slate-900/90" />
       </div>
 
       {/* Main Hero Content */}
@@ -89,10 +89,10 @@ export function GigaHero({
           >
             <Link
               href={badge.href || '#'}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 dark:text-white/80 uppercase">
+              <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">
                 {badge.text}
               </span>
               <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,7 +127,7 @@ export function GigaHero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight md:leading-tight lg:leading-[1.1] text-white dark:text-gray-50 mb-6 drop-shadow-sm"
+            className="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight md:leading-tight lg:leading-[1.1] text-white mb-6 drop-shadow-sm"
           >
             {title.split('. ').map((line, i, arr) => (
               <React.Fragment key={i}>
@@ -136,7 +136,7 @@ export function GigaHero({
                 {i < arr.length - 1 && (
                   <>
                     <br className="hidden md:block" />
-                    <span className="opacity-90 dark:opacity-80">
+                    <span className="opacity-90">
                       {i === arr.length - 2 ? '' : ' '}
                     </span>
                   </>
@@ -152,7 +152,7 @@ export function GigaHero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 dark:text-gray-300 font-light mb-10 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-white/80 font-light mb-10 max-w-2xl mx-auto"
           >
             {subtitle}
           </motion.p>
@@ -183,7 +183,7 @@ export function GigaHero({
           transition={{ duration: 0.8, delay: 0.4 }}
           className="relative z-10 w-full px-6 pb-12"
         >
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 dark:opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-normal">
             {logos.map((logo, index) => (
               <div
                 key={index}

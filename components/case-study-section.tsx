@@ -47,8 +47,8 @@ const accentColors = {
 }
 
 const bgColors = {
-  light: 'bg-white dark:bg-slate-950',
-  muted: 'bg-slate-50 dark:bg-slate-900',
+  light: 'bg-white',
+  muted: 'bg-slate-50',
   transparent: 'bg-transparent',
 }
 

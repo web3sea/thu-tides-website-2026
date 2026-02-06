@@ -3,7 +3,7 @@ import { GlassCard } from '@/components/ui/glass-card'
 
 export function CollabSection() {
   return (
-    <section className="relative section-padding">
+    <section id="contact" className="relative section-padding">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <H2 className="text-white mb-4">
@@ -12,11 +12,23 @@ export function CollabSection() {
           <P className="text-xl text-white font-light mb-4">
             Partner with us to create stunning visual content for your coastal hospitality brand
           </P>
-          <P className="text-white font-light max-w-2xl mx-auto">
+          <P className="text-white font-light max-w-2xl mx-auto mb-6">
             Whether you&apos;re a boutique hotel, homestay, dive resort, or liveaboard, we offer
             flexible partnership options to create the professional content you need to attract
             your ideal guests.
           </P>
+          <div className="flex flex-col items-center gap-4 mt-8">
+            <a
+              href="mailto:hello@thu-tides.com"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold transition-all hover:scale-105 shadow-lg"
+            >
+              <span className="material-symbols-outlined">mail</span>
+              hello@thu-tides.com
+            </a>
+            <P className="text-white/60 text-sm">
+              Get in touch to discuss your project
+            </P>
+          </div>
         </div>
 
         {/* Partnership Models */}

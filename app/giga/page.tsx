@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: 'Enterprise AI Support Agents',
   description: 'AI that talks like a human and handles millions of calls. Giga provides enterprise-grade AI agents for customer support with natural conversation capabilities.',
   keywords: ['enterprise AI', 'AI support agents', 'customer service AI', 'conversational AI', 'AI automation'],
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function GigaPage() {

@@ -14,7 +14,7 @@ export interface HeroWithImageProps {
   title: string
   subtitle?: string
   overlayOpacity?: number
-  overlayColor?: 'dark' | 'light' | 'cerulean' | 'none'
+  overlayColor?: 'black' | 'light' | 'cerulean' | 'none'
   content?: React.ReactNode
   height?: 'small' | 'medium' | 'large' | 'full'
   parallax?: boolean
@@ -30,7 +30,7 @@ const heightClasses = {
 }
 
 const overlayClasses = {
-  dark: 'bg-black',
+  black: 'bg-black',
   light: 'bg-white',
   cerulean: 'bg-brand-cerulean',
   none: '',
@@ -57,7 +57,7 @@ export function HeroWithImage({
   title,
   subtitle,
   overlayOpacity = 0.3,
-  overlayColor = 'dark',
+  overlayColor = 'black',
   content,
   height = 'large',
   parallax = true,
