@@ -8,7 +8,7 @@ export default function Page() {
         backgroundImage="/DJI_aerial_hero.JPG"
         backgroundImageAlt="Aerial view of coastal tides"
         title="My Island Life."
-        subtitle="AI agents for enterprise support"
+        subtitle="Expeditions in shades of blue."
         badge={{
           text: 'Where should we go next?',
           href: '#',
