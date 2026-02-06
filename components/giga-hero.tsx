@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { ArrowRight01Icon } from '@hugeicons/core-free-icons'
 
 export interface GigaHeroProps {
   backgroundImage?: string
