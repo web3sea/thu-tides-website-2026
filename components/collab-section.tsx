@@ -7,15 +7,12 @@ export function CollabSection() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <H2 className="text-white mb-4">
-            Partnership
-          </H2>
-          <P className="text-xl text-white font-light">
             Partner with us to create stunning visual content for your coastal hospitality brand
-          </P>
+          </H2>
         </div>
 
         <div className="space-y-8 mb-12">
-          <div className="max-w-md mx-auto">
+          <div className="w-full max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto px-4">
             <GlassCard>
               <div className="flex items-center justify-center w-20 h-20 mb-8 mx-auto bg-white/10 rounded-full">
                 <span className="material-symbols-outlined text-4xl text-white">
@@ -23,31 +20,33 @@ export function CollabSection() {
                 </span>
               </div>
 
-              <form className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
-                    placeholder="Your name"
-                  />
-                </div>
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
+                      placeholder="Your name"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="whatsapp" className="block text-sm font-medium text-white/90 mb-2">
-                    WhatsApp
-                  </label>
-                  <input
-                    type="tel"
-                    id="whatsapp"
-                    name="whatsapp"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
-                    placeholder="+62 123 456 7890"
-                  />
+                  <div>
+                    <label htmlFor="whatsapp" className="block text-sm font-medium text-white/90 mb-2">
+                      WhatsApp
+                    </label>
+                    <input
+                      type="tel"
+                      id="whatsapp"
+                      name="whatsapp"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
+                      placeholder="+62 123 456 7890"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -58,7 +57,7 @@ export function CollabSection() {
                     type="email"
                     id="email"
                     name="email"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -70,8 +69,8 @@ export function CollabSection() {
                   <textarea
                     id="inquiry"
                     name="inquiry"
-                    rows={4}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent resize-none min-h-32 md:min-h-48 lg:min-h-64"
+                    rows={8}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent resize-none min-h-48 md:min-h-64 lg:min-h-80 transition-all"
                     placeholder="Tell us about your project..."
                   />
                 </div>

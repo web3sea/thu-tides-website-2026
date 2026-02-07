@@ -305,9 +305,60 @@ const portfolioItems: PortfolioItem[] = [
 
 export function PortfolioSection() {
   const [filter, setFilter] = React.useState<string>('Dive Resort')
-  const propertyTypes = ['Dive Resort', 'Boutique Hotel', 'Homestay', 'Liveaboard']
+  const carouselRef = React.useRef<HTMLDivElement>(null)
+  const animationRef = React.useRef<number | null>(null)
+  const [scrollSpeed, setScrollSpeed] = React.useState(0)
 
+  const propertyTypes = ['Dive Resort', 'Boutique Hotel', 'Homestay', 'Liveaboard']
   const filteredItems = portfolioItems.filter(item => item.propertyType === filter)
+
+  // Handle mouse move for carousel scrolling
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!carouselRef.current) return
+
+    const rect = carouselRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const containerWidth = rect.width
+
+    // Calculate position as percentage (0 to 1)
+    const position = x / containerWidth
+
+    // Define scroll zones: left 30%, center 40%, right 30%
+    if (position < 0.3) {
+      // Scroll left - speed increases as mouse moves further left
+      const intensity = (0.3 - position) / 0.3
+      setScrollSpeed(-2 * intensity)
+    } else if (position > 0.7) {
+      // Scroll right - speed increases as mouse moves further right
+      const intensity = (position - 0.7) / 0.3
+      setScrollSpeed(2 * intensity)
+    } else {
+      // Center zone - no scrolling
+      setScrollSpeed(0)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    setScrollSpeed(0)
+  }
+
+  // Animate scrolling based on speed
+  React.useEffect(() => {
+    const animate = () => {
+      if (carouselRef.current && scrollSpeed !== 0) {
+        carouselRef.current.scrollLeft += scrollSpeed
+      }
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    animationRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [scrollSpeed])
 
   return (
     <section className="relative section-padding">
@@ -320,15 +371,15 @@ export function PortfolioSection() {
             Explore our work across dive resorts, boutique hotels, homestays, and liveaboards throughout Indonesia and the Philippines
           </P>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap justify-center gap-3">
+          {/* Filter Tabs */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             {propertyTypes.map((type) => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   filter === type
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-brand-cerulean text-white shadow-lg shadow-brand-cerulean/30'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -338,42 +389,63 @@ export function PortfolioSection() {
           </div>
         </div>
 
-        {/* Portfolio Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="group relative overflow-hidden rounded-lg bg-gray-900 aspect-[4/3] cursor-pointer"
-            >
-              {/* Image */}
-              <div className="relative w-full h-full">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              </div>
+        {/* Carousel Container */}
+        <div
+          className="relative"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Gradient Overlays for visual effect */}
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/50 to-transparent z-10 pointer-events-none" />
 
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <div className="flex items-center gap-2 text-sm mb-2 opacity-90">
-                    <span className="material-symbols-outlined text-base">
-                      location_on
-                    </span>
-                    <span>{item.location}</span>
-                    <span className="mx-2">•</span>
-                    <span>{item.propertyType}</span>
+          {/* Scrollable Carousel */}
+          <div
+            ref={carouselRef}
+            className="overflow-x-hidden overflow-y-visible scrollbar-hide py-4"
+            style={{
+              scrollBehavior: 'auto',
+              cursor: scrollSpeed !== 0 ? (scrollSpeed < 0 ? 'w-resize' : 'e-resize') : 'default'
+            }}
+          >
+            <div className="flex gap-6 px-8">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="group relative flex-shrink-0 w-[400px] h-[300px] overflow-hidden rounded-lg bg-gray-900 cursor-pointer hover:scale-105 transition-transform duration-500"
+                >
+                  {/* Image */}
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                   </div>
-                  <H3 className="mb-2">{item.title}</H3>
-                  <P className="text-sm text-gray-200 font-light">
-                    {item.description}
-                  </P>
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="flex items-center gap-2 text-sm mb-2 opacity-90">
+                        <span className="material-symbols-outlined text-base">
+                          location_on
+                        </span>
+                        <span>{item.location}</span>
+                        <span className="mx-2">•</span>
+                        <span>{item.propertyType}</span>
+                      </div>
+                      <H3 className="mb-2 text-white">{item.title}</H3>
+                      <P className="text-sm text-gray-200 font-light">
+                        {item.description}
+                      </P>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
         </div>
 
         {/* Empty State */}

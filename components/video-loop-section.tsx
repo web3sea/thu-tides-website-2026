@@ -2,7 +2,7 @@ import { Logo } from '@/components/logo'
 
 export function VideoLoopSection() {
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="hidden md:block relative w-full overflow-hidden pb-8 md:pb-12 bg-white">
       <div className="relative w-full h-[400px] md:h-[500px]">
         <video
           autoPlay

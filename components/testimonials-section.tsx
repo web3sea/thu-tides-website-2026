@@ -17,21 +17,21 @@ const testimonials: Testimonial[] = [
     author: "Sarah Chen",
     role: "Marketing Director",
     property: "Reconnect Resort",
-    location: "Buka Buka, Philippines",
+    location: "Buka Buka Island, Indonesia",
   },
   {
     quote: "Working with Thu Tides was seamless. They understood our brand and delivered stunning aerial content that elevated our entire online presence. The barter partnership was perfect for our boutique property.",
     author: "Michael Torres",
     role: "Owner",
-    property: "Coastal Haven Homestay",
+    property: "Evolution Divers",
     location: "Malapascua, Philippines",
   },
   {
     quote: "The quality of Thu Tides' photography is exceptional. Their travel and underwater expertise helped us showcase our unique location to travelers seeking authentic coastal experiences.",
     author: "Diana Kusuma",
     role: "General Manager",
-    property: "Island Paradise Resort",
-    location: "Raja Ampat, Indonesia",
+    property: "Munduk Heaven",
+    location: "Bali, Indonesia",
   },
 ]
 
@@ -40,12 +40,9 @@ export function TestimonialsSection() {
     <section id="partners" className="relative section-padding bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <H2 className="text-gray-900 mb-4">
-            What Our Partners Say
-          </H2>
-          <P className="text-xl text-gray-600 font-light">
+          <H2 className="text-gray-900 mb-4 text-center">
             Trusted by coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines
-          </P>
+          </H2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
@@ -83,23 +80,6 @@ export function TestimonialsSection() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Trust Badge */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-white rounded-full shadow-sm">
-            <span className="material-symbols-outlined text-3xl text-blue-600">
-              verified
-            </span>
-            <div className="text-left">
-              <P className="text-sm font-semibold text-gray-900">
-                Trusted by Properties
-              </P>
-              <P className="text-xs text-gray-600 font-light">
-                Across Indonesia, Philippines, and Southeast Asia
-              </P>
-            </div>
-          </div>
         </div>
       </div>
     </section>

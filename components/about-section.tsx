@@ -6,19 +6,19 @@ export function AboutSection() {
     <section id="about" className="relative section-padding bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <H2 className="text-gray-900 mb-4">
-            About
+          <H2 className="text-gray-900 mb-4 text-center">
+            Authentic visual storytelling for coastal and diving hospitality brands
           </H2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-xl">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-space-xl items-start">
           {/* Photo */}
-          <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+          <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
             <Image
               src="/uw_napalin.webp"
               alt="Underwater photography"
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
 
