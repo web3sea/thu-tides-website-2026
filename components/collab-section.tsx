@@ -71,7 +71,7 @@ export function CollabSection() {
                     id="inquiry"
                     name="inquiry"
                     rows={4}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent resize-none"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent resize-none min-h-32 md:min-h-48 lg:min-h-64"
                     placeholder="Tell us about your project..."
                   />
                 </div>

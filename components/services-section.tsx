@@ -12,6 +12,16 @@ export function ServicesSection() {
       icon: 'videocam',
       description: 'Compelling video content that brings your story to life. From aerial coastal views to intimate property tours, we create videos that elevate your brand perception and connect with travelers.',
     },
+    {
+      title: 'Website',
+      icon: 'language',
+      description: 'Custom website design and development that showcases your property with fast, modern, and mobile-responsive experiences. We build digital presences that convert visitors into bookings.',
+    },
+    {
+      title: 'Automation',
+      icon: 'automation',
+      description: 'Streamline your operations with smart automation solutions. From booking systems to guest communications, we help you save time and deliver consistent, high-quality experiences.',
+    },
   ]
 
   return (

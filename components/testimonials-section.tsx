@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
 
 export function TestimonialsSection() {
   return (
-    <section className="relative section-padding bg-gray-50">
+    <section id="partners" className="relative section-padding bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <H2 className="text-gray-900 mb-4">
