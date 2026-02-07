@@ -1,5 +1,6 @@
 import { H2, H3, P, Quote } from '@/components/typography'
 import { GlassCard } from '@/components/ui/glass-card'
+import Image from 'next/image'
 
 interface Testimonial {
   quote: string
@@ -7,6 +8,7 @@ interface Testimonial {
   role: string
   property: string
   location: string
+  logo: string
   image?: string
 }
 
@@ -18,6 +20,7 @@ const testimonials: Testimonial[] = [
     role: "Marketing Director",
     property: "Reconnect Resort",
     location: "Buka Buka Island, Indonesia",
+    logo: "/logo_reconect.jpeg",
   },
   {
     quote: "Working with Thu Tides was seamless. They understood our brand and delivered stunning aerial content that elevated our entire online presence. The barter partnership was perfect for our boutique property.",
@@ -25,6 +28,7 @@ const testimonials: Testimonial[] = [
     role: "Owner",
     property: "Evolution Divers",
     location: "Malapascua, Philippines",
+    logo: "/logo_evolution.jpg",
   },
   {
     quote: "The quality of Thu Tides' photography is exceptional. Their travel and underwater expertise helped us showcase our unique location to travelers seeking authentic coastal experiences.",
@@ -32,6 +36,7 @@ const testimonials: Testimonial[] = [
     role: "General Manager",
     property: "Munduk Heaven",
     location: "Bali, Indonesia",
+    logo: "/logo_munduk.webp",
   },
 ]
 
@@ -51,11 +56,15 @@ export function TestimonialsSection() {
               key={index}
               className="bg-white card-padding-lg rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col"
             >
-              {/* Quote Icon */}
-              <div className="flex items-center justify-center w-12 h-12 mb-6 bg-blue-50 rounded-full">
-                <span className="material-symbols-outlined text-2xl text-blue-600">
-                  format_quote
-                </span>
+              {/* Partner Logo */}
+              <div className="flex items-center justify-center w-16 h-16 mb-6 bg-white rounded-full border border-gray-200 overflow-hidden">
+                <Image
+                  src={testimonial.logo}
+                  alt={`${testimonial.property} logo`}
+                  width={64}
+                  height={64}
+                  className="object-contain p-2"
+                />
               </div>
 
               {/* Quote */}
