@@ -84,18 +84,19 @@ export function TestimonialsSection() {
                 <P className="text-sm text-gray-600 font-light">
                   {testimonial.role}
                 </P>
-                <P className="text-sm text-blue-600 font-medium mt-2">
-                  {testimonial.property}
-                </P>
-                {testimonial.website && (
+                {testimonial.website ? (
                   <a
                     href={testimonial.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-blue-500 hover:text-blue-700 underline font-light block mt-1"
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium mt-2 inline-block"
                   >
-                    {testimonial.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                    {testimonial.property}
                   </a>
+                ) : (
+                  <P className="text-sm text-blue-600 font-medium mt-2">
+                    {testimonial.property}
+                  </P>
                 )}
                 <P className="text-xs text-gray-500 font-light">
                   {testimonial.location}
