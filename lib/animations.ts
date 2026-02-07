@@ -18,13 +18,13 @@ export const TAILWIND_DURATION = {
   slow: 'duration-700',
 } as const
 
-// Easing functions
+// Easing functions (Framer Motion compatible)
 export const ANIMATION_EASING = {
-  ease: 'ease',
-  easeIn: 'ease-in',
-  easeOut: 'ease-out',
-  easeInOut: 'ease-in-out',
-  spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  ease: [0.25, 0.1, 0.25, 1], // ease
+  easeIn: [0.42, 0, 1, 1], // ease-in
+  easeOut: [0, 0, 0.58, 1], // ease-out
+  easeInOut: [0.42, 0, 0.58, 1], // ease-in-out
+  spring: [0.34, 1.56, 0.64, 1], // spring effect
 } as const
 
 // Common Framer Motion variants

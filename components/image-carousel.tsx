@@ -162,7 +162,7 @@ export function ImageCarousel({
               whileHover={{ opacity: 1, backgroundColor: 'color-mix(in srgb, var(--brand-cerulean) 10%, transparent)' }}
               className={cn(
                 'absolute left-4 top-1/2 -translate-y-1/2 z-10',
-                'p-2 rounded-full backdrop-blur-sm transition-fast',
+                'p-2 rounded-full backdrop-blur-sm transition duration-300',
                 'opacity-0 group-hover:opacity-100',
                 'focus:ring-2 focus-ring focus:outline-none'
               )}
@@ -177,7 +177,7 @@ export function ImageCarousel({
               whileHover={{ opacity: 1, backgroundColor: 'color-mix(in srgb, var(--brand-cerulean) 10%, transparent)' }}
               className={cn(
                 'absolute right-4 top-1/2 -translate-y-1/2 z-10',
-                'p-2 rounded-full backdrop-blur-sm transition-fast',
+                'p-2 rounded-full backdrop-blur-sm transition duration-300',
                 'opacity-0 group-hover:opacity-100',
                 'focus:ring-2 focus-ring focus:outline-none'
               )}
@@ -224,7 +224,7 @@ export function ImageCarousel({
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.95 }}
               className={cn(
-                'h-2 rounded-full transition-fast',
+                'h-2 rounded-full transition duration-300',
                 index === current
                   ? 'w-8 bg-brand-cerulean'
                   : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60'
