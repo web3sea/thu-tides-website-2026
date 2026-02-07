@@ -93,7 +93,7 @@ export function TestimonialsSection() {
             </span>
             <div className="text-left">
               <P className="text-sm font-semibold text-gray-900">
-                Trusted by 20+ Properties
+                Trusted by Properties
               </P>
               <P className="text-xs text-gray-600 font-light">
                 Across Indonesia, Philippines, and Southeast Asia
