@@ -27,7 +27,7 @@ export function GigaLayout({
   showNavigation = true,
 }: GigaLayoutProps) {
   return (
-    <div className={cn('w-full min-h-screen bg-slate-900 text-white', className)}>
+    <div className={cn('w-full min-h-full bg-slate-900 text-white', className)}>
       {showNavigation && <Navigation />}
       {children}
       <Footer brandName="THU TIDES" />

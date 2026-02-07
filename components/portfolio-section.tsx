@@ -314,10 +314,10 @@ export function PortfolioSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <H2 className="text-gray-900 mb-4">
-            Our Work
-          </H2>
-          <P className="text-xl text-white font-light mb-8">
             Portfolio Showcase
+          </H2>
+          <P className="text-xl text-gray-600 font-light mb-8 max-w-3xl mx-auto">
+            Explore our work across dive resorts, boutique hotels, homestays, and liveaboards throughout Indonesia and the Philippines
           </P>
 
           {/* Filter Buttons */}

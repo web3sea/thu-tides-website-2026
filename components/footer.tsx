@@ -15,7 +15,6 @@ import {
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
-import { TextHoverEffect } from "@/components/ui/text-hover-effect"
 
 interface FooterLink {
   label: string
@@ -45,27 +44,15 @@ interface FooterProps {
 const defaultSections: FooterSection[] = [
   {
     title: "Expeditions",
-    links: [
-      { label: "Reconnect", href: "/reconnect" },
-      { label: "Evolution", href: "/evolution" },
-      { label: "Munduk Heaven", href: "/munduk-heaven" },
-    ],
+    links: [],
   },
   {
     title: "Photographs",
-    links: [
-      { label: "Aerials", href: "/aerials" },
-      { label: "Underwater", href: "/underwater" },
-      { label: "Top Side", href: "/topside" },
-    ],
+    links: [],
   },
   {
     title: "About",
-    links: [
-      { label: "Our Story", href: "/about" },
-      { label: "Values", href: "/values" },
-      { label: "Testimonials", href: "/testimonials" },
-    ],
+    links: [],
   },
 ]
 
@@ -84,24 +71,6 @@ export function Footer({
   newsletterEnabled = true,
   className,
 }: FooterProps) {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light")
-
-  React.useEffect(() => {
-    // Check localStorage and system preference on mount
-    const isDark =
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    setTheme(isDark ? "dark" : "light")
-    document.documentElement.classList.toggle("dark", isDark)
-  }, [])
-
-  const toggleTheme = (newTheme: "light" | "dark") => {
-    setTheme(newTheme)
-    localStorage.theme = newTheme
-    document.documentElement.classList.toggle("dark", newTheme === "dark")
-  }
-
   return (
     <footer
       className={cn(
@@ -127,34 +96,9 @@ export function Footer({
               idx === 1 && "lg:col-span-3",
               idx === 2 && "lg:col-span-3"
             )}>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-6">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {section.title}
               </h3>
-              <ul className="space-y-4">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    {section.title === "Developers" && link.label === "GitHub" ? (
-                      <Link
-                        href={link.href}
-                        className="text-sm hover:text-muted-foreground transition-colors flex items-center gap-2 group"
-                      >
-                        <span>{link.label}</span>
-                        <div className="flex items-center bg-muted px-1.5 py-0.5 rounded text-[10px] font-medium text-muted-foreground group-hover:bg-muted/80 transition-colors">
-                          <HugeiconsIcon icon={Github01Icon} className="size-2 mr-1" strokeWidth={2} />
-                          20.6K
-                        </div>
-                      </Link>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="text-sm hover:text-muted-foreground transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
             </div>
           ))}
 
@@ -191,17 +135,8 @@ export function Footer({
         </div>
       </div>
 
-      {/* Decorative Brand Banner */}
-      <div className="w-full border-t border-b border-border overflow-hidden bg-background relative h-[200px] md:h-[300px]">
-        <TextHoverEffect
-          text={`FOLLOW ${brandName.toUpperCase()}`}
-          textSize="text-6xl md:text-8xl"
-          viewBox="0 0 1200 200"
-        />
-      </div>
-
-      {/* Bottom Bar - Social Links and Theme Switcher */}
-      <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* Bottom Bar - Social Links */}
+      <div className="max-w-7xl mx-auto px-6 pt-6 pb-4 flex items-center justify-center">
         {/* Social Links */}
         <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground">
           {socialLinks.map((social) => (
@@ -214,34 +149,6 @@ export function Footer({
               <span className="hidden sm:inline">{social.label}</span>
             </Link>
           ))}
-        </div>
-
-        {/* Theme Switcher */}
-        <div className="flex items-center border border-border rounded-sm overflow-hidden">
-          <button
-            onClick={() => toggleTheme("light")}
-            className={cn(
-              "px-3 py-1 text-xs font-medium transition-colors",
-              theme === "light"
-                ? "bg-background text-foreground"
-                : "bg-transparent text-muted-foreground hover:bg-muted/50"
-            )}
-            aria-label="Switch to light theme"
-          >
-            Light
-          </button>
-          <button
-            onClick={() => toggleTheme("dark")}
-            className={cn(
-              "px-3 py-1 text-xs font-medium transition-colors",
-              theme === "dark"
-                ? "bg-background text-foreground"
-                : "bg-transparent text-muted-foreground hover:bg-muted/50"
-            )}
-            aria-label="Switch to dark theme"
-          >
-            Dark
-          </button>
         </div>
       </div>
     </footer>

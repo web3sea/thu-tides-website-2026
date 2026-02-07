@@ -50,8 +50,8 @@ export function GigaHero({
   },
   title = 'AI that talks like a human. Handles millions of calls.',
   subtitle = '',
-  ctaText = 'Talk to us',
-  ctaHref = '#',
+  ctaText,
+  ctaHref,
   logos = defaultLogos,
   className,
   useHoverEffect = false,
@@ -80,35 +80,13 @@ export function GigaHero({
 
       {/* Main Hero Content */}
       <main className="relative z-10 flex-grow flex flex-col items-center justify-center px-4 pt-10 pb-32 text-center max-w-5xl mx-auto w-full">
-        {/* Badge */}
-        {badge && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Link
-              href={badge.href || '#'}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
-            >
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">
-                {badge.text}
-              </span>
-              <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </motion.div>
-        )}
-
         {/* Title */}
         {useHoverEffect ? (
           <>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
+              transition={{ duration: 0.8 }}
               className="w-full max-w-4xl h-[300px] md:h-[400px] mb-4"
             >
               <TextHoverEffect text={hoverEffectText || title} />
@@ -116,7 +94,7 @@ export function GigaHero({
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
               className="text-xl md:text-2xl text-white font-light mb-6 max-w-3xl mx-auto"
             >
               {title}
@@ -126,7 +104,7 @@ export function GigaHero({
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
+            transition={{ duration: 0.8 }}
             className="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight md:leading-tight lg:leading-[1.1] text-white mb-6 drop-shadow-sm"
           >
             {title.split('. ').map((line, i, arr) => (
@@ -146,6 +124,28 @@ export function GigaHero({
           </motion.h1>
         )}
 
+        {/* Badge */}
+        {badge && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <Link
+              href={badge.href || '#'}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
+            >
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">
+                {badge.text}
+              </span>
+              <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </motion.div>
+        )}
+
         {/* Subtitle */}
         {subtitle && (
           <motion.p
@@ -159,20 +159,22 @@ export function GigaHero({
         )}
 
         {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <Link href={ctaHref}>
-            <Button
-              size="lg"
-              className="bg-white hover:bg-gray-100 text-slate-900 px-8 py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-white/20 transform hover:-translate-y-0.5 transition-all h-auto"
-            >
-              {ctaText}
-            </Button>
-          </Link>
-        </motion.div>
+        {ctaText && ctaHref && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <Link href={ctaHref}>
+              <Button
+                size="lg"
+                className="bg-white hover:bg-gray-100 text-slate-900 px-8 py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-white/20 transform hover:-translate-y-0.5 transition-all h-auto"
+              >
+                {ctaText}
+              </Button>
+            </Link>
+          </motion.div>
+        )}
       </main>
 
       {/* Logo Section */}
