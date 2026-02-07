@@ -1,5 +1,3 @@
-'use client'
-
 import { GigaLayout } from '@/components/giga-layout'
 import { GigaHero } from '@/components/giga-hero'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
