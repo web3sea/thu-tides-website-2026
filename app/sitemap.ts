@@ -55,15 +55,21 @@ function discoverRoutes(dir: string, basePath = ''): string[] {
       }
     }
   } catch (error) {
-    console.error('Error discovering routes:', error)
+    // Log error but continue - better to have partial sitemap than none
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error discovering routes:', error)
+    }
   }
 
   return routes
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://thutides.com'
-  const currentDate = new Date()
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://thutides.com'
+
+  // Use a static date for better caching - update manually when content changes
+  // or use git commit date in production
+  const lastModified = new Date('2026-02-06')
 
   // Discover all routes
   const appDir = join(process.cwd(), 'app')
@@ -74,7 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Homepage - highest priority
     {
       url: baseUrl,
-      lastModified: currentDate,
+      lastModified: lastModified,
       changeFrequency: 'weekly',
       priority: 1.0,
     },
@@ -84,7 +90,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const route of discoveredRoutes) {
     sitemapEntries.push({
       url: `${baseUrl}${route}`,
-      lastModified: currentDate,
+      lastModified: lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     })

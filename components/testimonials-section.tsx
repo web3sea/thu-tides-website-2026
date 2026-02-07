@@ -3,6 +3,7 @@ import { GlassCard } from '@/components/ui/glass-card'
 import Image from 'next/image'
 
 interface Testimonial {
+  id: string
   quote: string
   author: string
   role: string
@@ -13,9 +14,9 @@ interface Testimonial {
   website?: string
 }
 
-// TODO: Replace with your actual testimonials
 const testimonials: Testimonial[] = [
   {
+    id: 'reconnect-resort',
     quote: "Thu Tides captured the essence of our resort perfectly. The underwater shots showcased our dive sites in a way that immediately increased bookings. Their professionalism and eye for detail are unmatched.",
     author: "Thomas Despin",
     role: "Marketing Director",
@@ -25,6 +26,7 @@ const testimonials: Testimonial[] = [
     website: "https://www.reconnect.id/",
   },
   {
+    id: 'evolution-divers',
     quote: "Working with Thu Tides was seamless. They understood our brand and delivered stunning aerial content that elevated our entire online presence. The barter partnership was perfect for our boutique property.",
     author: "Michael Torres",
     role: "Owner",
@@ -34,6 +36,7 @@ const testimonials: Testimonial[] = [
     website: "https://evolution.com.ph/",
   },
   {
+    id: 'munduk-heaven',
     quote: "The quality of Thu Tides' photography is exceptional. Their travel and underwater expertise helped us showcase our unique location to travelers seeking authentic coastal experiences.",
     author: "Diana Kusuma",
     role: "General Manager",
@@ -44,7 +47,7 @@ const testimonials: Testimonial[] = [
   },
 ]
 
-export function TestimonialsSection() {
+export function TestimonialsSection(): React.JSX.Element {
   return (
     <section id="partners" className="relative section-padding bg-gray-50">
       <div className="max-w-6xl mx-auto">
@@ -55,9 +58,9 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.id}
               className="bg-white card-padding-lg rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col"
             >
               {/* Partner Logo */}

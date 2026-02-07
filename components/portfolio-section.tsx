@@ -3,318 +3,29 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { H2, H3, P } from '@/components/typography'
+import { portfolioItems, propertyTypes as importedPropertyTypes, type PortfolioItem } from '@/data/portfolio'
 
-type PortfolioItem = {
-  id: string
-  title: string
-  description: string
-  propertyType: string
-  location: string
-  image: string
-  featured: boolean
-}
-
-// Portfolio data organized by location and type
-const portfolioItems: PortfolioItem[] = [
-  // Buka Buka / Reconnect Resort
-  {
-    id: '1',
-    title: 'Reconnect Buka Buka',
-    description: 'Intimate island resort photography',
-    propertyType: 'Dive Resort',
-    location: 'Togean, Sulawesi',
-    image: '/reconnect_buka_buka.webp',
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'Buka Buka Sunset',
-    description: 'Golden hour at Reconnect resort',
-    propertyType: 'Dive Resort',
-    location: 'Togean, Sulawesi',
-    image: '/villa_sunset_reconnect_buka_buka.webp',
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'Villa Bath - Reconnect',
-    description: 'Luxury accommodation details',
-    propertyType: 'Dive Resort',
-    location: 'Togean, Sulawesi',
-    image: '/villa_bath_reconnect_buka_buka.webp',
-    featured: false,
-  },
-  {
-    id: '4',
-    title: 'Buka Buka Underwater',
-    description: 'Vibrant marine life at Buka Buka',
-    propertyType: 'Dive Resort',
-    location: 'Togean, Sulawesi',
-    image: '/uw_buka_buka.webp',
-    featured: false,
-  },
-  // Aerial Photography
-  {
-    id: '5',
-    title: 'Kalanggaman Beach',
-    description: 'Stunning aerial view of pristine beach',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/dji_aerial_beach_kalanggaman.webp',
-    featured: true,
-  },
-  {
-    id: '6',
-    title: 'Balicasag Island',
-    description: 'Aerial perspective of island paradise',
-    propertyType: 'Dive Resort',
-    location: 'Bohol, Philippines',
-    image: '/DJI_arial_island_balicasa.webp',
-    featured: false,
-  },
-  {
-    id: '7',
-    title: 'Casaroro Waterfall',
-    description: 'Aerial view of mountain waterfall',
-    propertyType: 'Homestay',
-    location: 'Negros, Philippines',
-    image: '/DJI_arial_waterfall_casaroro.webp',
-    featured: false,
-  },
-  {
-    id: '8',
-    title: 'Pasalan Waterfall',
-    description: 'Hidden waterfall from above',
-    propertyType: 'Homestay',
-    location: 'Philippines',
-    image: '/DJI_arial_waterfall_pasalan.webp',
-    featured: false,
-  },
-  {
-    id: '9',
-    title: 'Top Reef Atoll',
-    description: 'Aerial view of coral reef atoll',
-    propertyType: 'Liveaboard',
-    location: 'Philippines',
-    image: '/dji_aerial_top_reef_atoll.webp',
-    featured: false,
-  },
-  // Underwater Photography
-  {
-    id: '10',
-    title: 'Pulau Papan Underwater',
-    description: 'Underwater coral gardens',
-    propertyType: 'Dive Resort',
-    location: 'Philippines',
-    image: '/uw_pulau_papan.webp',
-    featured: true,
-  },
-  {
-    id: '11',
-    title: 'Mariona Depths',
-    description: 'Deep water marine photography',
-    propertyType: 'Liveaboard',
-    location: 'Philippines',
-    image: '/uw_mariona.webp',
-    featured: false,
-  },
-  {
-    id: '12',
-    title: 'Jellyfish - Mariona',
-    description: 'Ethereal jellyfish photography',
-    propertyType: 'Liveaboard',
-    location: 'Philippines',
-    image: '/uw_jellyfish_mariona.webp',
-    featured: false,
-  },
-  {
-    id: '13',
-    title: 'Malapascua Diving',
-    description: 'Underwater life at Malapascua',
-    propertyType: 'Dive Resort',
-    location: 'Malapascua, Philippines',
-    image: '/uw_malapascua.webp',
-    featured: false,
-  },
-  {
-    id: '14',
-    title: 'Moalboal Marine Life',
-    description: 'Sardine run and coral gardens',
-    propertyType: 'Dive Resort',
-    location: 'Moalboal, Philippines',
-    image: '/uw_moalboal.webp',
-    featured: false,
-  },
-  {
-    id: '15',
-    title: 'Dauin Muck Diving',
-    description: 'Macro underwater photography',
-    propertyType: 'Dive Resort',
-    location: 'Dauin, Philippines',
-    image: '/uw_dauin.webp',
-    featured: false,
-  },
-  {
-    id: '16',
-    title: 'Napalin Underwater',
-    description: 'Crystal clear waters and marine life',
-    propertyType: 'Dive Resort',
-    location: 'Philippines',
-    image: '/uw_napalin.webp',
-    featured: false,
-  },
-  {
-    id: '17',
-    title: 'Top Reef Underwater',
-    description: 'Healthy coral reef ecosystem',
-    propertyType: 'Liveaboard',
-    location: 'Philippines',
-    image: '/uw_top_reef_atoll.webp',
-    featured: false,
-  },
-  {
-    id: '18',
-    title: 'Dive Experience',
-    description: 'Capturing the diving adventure',
-    propertyType: 'Dive Resort',
-    location: 'Philippines',
-    image: '/dive_shop_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '19',
-    title: 'Diving Moments',
-    description: 'Professional dive photography',
-    propertyType: 'Dive Resort',
-    location: 'Philippines',
-    image: '/dive_tanks_reconnect.webp',
-    featured: false,
-  },
-  // Wildlife & Nature
-  {
-    id: '20',
-    title: 'Tarsier - Bohol',
-    description: 'World\'s smallest primate in natural habitat',
-    propertyType: 'Homestay',
-    location: 'Bohol, Philippines',
-    image: '/tarsier_bohol.webp',
-    featured: false,
-  },
-  {
-    id: '21',
-    title: 'Golden Sunrise',
-    description: 'Breathtaking sunrise over the islands',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/villa_sunrise_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '22',
-    title: 'Island Common Area',
-    description: 'Shared spaces and community vibes',
-    propertyType: 'Homestay',
-    location: 'Philippines',
-    image: '/pier_reconnect.webp',
-    featured: false,
-  },
-  // Portrait & Lifestyle
-  {
-    id: '23',
-    title: 'Island Lifestyle',
-    description: 'Authentic coastal living moments',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/villa_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '24',
-    title: 'Coastal Relaxation',
-    description: 'Guest experience photography',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/villa_sign_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '25',
-    title: 'Beach Moments',
-    description: 'Capturing the island experience',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/villa_athena_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '26',
-    title: 'Coastal Living',
-    description: 'Lifestyle photography for hospitality',
-    propertyType: 'Homestay',
-    location: 'Philippines',
-    image: '/villa_coco_reconnect.webp',
-    featured: false,
-  },
-  // Additional Photography
-  {
-    id: '27',
-    title: 'Property Details',
-    description: 'Architectural and detail photography',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/uw_seafan.webp',
-    featured: false,
-  },
-  {
-    id: '28',
-    title: 'Resort Atmosphere',
-    description: 'Capturing the ambiance',
-    propertyType: 'Dive Resort',
-    location: 'Philippines',
-    image: '/uw_turtle.webp',
-    featured: false,
-  },
-  {
-    id: '29',
-    title: 'Coastal Views',
-    description: 'Scenic coastal photography',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/uw_wall.webp',
-    featured: false,
-  },
-  {
-    id: '30',
-    title: 'Island Scenes',
-    description: 'Documenting island life',
-    propertyType: 'Homestay',
-    location: 'Philippines',
-    image: '/maison_coco_reconnect.webp',
-    featured: false,
-  },
-  {
-    id: '31',
-    title: 'Professional Composition',
-    description: 'High-quality property photography',
-    propertyType: 'Boutique Hotel',
-    location: 'Philippines',
-    image: '/uw_jacks.webp',
-    featured: false,
-  },
-]
-
-export function PortfolioSection() {
+export function PortfolioSection(): React.JSX.Element {
   const [filter, setFilter] = React.useState<string>('Dive Resort')
   const carouselRef = React.useRef<HTMLDivElement>(null)
   const animationRef = React.useRef<number | null>(null)
   const [scrollSpeed, setScrollSpeed] = React.useState(0)
+  const [isTouchDevice, setIsTouchDevice] = React.useState(false)
 
-  const propertyTypes = ['Dive Resort', 'Boutique Hotel', 'Homestay', 'Liveaboard']
+  // Scroll zone thresholds and speeds
+  const SCROLL_ZONE_LEFT = 0.3
+  const SCROLL_ZONE_RIGHT = 0.7
+  const MAX_SCROLL_SPEED = 2
   const filteredItems = portfolioItems.filter(item => item.propertyType === filter)
 
-  // Handle mouse move for carousel scrolling
+  // Detect touch device
+  React.useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  }, [])
+
+  // Handle mouse move for carousel scrolling (desktop only)
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!carouselRef.current) return
+    if (!carouselRef.current || isTouchDevice) return
 
     const rect = carouselRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -324,14 +35,14 @@ export function PortfolioSection() {
     const position = x / containerWidth
 
     // Define scroll zones: left 30%, center 40%, right 30%
-    if (position < 0.3) {
+    if (position < SCROLL_ZONE_LEFT) {
       // Scroll left - speed increases as mouse moves further left
-      const intensity = (0.3 - position) / 0.3
-      setScrollSpeed(-2 * intensity)
-    } else if (position > 0.7) {
+      const intensity = (SCROLL_ZONE_LEFT - position) / SCROLL_ZONE_LEFT
+      setScrollSpeed(-MAX_SCROLL_SPEED * intensity)
+    } else if (position > SCROLL_ZONE_RIGHT) {
       // Scroll right - speed increases as mouse moves further right
-      const intensity = (position - 0.7) / 0.3
-      setScrollSpeed(2 * intensity)
+      const intensity = (position - SCROLL_ZONE_RIGHT) / (1 - SCROLL_ZONE_RIGHT)
+      setScrollSpeed(MAX_SCROLL_SPEED * intensity)
     } else {
       // Center zone - no scrolling
       setScrollSpeed(0)
@@ -342,8 +53,25 @@ export function PortfolioSection() {
     setScrollSpeed(0)
   }
 
-  // Animate scrolling based on speed
+  // Handle keyboard navigation for accessibility
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!carouselRef.current) return
+
+    const scrollAmount = 400 // Width of one portfolio item
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      carouselRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  // Animate scrolling based on speed (desktop only)
   React.useEffect(() => {
+    if (isTouchDevice) return
+
     const animate = () => {
       if (carouselRef.current && scrollSpeed !== 0) {
         carouselRef.current.scrollLeft += scrollSpeed
@@ -358,7 +86,7 @@ export function PortfolioSection() {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [scrollSpeed])
+  }, [scrollSpeed, isTouchDevice])
 
   return (
     <section className="relative section-padding">
@@ -373,7 +101,7 @@ export function PortfolioSection() {
 
           {/* Filter Tabs */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {propertyTypes.map((type) => (
+            {importedPropertyTypes.map((type) => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
@@ -394,6 +122,10 @@ export function PortfolioSection() {
           className="relative"
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onKeyDown={handleKeyDown}
+          role="region"
+          aria-label="Portfolio carousel - use arrow keys to navigate"
+          tabIndex={0}
         >
           {/* Gradient Overlays for visual effect */}
           <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/50 to-transparent z-10 pointer-events-none" />
@@ -402,10 +134,13 @@ export function PortfolioSection() {
           {/* Scrollable Carousel */}
           <div
             ref={carouselRef}
-            className="overflow-x-hidden overflow-y-visible scrollbar-hide py-4"
+            className={`overflow-y-visible scrollbar-hide py-4 ${
+              isTouchDevice ? 'overflow-x-auto' : 'overflow-x-hidden'
+            }`}
             style={{
-              scrollBehavior: 'auto',
-              cursor: scrollSpeed !== 0 ? (scrollSpeed < 0 ? 'w-resize' : 'e-resize') : 'default'
+              scrollBehavior: isTouchDevice ? 'smooth' : 'auto',
+              cursor: !isTouchDevice && scrollSpeed !== 0 ? (scrollSpeed < 0 ? 'w-resize' : 'e-resize') : 'default',
+              WebkitOverflowScrolling: 'touch'
             }}
           >
             <div className="flex gap-6 px-8">
