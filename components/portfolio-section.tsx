@@ -289,7 +289,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Documenting island life',
     propertyType: 'Homestay',
     location: 'Philippines',
-    image: '/DSC00366.webp',
+    image: '/maison_coco_reconnect.webp',
     featured: false,
   },
   {
@@ -298,7 +298,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'High-quality property photography',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/LUS03355-2.webp',
+    image: '/uw_jacks.webp',
     featured: false,
   },
 ]
