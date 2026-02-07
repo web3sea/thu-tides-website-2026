@@ -32,7 +32,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Golden hour at Reconnect resort',
     propertyType: 'Dive Resort',
     location: 'Togean, Sulawesi',
-    image: '/sunset6_reconnect_buka_buka.webp',
+    image: '/villa_sunset_reconnect_buka_buka.webp',
     featured: true,
   },
   {
@@ -178,7 +178,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Capturing the diving adventure',
     propertyType: 'Dive Resort',
     location: 'Philippines',
-    image: '/dive 8.webp',
+    image: '/dive_shop_reconnect.webp',
     featured: false,
   },
   {
@@ -187,7 +187,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Professional dive photography',
     propertyType: 'Dive Resort',
     location: 'Philippines',
-    image: '/dive 9.webp',
+    image: '/dive_tanks_reconnect.webp',
     featured: false,
   },
   // Wildlife & Nature
@@ -206,7 +206,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Breathtaking sunrise over the islands',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/Sunrise 2.webp',
+    image: '/villa_sunrise_reconnect.webp',
     featured: false,
   },
   {
@@ -215,7 +215,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Shared spaces and community vibes',
     propertyType: 'Homestay',
     location: 'Philippines',
-    image: '/common 19.webp',
+    image: '/pier_reconnect.webp',
     featured: false,
   },
   // Portrait & Lifestyle
@@ -225,7 +225,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Authentic coastal living moments',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/AC 2.webp',
+    image: '/villa_reconnect.webp',
     featured: false,
   },
   {
@@ -234,7 +234,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Guest experience photography',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/AC 5.webp',
+    image: '/villa_sign_reconnect.webp',
     featured: false,
   },
   {
@@ -243,7 +243,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Capturing the island experience',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/Athena 10.webp',
+    image: '/villa_athena_reconnect.webp',
     featured: false,
   },
   {
@@ -252,7 +252,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Lifestyle photography for hospitality',
     propertyType: 'Homestay',
     location: 'Philippines',
-    image: '/Coco 8.webp',
+    image: '/villa_coco_reconnect.webp',
     featured: false,
   },
   // Additional Photography
@@ -262,7 +262,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Architectural and detail photography',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/DSC00012.webp',
+    image: '/uw_seafan.webp',
     featured: false,
   },
   {
@@ -271,7 +271,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Capturing the ambiance',
     propertyType: 'Dive Resort',
     location: 'Philippines',
-    image: '/DSC00057.webp',
+    image: '/uw_turtle.webp',
     featured: false,
   },
   {
@@ -280,7 +280,7 @@ const portfolioItems: PortfolioItem[] = [
     description: 'Scenic coastal photography',
     propertyType: 'Boutique Hotel',
     location: 'Philippines',
-    image: '/DSC00090.webp',
+    image: '/uw_wall.webp',
     featured: false,
   },
   {

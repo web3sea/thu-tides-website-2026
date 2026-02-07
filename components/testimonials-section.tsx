@@ -10,17 +10,19 @@ interface Testimonial {
   location: string
   logo: string
   image?: string
+  website?: string
 }
 
 // TODO: Replace with your actual testimonials
 const testimonials: Testimonial[] = [
   {
     quote: "Thu Tides captured the essence of our resort perfectly. The underwater shots showcased our dive sites in a way that immediately increased bookings. Their professionalism and eye for detail are unmatched.",
-    author: "Sarah Chen",
+    author: "Thomas Despin",
     role: "Marketing Director",
     property: "Reconnect Resort",
     location: "Buka Buka Island, Indonesia",
     logo: "/logo_reconect.jpeg",
+    website: "https://www.reconnect.id/",
   },
   {
     quote: "Working with Thu Tides was seamless. They understood our brand and delivered stunning aerial content that elevated our entire online presence. The barter partnership was perfect for our boutique property.",
@@ -29,6 +31,7 @@ const testimonials: Testimonial[] = [
     property: "Evolution Divers",
     location: "Malapascua, Philippines",
     logo: "/logo_evolution.jpg",
+    website: "https://evolution.com.ph/",
   },
   {
     quote: "The quality of Thu Tides' photography is exceptional. Their travel and underwater expertise helped us showcase our unique location to travelers seeking authentic coastal experiences.",
@@ -37,6 +40,7 @@ const testimonials: Testimonial[] = [
     property: "Munduk Heaven",
     location: "Bali, Indonesia",
     logo: "/logo_munduk.webp",
+    website: "https://mundukheavenluxuryvillas.com/",
   },
 ]
 
@@ -83,6 +87,16 @@ export function TestimonialsSection() {
                 <P className="text-sm text-blue-600 font-medium mt-2">
                   {testimonial.property}
                 </P>
+                {testimonial.website && (
+                  <a
+                    href={testimonial.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-500 hover:text-blue-700 underline font-light block mt-1"
+                  >
+                    {testimonial.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                  </a>
+                )}
                 <P className="text-xs text-gray-500 font-light">
                   {testimonial.location}
                 </P>

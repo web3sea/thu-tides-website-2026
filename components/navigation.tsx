@@ -105,6 +105,14 @@ export function Navigation({ className }: NavigationProps) {
             Home
           </Link>
 
+          {/* About Link */}
+          <Link
+            href="#about"
+            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
+          >
+            About
+          </Link>
+
           {/* Photographs Dropdown */}
           <div
             className="relative"
@@ -154,14 +162,6 @@ export function Navigation({ className }: NavigationProps) {
               )}
             </AnimatePresence>
           </div>
-
-          {/* About Link */}
-          <Link
-            href="#about"
-            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
-          >
-            About
-          </Link>
         </div>
       </div>
 
