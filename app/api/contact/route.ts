@@ -51,8 +51,20 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Collect failures to inform user
+    const failures = results
+      .map((result, index) => ({
+        integration: index === 0 ? 'Slack' : 'Brevo',
+        failed: result.status === 'rejected',
+      }))
+      .filter(r => r.failed)
+
     return NextResponse.json(
-      { success: true, message: 'Contact form submitted successfully' },
+      {
+        success: true,
+        message: 'Contact form submitted successfully',
+        warnings: failures.length > 0 ? failures : undefined,
+      },
       { status: 200 }
     )
   } catch (error) {
@@ -144,12 +156,7 @@ async function addToBrevo(data: ContactFormData) {
       return
     }
 
-    // Sanitize phone number: remove spaces, dashes, parentheses
-    const sanitizedPhone = data.whatsapp
-      ? data.whatsapp.replace(/[\s\-\(\)]/g, '')
-      : ''
-
-    // 1. Add contact to list
+    // 1. Add contact to list (without phone for now - Brevo has strict validation)
     const contactResponse = await fetchWithTimeout('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
@@ -161,7 +168,8 @@ async function addToBrevo(data: ContactFormData) {
         email: data.email,
         attributes: {
           FIRSTNAME: data.name,
-          SMS: sanitizedPhone, // Using SMS field for WhatsApp number
+          // SMS field omitted - Brevo's phone validation is too strict
+          // WhatsApp number is available in Slack notification
         },
         listIds: brevoListId ? [parseInt(brevoListId)] : [],
         updateEnabled: true, // Update if contact already exists
@@ -170,9 +178,15 @@ async function addToBrevo(data: ContactFormData) {
 
     if (!contactResponse.ok && contactResponse.status !== 400) {
       // 400 might mean contact already exists, which is fine with updateEnabled
-      const error = await contactResponse.text()
-      console.error('Brevo contact creation failed:', error)
-      return // Don't proceed to email if contact creation failed
+      const errorText = await contactResponse.text()
+      const errorDetails = {
+        status: contactResponse.status,
+        statusText: contactResponse.statusText,
+        headers: Object.fromEntries(contactResponse.headers),
+        body: errorText,
+      }
+      console.error('Brevo contact creation failed:', JSON.stringify(errorDetails, null, 2))
+      throw new Error(`Brevo API error: ${contactResponse.status} ${errorText}`)
     }
 
     // 2. Send welcome email (if configured)
@@ -205,11 +219,25 @@ async function addToBrevo(data: ContactFormData) {
     }, 20000) // 20 second timeout for slow connections
 
     if (!emailResponse.ok) {
-      const error = await emailResponse.text()
-      console.error('Brevo welcome email failed:', error)
+      const errorText = await emailResponse.text()
+      const errorDetails = {
+        status: emailResponse.status,
+        statusText: emailResponse.statusText,
+        headers: Object.fromEntries(emailResponse.headers),
+        body: errorText,
+      }
+      console.error('Brevo welcome email failed:', JSON.stringify(errorDetails, null, 2))
+      throw new Error(`Brevo email API error: ${emailResponse.status} ${errorText}`)
     }
   } catch (error) {
-    // Log but don't throw - let the form submission succeed
-    console.error('Brevo integration error:', error)
+    // Enhanced error logging with full details
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      cause: error instanceof Error ? error.cause : undefined,
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+    }
+    console.error('Brevo integration error:', JSON.stringify(errorDetails, null, 2))
+    throw error // Re-throw to mark as rejected in Promise.allSettled
   }
 }
