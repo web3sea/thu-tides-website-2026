@@ -5,6 +5,7 @@ import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { GoogleTag } from "./components/GoogleTag";
 import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const notoSans = Noto_Sans({variable:'--font-sans'});
 
@@ -155,6 +156,7 @@ export default function RootLayout({
         {children}
         <Toaster />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
