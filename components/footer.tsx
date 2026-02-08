@@ -5,10 +5,6 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Github01Icon,
-  DiscordIcon,
-  NewTwitterIcon,
-  YoutubeIcon,
-  Linkedin01Icon,
   InstagramIcon,
   Mail01Icon,
   ArrowUpRightIcon,
@@ -65,7 +61,6 @@ const defaultSocialLinks: SocialLink[] = [
 ]
 
 export function Footer({
-  brandName = "Letta",
   sections = defaultSections,
   socialLinks = defaultSocialLinks,
   newsletterEnabled = true,

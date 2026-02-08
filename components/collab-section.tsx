@@ -1,6 +1,6 @@
 "use client"
 
-import { H2, H3, P, Typography } from '@/components/typography'
+import { H2 } from '@/components/typography'
 import { GlassCard } from '@/components/ui/glass-card'
 import { toast } from 'sonner'
 import { FormEvent, useState } from 'react'

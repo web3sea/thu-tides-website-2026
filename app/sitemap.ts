@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { readdirSync, statSync } from 'fs'
+import { readdirSync } from 'fs'
 import { join } from 'path'
 
 /**
