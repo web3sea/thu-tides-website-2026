@@ -131,7 +131,6 @@ async function sendToSlack(data: ContactFormData) {
     }
   } catch (error) {
     console.error('Slack integration error:', error)
-    throw error
   }
 }
 
@@ -212,6 +211,5 @@ async function addToBrevo(data: ContactFormData) {
   } catch (error) {
     // Log but don't throw - let the form submission succeed
     console.error('Brevo integration error:', error)
-    throw error
   }
 }
