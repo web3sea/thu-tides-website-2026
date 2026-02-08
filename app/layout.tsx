@@ -4,6 +4,7 @@ import "./globals.css";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 import { GoogleTag } from "./components/GoogleTag";
 import { Toaster } from "@/components/ui/sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const notoSans = Noto_Sans({variable:'--font-sans'});
 
@@ -153,6 +154,7 @@ export default function RootLayout({
         <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''} />
         {children}
         <Toaster />
+        <SpeedInsights />
       </body>
     </html>
   );
