@@ -39,6 +39,7 @@
 | Image Optimization | Sharp | 0.34.x |
 | Package Manager | pnpm | - |
 | Testing | Jest 30 + Puppeteer 24 | - |
+| Browser Automation | agent-browser | via npx |
 | Deployment | Vercel | Hobby plan |
 
 ### Key Libraries
@@ -186,6 +187,8 @@ pnpm test:dev         # Start dev server + run responsive tests concurrently
 
 ### Testing Setup
 
+#### Automated Testing (Jest + Puppeteer)
+
 - **Framework:** Jest 30 with ts-jest
 - **Browser Testing:** Puppeteer 24 (headless Chrome)
 - **Config:** `jest.config.js` - runs serially (`maxWorkers: 1`) with 30s timeout
@@ -193,6 +196,66 @@ pnpm test:dev         # Start dev server + run responsive tests concurrently
 - **Screenshots:** Saved to `screenshots/` directory (gitignored)
 - Tests require the dev server to be running (`pnpm dev`) before execution
 - The responsive tests target `/giga-demo` page specifically
+
+#### Interactive Testing (agent-browser)
+
+**agent-browser** is a browser automation CLI for AI agents that enables interactive testing and debugging of the website. It's particularly useful for:
+
+- Testing form submissions and user interactions
+- Debugging UI behavior in real-time
+- Taking screenshots and inspecting elements
+- Automating repetitive testing tasks
+- Verifying responsive behavior across viewports
+
+**Common Usage Patterns:**
+
+```bash
+# Launch browser in visible mode (headed) for watching automation
+agent-browser --headed open http://localhost:3000
+
+# Take snapshot to see interactive elements with refs
+agent-browser --headed snapshot -i
+
+# Fill and submit the contact form
+agent-browser --headed fill @e1 "Test Name"
+agent-browser --headed fill @e2 "test@example.com"
+agent-browser --headed fill @e3 "+1234567890"
+agent-browser --headed fill @e4 "Test inquiry message"
+agent-browser --headed click @e5  # Submit button
+
+# Take screenshot of results
+agent-browser --headed screenshot screenshots/test-result.png
+
+# Check console logs for errors
+agent-browser --headed console
+
+# Close browser when done
+agent-browser close
+```
+
+**Key Features:**
+
+- **Headed mode:** Use `--headed` flag to watch the browser in action (default is headless)
+- **Element refs:** Snapshot with `-i` flag provides `@e1`, `@e2`, etc. refs for easy interaction
+- **Session management:** Supports isolated sessions and persistent profiles
+- **Debug tools:** Access console logs, network requests, and page errors
+- **Screenshots & PDFs:** Capture visual state for documentation or debugging
+
+**Installation:**
+
+agent-browser is available via npx and installed as an agent skill:
+```bash
+npx skills add vercel-labs/agent-browser@agent-browser -g -y
+```
+
+**Testing the Contact Form:**
+
+The contact form in `CollabSection` is a critical user interaction point. Use agent-browser to:
+1. Navigate to `http://localhost:3000/#contact`
+2. Fill out all required fields (name, email, WhatsApp, inquiry)
+3. Submit and verify success/error handling
+4. Check console logs for API errors
+5. Verify toast notifications appear correctly
 
 ## Coding Standards and Patterns
 
