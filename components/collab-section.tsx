@@ -1,7 +1,49 @@
+"use client"
+
 import { H2, H3, P, Typography } from '@/components/typography'
 import { GlassCard } from '@/components/ui/glass-card'
+import { toast } from 'sonner'
+import { FormEvent } from 'react'
 
 export function CollabSection() {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get('name') as string,
+      whatsapp: formData.get('whatsapp') as string,
+      email: formData.get('email') as string,
+      inquiry: formData.get('inquiry') as string,
+    }
+
+    try {
+      // Send to API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to send inquiry')
+      }
+
+      // Show success toast in bottom right
+      toast.success("Thank you for sharing that information. We will be in touch.", {
+        position: "bottom-right",
+      })
+
+      // Reset form
+      e.currentTarget.reset()
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right",
+      })
+    }
+  }
   return (
     <section id="contact" className="relative section-padding">
       <div className="max-w-4xl mx-auto">
@@ -20,7 +62,7 @@ export function CollabSection() {
                 </span>
               </div>
 
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">

@@ -1,4 +1,4 @@
-import { Logo } from '@/components/logo'
+import { AnimatedWaveLogo } from '@/components/animated-wave-logo'
 
 export function VideoLoopSection() {
   return (
@@ -20,7 +20,7 @@ export function VideoLoopSection() {
 
         {/* Thu Tides Logo Centered */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <Logo
+          <AnimatedWaveLogo
             className="scale-150 md:scale-200"
             iconClassName="w-16 h-16 md:w-20 md:h-20"
             textClassName="text-4xl md:text-5xl font-light tracking-wide text-white"
