@@ -3,13 +3,21 @@
 import { H2, H3, P, Typography } from '@/components/typography'
 import { GlassCard } from '@/components/ui/glass-card'
 import { toast } from 'sonner'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 
 export function CollabSection() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const formData = new FormData(e.currentTarget)
+    // Prevent double submissions
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
+    // Store form reference before async operations
+    const form = e.currentTarget
+    const formData = new FormData(form)
     const data = {
       name: formData.get('name') as string,
       whatsapp: formData.get('whatsapp') as string,
@@ -27,8 +35,11 @@ export function CollabSection() {
         body: JSON.stringify(data),
       })
 
+      const result = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to send inquiry')
+        console.error('API error:', result)
+        throw new Error(result.error || 'Failed to send inquiry')
       }
 
       // Show success toast in bottom right
@@ -36,12 +47,15 @@ export function CollabSection() {
         position: "bottom-right",
       })
 
-      // Reset form
-      e.currentTarget.reset()
+      // Reset form using stored reference
+      form.reset()
     } catch (error) {
+      console.error('Form submission error:', error)
       toast.error("Something went wrong. Please try again.", {
         position: "bottom-right",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
   return (
@@ -72,6 +86,7 @@ export function CollabSection() {
                       type="text"
                       id="name"
                       name="name"
+                      required
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
                       placeholder="Your name"
                     />
@@ -99,6 +114,7 @@ export function CollabSection() {
                     type="email"
                     id="email"
                     name="email"
+                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
                     placeholder="your@email.com"
                   />
@@ -112,6 +128,7 @@ export function CollabSection() {
                     id="inquiry"
                     name="inquiry"
                     rows={8}
+                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent resize-none min-h-48 md:min-h-64 lg:min-h-80 transition-all"
                     placeholder="Tell us about your project..."
                   />
@@ -119,9 +136,10 @@ export function CollabSection() {
 
                 <button
                   type="submit"
-                  className="w-full px-8 py-4 bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold transition-all hover:scale-105 shadow-lg"
+                  disabled={isSubmitting}
+                  className="w-full px-8 py-4 bg-white hover:bg-gray-100 text-slate-900 rounded-full font-semibold transition-all hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  Send Inquiry
+                  {isSubmitting ? 'Sending...' : 'Send Inquiry'}
                 </button>
               </form>
             </GlassCard>
