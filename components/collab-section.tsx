@@ -18,15 +18,20 @@ export function CollabSection() {
     // Store form reference before async operations
     const form = e.currentTarget
     const formData = new FormData(form)
+
+    // Trim all inputs to prevent whitespace-only submissions
+    const emailTrimmed = (formData.get('email') as string)?.trim() || ''
+    const whatsappTrimmed = (formData.get('whatsapp') as string)?.trim() || ''
+
     const data = {
       name: formData.get('name') as string,
-      whatsapp: formData.get('whatsapp') as string,
-      email: formData.get('email') as string,
+      whatsapp: whatsappTrimmed,
+      email: emailTrimmed,
       inquiry: formData.get('inquiry') as string,
     }
 
     // Validate that at least one contact method is provided
-    if (!data.email && !data.whatsapp) {
+    if (!emailTrimmed && !whatsappTrimmed) {
       toast.error("Please provide either an email address or WhatsApp number.", {
         position: "bottom-right",
       })
