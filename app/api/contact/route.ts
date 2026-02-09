@@ -29,18 +29,35 @@ export async function POST(request: NextRequest) {
   try {
     const data: ContactFormData = await request.json()
 
+    // Trim all inputs to prevent whitespace-only submissions
+    const name = data.name?.trim() || ''
+    const email = data.email?.trim() || ''
+    const whatsapp = data.whatsapp?.trim() || ''
+    const inquiry = data.inquiry?.trim() || ''
+
     // Validate required fields
-    if (!data.name || !data.email || !data.inquiry) {
+    if (!name || !inquiry) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: name and inquiry are required' },
         { status: 400 }
       )
     }
 
+    // Validate at least one contact method is provided
+    if (!email && !whatsapp) {
+      return NextResponse.json(
+        { error: 'Please provide either an email address or WhatsApp number' },
+        { status: 400 }
+      )
+    }
+
+    // Use trimmed values for integrations
+    const cleanData: ContactFormData = { name, email, whatsapp, inquiry }
+
     // Run integrations in parallel with graceful error handling
     const results = await Promise.allSettled([
-      sendToSlack(data),
-      addToBrevo(data),
+      sendToSlack(cleanData),
+      addToBrevo(cleanData),
     ])
 
     // Log failures but don't block success
@@ -153,6 +170,12 @@ async function addToBrevo(data: ContactFormData) {
 
     if (!brevoApiKey) {
       console.warn('BREVO_API_KEY not configured')
+      return
+    }
+
+    // Skip Brevo if no email provided (Brevo requires email)
+    if (!data.email) {
+      console.warn('No email provided, skipping Brevo integration')
       return
     }
 
