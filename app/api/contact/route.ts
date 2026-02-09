@@ -30,9 +30,17 @@ export async function POST(request: NextRequest) {
     const data: ContactFormData = await request.json()
 
     // Validate required fields
-    if (!data.name || !data.email || !data.inquiry) {
+    if (!data.name || !data.inquiry) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: name and inquiry are required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate at least one contact method is provided
+    if (!data.email && !data.whatsapp) {
+      return NextResponse.json(
+        { error: 'Please provide either an email address or WhatsApp number' },
         { status: 400 }
       )
     }
@@ -153,6 +161,12 @@ async function addToBrevo(data: ContactFormData) {
 
     if (!brevoApiKey) {
       console.warn('BREVO_API_KEY not configured')
+      return
+    }
+
+    // Skip Brevo if no email provided (Brevo requires email)
+    if (!data.email) {
+      console.warn('No email provided, skipping Brevo integration')
       return
     }
 

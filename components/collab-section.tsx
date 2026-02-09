@@ -25,6 +25,15 @@ export function CollabSection() {
       inquiry: formData.get('inquiry') as string,
     }
 
+    // Validate that at least one contact method is provided
+    if (!data.email && !data.whatsapp) {
+      toast.error("Please provide either an email address or WhatsApp number.", {
+        position: "bottom-right",
+      })
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       // Send to API
       const response = await fetch('/api/contact', {
@@ -94,7 +103,7 @@ export function CollabSection() {
 
                   <div>
                     <label htmlFor="whatsapp" className="block text-sm font-medium text-white/90 mb-2">
-                      WhatsApp
+                      WhatsApp <span className="text-white/60 text-xs">(required if no email)</span>
                     </label>
                     <input
                       type="tel"
@@ -108,13 +117,12 @@ export function CollabSection() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                    Email
+                    Email <span className="text-white/60 text-xs">(required if no WhatsApp)</span>
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
                     placeholder="your@email.com"
                   />
