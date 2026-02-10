@@ -33,6 +33,85 @@ PR Merge Checklist:
 
 ---
 
+## 🚨 CRITICAL: DEPLOYMENT MONITORING (MANDATORY) 🚨
+
+### AFTER EVERY MERGE TO MAIN - NO EXCEPTIONS
+
+**When code is merged to `main`, Vercel automatically triggers a production deployment. You MUST:**
+
+1. **IMMEDIATELY monitor the deployment** - Do NOT wait for user to ask
+2. **Check deployment logs** - Verify build succeeded without errors
+3. **Test production URL** - Verify site works correctly
+
+### Pre-Deployment Checklist (BEFORE Merging to Main)
+
+```bash
+# 1. VERIFY LOCKFILE IS UP TO DATE
+pnpm install  # Regenerate lockfile if package.json changed
+git status    # Check if pnpm-lock.yaml was modified
+git add pnpm-lock.yaml  # Stage lockfile if modified
+
+# 2. VERIFY BUILD SUCCEEDS LOCALLY
+pnpm build    # Must succeed without errors
+
+# 3. VERIFY TESTS PASS
+pnpm lint     # Must pass
+pnpm test:all # Must pass (if tests exist)
+```
+
+**🚨 CRITICAL:** If you added/removed/updated dependencies in `package.json`, you MUST run `pnpm install` and commit the updated `pnpm-lock.yaml` BEFORE merging. An outdated lockfile will cause Vercel deployment to fail.
+
+### Post-Deployment Monitoring (AFTER Merge)
+
+```bash
+# Step 1: Wait for deployment to trigger (15-20 seconds)
+sleep 20
+
+# Step 2: Check deployment status
+vercel ls --scope coraltriangle-uat | head -8
+
+# Step 3: Monitor until complete (Building → Ready or Error)
+# Watch the "Status" column - wait for "Ready" or "Error"
+
+# Step 4: If Status = "Error", GET LOGS IMMEDIATELY
+vercel inspect <deployment-url> --logs --scope coraltriangle-uat
+
+# Step 5: If Status = "Ready", VERIFY PRODUCTION
+curl -I https://thutides.com  # Should return 200 OK
+```
+
+### Common Deployment Failures & Fixes
+
+#### 1. ERR_PNPM_OUTDATED_LOCKFILE
+**Cause:** `package.json` was modified but `pnpm-lock.yaml` wasn't updated
+**Fix:**
+```bash
+pnpm install
+git add pnpm-lock.yaml
+git commit -m "Update pnpm lockfile"
+git push
+```
+
+#### 2. Missing Environment Variables
+**Cause:** Required env vars not set in Vercel dashboard
+**Fix:** Go to Vercel Dashboard → Project Settings → Environment Variables → Add missing vars → Trigger redeploy
+
+#### 3. TypeScript Errors
+**Cause:** Type errors that passed locally but fail in strict mode
+**Fix:** Run `pnpm build` locally to catch errors before pushing
+
+### Deployment Rollback
+
+If deployment fails and can't be fixed quickly:
+1. Go to Vercel Dashboard → Deployments
+2. Find the last successful deployment
+3. Click "..." → "Promote to Production"
+4. Fix issues in a new branch and re-deploy when ready
+
+**⚠️ REMEMBER: Always monitor deployments immediately after merge. Never assume deployment succeeded.**
+
+---
+
 ## Business Context
 
 **Thu Tides** is a creative collaboration service that connects boutique coastal hospitality brands with professional photography and video content creation. The business operates at the intersection of travel, art, and hospitality marketing.
