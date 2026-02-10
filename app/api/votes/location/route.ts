@@ -26,7 +26,7 @@ const RATE_LIMIT_WINDOW_MS = 60000 // 1 minute
 
 export async function POST(request: NextRequest) {
   // Check if Firebase is initialized
-  if (!db) {
+  if (!adminDb) {
     return NextResponse.json(
       {
         success: false,
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Create non-null reference for TypeScript
-  const db = db
+  const db = adminDb
 
   try {
     // Extract IP address from headers
