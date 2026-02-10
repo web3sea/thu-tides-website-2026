@@ -7,6 +7,33 @@ interface ContactFormData {
   inquiry: string
 }
 
+// Simple in-memory rate limiter (per-instance; resets on cold start)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+const RATE_LIMIT_WINDOW_MS = 60_000 // 1 minute
+const RATE_LIMIT_MAX = 5 // max requests per window
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS })
+    return false
+  }
+
+  entry.count++
+  return entry.count > RATE_LIMIT_MAX
+}
+
+// Email format validation
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Field length limits
+const MAX_NAME_LENGTH = 200
+const MAX_EMAIL_LENGTH = 254
+const MAX_WHATSAPP_LENGTH = 20
+const MAX_INQUIRY_LENGTH = 5000
+
 // Utility function to add timeout to fetch requests
 async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 10000) {
   const controller = new AbortController()
@@ -27,6 +54,15 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 1
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting by IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
     const data: ContactFormData = await request.json()
 
     // Trim all inputs to prevent whitespace-only submissions
@@ -47,6 +83,25 @@ export async function POST(request: NextRequest) {
     if (!email && !whatsapp) {
       return NextResponse.json(
         { error: 'Please provide either an email address or WhatsApp number' },
+        { status: 400 }
+      )
+    }
+
+    // Validate field lengths
+    if (name.length > MAX_NAME_LENGTH ||
+        email.length > MAX_EMAIL_LENGTH ||
+        whatsapp.length > MAX_WHATSAPP_LENGTH ||
+        inquiry.length > MAX_INQUIRY_LENGTH) {
+      return NextResponse.json(
+        { error: 'One or more fields exceed the maximum allowed length' },
+        { status: 400 }
+      )
+    }
+
+    // Validate email format (only when email is provided)
+    if (email && !EMAIL_REGEX.test(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
         { status: 400 }
       )
     }
@@ -202,14 +257,8 @@ async function addToBrevo(data: ContactFormData) {
     if (!contactResponse.ok && contactResponse.status !== 400) {
       // 400 might mean contact already exists, which is fine with updateEnabled
       const errorText = await contactResponse.text()
-      const errorDetails = {
-        status: contactResponse.status,
-        statusText: contactResponse.statusText,
-        headers: Object.fromEntries(contactResponse.headers),
-        body: errorText,
-      }
-      console.error('Brevo contact creation failed:', JSON.stringify(errorDetails, null, 2))
-      throw new Error(`Brevo API error: ${contactResponse.status} ${errorText}`)
+      console.error('Brevo contact creation failed:', contactResponse.status, errorText)
+      throw new Error(`Brevo API error: ${contactResponse.status}`)
     }
 
     // 2. Send welcome email (if configured)
@@ -243,14 +292,8 @@ async function addToBrevo(data: ContactFormData) {
 
     if (!emailResponse.ok) {
       const errorText = await emailResponse.text()
-      const errorDetails = {
-        status: emailResponse.status,
-        statusText: emailResponse.statusText,
-        headers: Object.fromEntries(emailResponse.headers),
-        body: errorText,
-      }
-      console.error('Brevo welcome email failed:', JSON.stringify(errorDetails, null, 2))
-      throw new Error(`Brevo email API error: ${emailResponse.status} ${errorText}`)
+      console.error('Brevo welcome email failed:', emailResponse.status, errorText)
+      throw new Error(`Brevo email API error: ${emailResponse.status}`)
     }
   } catch (error) {
     // Enhanced error logging with full details
