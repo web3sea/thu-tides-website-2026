@@ -108,7 +108,7 @@ export function CollabSection() {
 
                   <div>
                     <label htmlFor="whatsapp" className="block text-sm font-medium text-white/90 mb-2">
-                      WhatsApp <span className="text-white/60 text-xs">(required if no email)</span>
+                      WhatsApp
                     </label>
                     <input
                       type="tel"
@@ -122,7 +122,7 @@ export function CollabSection() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                    Email <span className="text-white/60 text-xs">(required if no WhatsApp)</span>
+                    Email
                   </label>
                   <input
                     type="email"

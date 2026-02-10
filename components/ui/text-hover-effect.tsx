@@ -7,17 +7,20 @@ export const TextHoverEffect = ({
   duration,
   textSize = "text-7xl",
   viewBox = "0 0 800 200",
+  flickerTrigger,
 }: {
   text: string;
   duration?: number;
   automatic?: boolean;
   textSize?: string;
   viewBox?: string;
+  flickerTrigger?: boolean;
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
+  const [flickerActive, setFlickerActive] = useState(false);
 
   useEffect(() => {
     if (svgRef.current && cursor.x !== null && cursor.y !== null) {
@@ -30,6 +33,28 @@ export const TextHoverEffect = ({
       });
     }
   }, [cursor]);
+
+  // Handle flicker trigger
+  useEffect(() => {
+    if (flickerTrigger && svgRef.current) {
+      setFlickerActive(true);
+
+      // Trigger SVG animations
+      const animX1 = svgRef.current.querySelector('#flickerAnimX1') as SVGAnimateElement;
+      const animX2 = svgRef.current.querySelector('#flickerAnimX2') as SVGAnimateElement;
+
+      if (animX1 && animX2) {
+        animX1.beginElement();
+        animX2.beginElement();
+      }
+
+      const timer = setTimeout(() => {
+        setFlickerActive(false);
+      }, 800); // Match animation duration
+
+      return () => clearTimeout(timer);
+    }
+  }, [flickerTrigger]);
 
   return (
     <svg
@@ -91,6 +116,37 @@ export const TextHoverEffect = ({
             fill="url(#revealMask)"
           />
         </mask>
+
+        {/* Flicker gradient - left-to-right sweep */}
+        <linearGradient
+          id="flickerGradient"
+          x1="-50%"
+          x2="0%"
+          y1="0%"
+          y2="0%"
+        >
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="50%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+          <animate
+            attributeName="x1"
+            from="-50%"
+            to="150%"
+            dur="0.8s"
+            begin="indefinite"
+            fill="freeze"
+            id="flickerAnimX1"
+          />
+          <animate
+            attributeName="x2"
+            from="0%"
+            to="200%"
+            dur="0.8s"
+            begin="indefinite"
+            fill="freeze"
+            id="flickerAnimX2"
+          />
+        </linearGradient>
       </defs>
       {/* Base visible text - always readable */}
       <text
@@ -138,6 +194,23 @@ export const TextHoverEffect = ({
         mask="url(#textMask)"
         className={`fill-white/80 font-[helvetica] ${textSize} font-bold`}
         style={{ opacity: hovered ? 1 : 0 }}
+      >
+        {text}
+      </text>
+
+      {/* Flicker effect layer - appears during click animation */}
+      <text
+        x="50%"
+        y="50%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="url(#flickerGradient)"
+        className={`font-[helvetica] ${textSize} font-bold`}
+        style={{
+          opacity: flickerActive ? 1 : 0,
+          filter: "drop-shadow(0 0 20px rgba(255,255,255,0.8))",
+          transition: "opacity 0.1s"
+        }}
       >
         {text}
       </text>

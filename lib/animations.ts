@@ -78,6 +78,12 @@ export const TAP_EFFECTS = {
   scaleSmall: { scale: 0.98 },
 } as const
 
+// Flicker animation constants
+export const FLICKER_ANIMATION = {
+  duration: 0.8,
+  ease: [0.34, 1.56, 0.64, 1], // Spring easing for energetic feel
+} as const
+
 /**
  * Standard transition configuration for Framer Motion
  */

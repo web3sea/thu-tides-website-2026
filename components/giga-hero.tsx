@@ -57,6 +57,12 @@ export function GigaHero({
   useHoverEffect = false,
   hoverEffectText,
 }: GigaHeroProps) {
+  const [triggerFlicker, setTriggerFlicker] = React.useState(false);
+
+  const handleBadgeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setTriggerFlicker(prev => !prev); // Toggle triggers animation via useEffect
+  };
   return (
     <div
       className={cn(
@@ -89,7 +95,10 @@ export function GigaHero({
               transition={{ duration: 0.8 }}
               className="w-full max-w-4xl h-[300px] md:h-[400px] mb-4"
             >
-              <TextHoverEffect text={hoverEffectText || title} />
+              <TextHoverEffect
+                text={hoverEffectText || title}
+                flickerTrigger={triggerFlicker}
+              />
             </motion.div>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -131,9 +140,10 @@ export function GigaHero({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <Link
-              href={badge.href || '#'}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group"
+            <button
+              onClick={handleBadgeClick}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group cursor-pointer"
+              aria-label={`${badge.text} - Click to animate logo`}
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">
@@ -142,7 +152,7 @@ export function GigaHero({
               <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </Link>
+            </button>
           </motion.div>
         )}
 

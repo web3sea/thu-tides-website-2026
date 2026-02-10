@@ -6,8 +6,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Github01Icon,
   InstagramIcon,
-  Mail01Icon,
-  ArrowUpRightIcon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
@@ -34,7 +32,6 @@ interface FooterProps {
   brandName?: string
   sections?: FooterSection[]
   socialLinks?: SocialLink[]
-  newsletterEnabled?: boolean
   className?: string
 }
 
@@ -63,7 +60,6 @@ const defaultSocialLinks: SocialLink[] = [
 export function Footer({
   sections = defaultSections,
   socialLinks = defaultSocialLinks,
-  newsletterEnabled = true,
   className,
 }: FooterProps) {
   return (
@@ -107,38 +103,6 @@ export function Footer({
             </Link>
           ))}
         </nav>
-
-        {/* Email Section - Enhanced with brand colors */}
-        {newsletterEnabled && (
-          <div className="max-w-md mx-auto mb-16">
-            <h3 className="text-sm font-medium text-brand-sage mb-6 text-center tracking-wide uppercase">
-              Stay Connected
-            </h3>
-            <form className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative flex-grow">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-brand-cerulean/60">
-                  <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} className="size-5" />
-                </div>
-                <input
-                  className="w-full pl-11 pr-4 py-3.5 bg-muted/20 border border-brand-cerulean/20 text-foreground placeholder-muted-foreground text-sm focus:ring-2 focus:ring-brand-cerulean/40 focus:border-brand-cerulean/40 hover:border-brand-cerulean/30 transition-all rounded-lg outline-none backdrop-blur-sm"
-                  placeholder="your@email.com"
-                  type="email"
-                />
-              </div>
-              <button
-                className="flex-shrink-0 bg-gradient-to-r from-brand-cerulean to-brand-cerulean-2 hover:from-brand-cerulean-2 hover:to-brand-cerulean text-white px-7 py-3.5 flex items-center justify-center rounded-lg transition-all duration-300 group font-medium shadow-lg shadow-brand-cerulean/20 hover:shadow-brand-cerulean/30 hover:scale-[1.02]"
-                type="button"
-              >
-                <span className="mr-2">Send</span>
-                <HugeiconsIcon
-                  icon={ArrowUpRightIcon}
-                  strokeWidth={2.5}
-                  className="size-4 transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform duration-300"
-                />
-              </button>
-            </form>
-          </div>
-        )}
 
         {/* Social Links - Enhanced with brand accent */}
         <div className="flex justify-center items-center pt-12 border-t border-brand-cerulean/10 relative">
