@@ -38,24 +38,7 @@ export function LocationVoteDropdown({
   const [isVoting, setIsVoting] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [hasVoted, setHasVoted] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Detect mobile with resize listener
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    // Check on mount
-    checkMobile()
-
-    // Add resize listener
-    window.addEventListener('resize', checkMobile)
-
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   // Fetch results when dropdown opens
   useEffect(() => {
@@ -117,145 +100,101 @@ export function LocationVoteDropdown({
     }
   }
 
-  // Detect mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-
   // Handle backdrop click on mobile
   const handleBackdropClick = (e: React.MouseEvent) => {
-    if (isMobile && e.target === e.currentTarget) {
+    if (e.target === e.currentTarget) {
       onClose()
     }
   }
 
-  // Mobile: Full-screen modal
-  if (isMobile) {
+  // Render voting content (shared between mobile and desktop)
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin h-8 w-8 border-4 border-white/30 border-t-white rounded-full" />
+        </div>
+      )
+    }
+
+    if (!results) {
+      return (
+        <div className="text-center py-8 text-white/70">
+          Failed to load results
+        </div>
+      )
+    }
+
     return (
-      <AnimatePresence>
-        {isOpen && (
+      <div className="space-y-1 max-h-[70vh] md:max-h-[400px] overflow-y-auto">
+        {results.locations.map((location) => (
+          <motion.button
+            key={location.slug}
+            onClick={() => handleVote(location.slug)}
+            disabled={isVoting || hasVoted}
+            whileHover={
+              !hasVoted && !isVoting
+                ? { backgroundColor: 'rgba(255, 255, 255, 0.1)', x: 4 }
+                : undefined
+            }
+            whileTap={!hasVoted && !isVoting ? { scale: 0.98 } : undefined}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-white transition-colors ${
+              hasVoted ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+            }`}
+          >
+            <span className="font-medium text-left">{location.name}</span>
+            <span className="text-lg font-semibold text-white/90 ml-4 flex-shrink-0">
+              {isVoting && selectedLocation === location.slug ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                `${location.percentage.toFixed(1)}%`
+              )}
+            </span>
+          </motion.button>
+        ))}
+        {hasVoted && (
+          <div className="mt-4 pt-3 border-t border-white/10 text-center">
+            <p className="text-sm text-white/70">
+              Thanks for voting! Total votes: {results.totalVotes}
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Mobile: Full-screen modal */}
           <motion.div
             ref={dropdownRef}
             variants={dropdownVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
             onClick={handleBackdropClick}
           >
             <GlassCard variant="strong" padding="sm" className="w-full max-w-md">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin h-8 w-8 border-4 border-white/30 border-t-white rounded-full" />
-                </div>
-              ) : results ? (
-                <div className="space-y-1 max-h-[70vh] overflow-y-auto">
-                  {results.locations.map((location) => (
-                    <motion.button
-                      key={location.slug}
-                      onClick={() => handleVote(location.slug)}
-                      disabled={isVoting || hasVoted}
-                      whileHover={
-                        !hasVoted && !isVoting
-                          ? { backgroundColor: 'rgba(255, 255, 255, 0.1)', x: 4 }
-                          : undefined
-                      }
-                      whileTap={!hasVoted && !isVoting ? { scale: 0.98 } : undefined}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-white transition-colors ${
-                        hasVoted ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-                      }`}
-                    >
-                      <span className="font-medium text-left">{location.name}</span>
-                      <span className="text-lg font-semibold text-white/90 ml-4 flex-shrink-0">
-                        {isVoting && selectedLocation === location.slug ? (
-                          <span className="animate-pulse">...</span>
-                        ) : (
-                          `${location.percentage.toFixed(1)}%`
-                        )}
-                      </span>
-                    </motion.button>
-                  ))}
-                  {hasVoted && (
-                    <div className="mt-4 pt-3 border-t border-white/10 text-center">
-                      <p className="text-sm text-white/70">
-                        Thanks for voting! Total votes: {results.totalVotes}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-white/70">
-                  Failed to load results
-                </div>
-              )}
+              {renderContent()}
             </GlassCard>
           </motion.div>
-        )}
-      </AnimatePresence>
-    )
-  }
 
-  // Desktop: Inline accordion
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          ref={dropdownRef}
-          variants={dropdownVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          className="w-full mt-6"
-        >
-          <GlassCard variant="strong" padding="sm" className="max-w-2xl mx-auto">
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin h-8 w-8 border-4 border-white/30 border-t-white rounded-full" />
-              </div>
-            ) : results ? (
-              <div
-                className={`space-y-1 overflow-y-auto ${
-                  isMobile ? 'max-h-[70vh]' : 'max-h-[400px]'
-                }`}
-              >
-                {results.locations.map((location) => (
-                  <motion.button
-                    key={location.slug}
-                    onClick={() => handleVote(location.slug)}
-                    disabled={isVoting || hasVoted}
-                    whileHover={
-                      !hasVoted && !isVoting
-                        ? { backgroundColor: 'rgba(255, 255, 255, 0.1)', x: 4 }
-                        : undefined
-                    }
-                    whileTap={!hasVoted && !isVoting ? { scale: 0.98 } : undefined}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-white transition-colors ${
-                      hasVoted ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-                    }`}
-                  >
-                    <span className="font-medium text-left">{location.name}</span>
-                    <span className="text-lg font-semibold text-white/90 ml-4 flex-shrink-0">
-                      {isVoting && selectedLocation === location.slug ? (
-                        <span className="animate-pulse">...</span>
-                      ) : (
-                        `${location.percentage.toFixed(1)}%`
-                      )}
-                    </span>
-                  </motion.button>
-                ))}
-                {hasVoted && (
-                  <div className="mt-4 pt-3 border-t border-white/10 text-center">
-                    <p className="text-sm text-white/70">
-                      Thanks for voting! Total votes: {results.totalVotes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-white/70">
-                Failed to load results
-              </div>
-            )}
-          </GlassCard>
-        </motion.div>
+          {/* Desktop: Inline accordion */}
+          <motion.div
+            variants={dropdownVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="hidden md:block w-full mt-6"
+          >
+            <GlassCard variant="strong" padding="sm" className="max-w-2xl mx-auto">
+              {renderContent()}
+            </GlassCard>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   )

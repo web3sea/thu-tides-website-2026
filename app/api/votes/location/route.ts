@@ -36,45 +36,62 @@ export async function POST(request: NextRequest) {
       .update(ip)
       .digest('hex')
 
-    // Firestore-based rate limiting check
+    // Firestore-based rate limiting check with transaction for atomicity
     const now = Date.now()
     const rateLimitRef = adminDb.collection('rate_limits').doc(hashedIPForRateLimit)
-    const rateLimitDoc = await rateLimitRef.get()
 
-    if (rateLimitDoc.exists) {
-      const data = rateLimitDoc.data()
-      const count = data?.count || 0
-      const resetTime = data?.resetTime?.toMillis() || 0
+    try {
+      await adminDb.runTransaction(async (transaction) => {
+        const rateLimitDoc = await transaction.get(rateLimitRef)
 
-      // Check if within rate limit window and over limit
-      if (count >= RATE_LIMIT_MAX && now < resetTime) {
+        if (rateLimitDoc.exists) {
+          const data = rateLimitDoc.data()
+          const count = data?.count || 0
+          const resetTime = data?.resetTime?.toMillis() || 0
+
+          // Check if within rate limit window and over limit
+          if (count >= RATE_LIMIT_MAX && now < resetTime) {
+            throw new Error('RATE_LIMITED')
+          }
+
+          // Update rate limit counter
+          if (now >= resetTime) {
+            // Window expired, reset counter
+            transaction.set(rateLimitRef, {
+              count: 1,
+              resetTime: admin.firestore.Timestamp.fromMillis(
+                now + RATE_LIMIT_WINDOW_MS
+              ),
+              ip: hashedIPForRateLimit,
+            })
+          } else {
+            // Increment counter within window
+            transaction.update(rateLimitRef, {
+              count: admin.firestore.FieldValue.increment(1),
+            })
+          }
+        } else {
+          // First request from this IP, create rate limit document
+          transaction.set(rateLimitRef, {
+            count: 1,
+            resetTime: admin.firestore.Timestamp.fromMillis(now + RATE_LIMIT_WINDOW_MS),
+            ip: hashedIPForRateLimit,
+          })
+        }
+      })
+    } catch (rateLimitError) {
+      // Handle rate limit exceeded error from transaction
+      if (
+        rateLimitError instanceof Error &&
+        rateLimitError.message === 'RATE_LIMITED'
+      ) {
         return NextResponse.json(
           { error: 'Too many requests. Please try again later.', success: false },
           { status: 429 }
         )
       }
-
-      // Update rate limit counter
-      if (now >= resetTime) {
-        // Window expired, reset counter
-        await rateLimitRef.set({
-          count: 1,
-          resetTime: admin.firestore.Timestamp.fromMillis(now + RATE_LIMIT_WINDOW_MS),
-          ip: hashedIPForRateLimit,
-        })
-      } else {
-        // Increment counter within window
-        await rateLimitRef.update({
-          count: admin.firestore.FieldValue.increment(1),
-        })
-      }
-    } else {
-      // First request from this IP, create rate limit document
-      await rateLimitRef.set({
-        count: 1,
-        resetTime: admin.firestore.Timestamp.fromMillis(now + RATE_LIMIT_WINDOW_MS),
-        ip: hashedIPForRateLimit,
-      })
+      // Re-throw other transaction errors to outer catch
+      throw rateLimitError
     }
 
     // Parse and validate request body first
