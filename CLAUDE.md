@@ -1,5 +1,38 @@
 # Thu Tides Website - Project Instructions for Claude
 
+---
+
+## 🚨 CRITICAL WORKFLOW REQUIREMENT 🚨
+
+### EVERY PULL REQUEST CHECKLIST (NON-NEGOTIABLE)
+
+Before merging ANY pull request to `main`, you MUST complete this checklist:
+
+```
+PR Merge Checklist:
+☐ 1. Feature branch created and pushed
+☐ 2. Pull request created on GitHub
+☐ 3. 🔴 CODE REVIEW EXECUTED: /code-review-excellence ← DO THIS NOW
+☐ 4. All 🔴 [blocking] issues resolved
+☐ 5. All 🟡 [important] issues resolved
+☐ 6. Tests passing: pnpm test:all
+☐ 7. Build succeeds: pnpm build
+☐ 8. Lint passes: pnpm lint
+☐ 9. Frontend tested with agent-browser (if UI changes)
+☐ 10. Ready to merge
+
+⚠️ STEP 3 IS MANDATORY - DO NOT SKIP CODE REVIEW ⚠️
+```
+
+**Command to invoke code review:**
+```
+/code-review-excellence
+```
+
+**This is MANDATORY. No exceptions. See "Pull Request Workflow Requirements" section below.**
+
+---
+
 ## Business Context
 
 **Thu Tides** is a creative collaboration service that connects boutique coastal hospitality brands with professional photography and video content creation. The business operates at the intersection of travel, art, and hospitality marketing.
@@ -23,6 +56,30 @@
 - Instagram promotion to an engaged audience of travelers
 - Visual storytelling that captures the authentic character of each location
 
+## Key Features
+
+### Location Voting System
+
+An interactive audience engagement feature that allows visitors to vote on the next destination for Thu Tides. This feature:
+
+- **Interactive Dropdown UI:** Badge button in hero section opens animated dropdown with 11 travel destinations
+- **Real-time Vote Tracking:** Firebase Firestore backend with live vote percentages
+- **Privacy-First:** IP addresses are SHA-256 hashed for anonymous vote tracking
+- **Rate Limiting:** 10 requests per minute per IP to prevent spam
+- **Smooth Animations:** Framer Motion "liquid" spring physics for dropdown reveal
+- **Mobile Responsive:** Touch-friendly UI that works across all devices
+
+**Technical Implementation:**
+- Frontend: `components/location-vote-dropdown.tsx` with GlassCard UI
+- Backend: `/app/api/votes/location` (POST) and `/app/api/votes/results` (GET)
+- Database: Firebase Firestore with atomic vote increments (prevents race conditions)
+- Security: Firestore security rules prevent client-side writes; all votes validated server-side
+
+**Locations:**
+Maldives, Misool, Java, Lombok & Sumba, California, Flores, Kalimantan, Namibia, Mauritius, Banggai, Togean
+
+See `IMPLEMENTATION_COMPLETE.md` and `FIREBASE_SETUP.md` for detailed documentation.
+
 ## Tech Stack
 
 | Layer | Technology | Version |
@@ -37,6 +94,7 @@
 | Carousel | Embla Carousel | 8.x |
 | Toast Notifications | Sonner | 2.x |
 | Image Optimization | Sharp | 0.34.x |
+| Backend Services | Firebase (Firestore) | Client: 12.9.0, Admin: 13.6.1 |
 | Package Manager | pnpm | - |
 | Testing | Jest 30 + Puppeteer 24 | - |
 | Browser Automation | agent-browser | via npx |
@@ -60,7 +118,10 @@ app/
   sitemap.ts          # Dynamic sitemap with auto-route discovery
   robots.ts           # Robots.txt configuration
   api/
-    contact/route.ts  # Contact form API (Slack + Brevo integrations)
+    contact/route.ts         # Contact form API (Slack + Brevo integrations)
+    votes/
+      location/route.ts      # POST endpoint for vote submission with rate limiting
+      results/route.ts       # GET endpoint for fetching poll results
   components/
     GoogleAnalytics.tsx
     GoogleTag.tsx
@@ -69,9 +130,10 @@ app/
   giga/page.tsx         # Demo/prototype page (excluded from sitemap)
 
 components/
-  navigation.tsx        # Main nav with desktop dropdown + mobile drawer
-  giga-hero.tsx         # Hero section with background image + text hover effect
-  giga-layout.tsx       # Page layout wrapper (nav + footer)
+  navigation.tsx             # Main nav with desktop dropdown + mobile drawer
+  giga-hero.tsx              # Hero section with voting button + text hover effect
+  location-vote-dropdown.tsx # Interactive voting dropdown with Firebase integration
+  giga-layout.tsx            # Page layout wrapper (nav + footer)
   services-section.tsx  # Services overview
   ocean-quote.tsx       # Decorative quote section
   portfolio-section.tsx # Portfolio gallery
@@ -89,6 +151,16 @@ components/
 lib/
   utils.ts              # cn() utility function
   animations.ts         # Framer Motion animation constants and helpers
+  firebase.ts           # Firebase client SDK configuration
+  firebase-admin.ts     # Firebase Admin SDK for server-side operations
+
+types/
+  votes.ts              # TypeScript interfaces for voting system
+
+scripts/
+  seed-firestore.js            # Seed Firestore with initial location data
+  validate-firebase-config.js  # Validate Firebase environment variables
+  firebase-setup-wizard.sh     # Interactive Firebase setup script
 
 product/                # Product documentation
   overview.md           # Product description, audience, features, brand positioning
@@ -98,6 +170,16 @@ product/                # Product documentation
 tests/
   smoke.test.ts         # Basic infrastructure validation with Puppeteer
   responsive.test.ts    # Responsive UI testing at mobile/tablet/desktop breakpoints
+
+test-voting-responsive.js  # Standalone voting system responsive tests (Puppeteer)
+test-responsive-simple.js  # Simplified responsive test runner
+
+docs/
+  FIREBASE_SETUP.md              # Complete Firebase setup guide
+  IMPLEMENTATION_COMPLETE.md     # Location voting system documentation
+  VOTING_SYSTEM_TESTING.md       # Testing guide for voting feature
+  RACE_CONDITION_FIX.md          # Technical notes on Firestore transaction fix
+  QUICK_START.md                 # Quick start guide for developers
 
 public/                 # Static assets (images, videos, logos, favicons)
 ```
@@ -138,6 +220,22 @@ public/                 # Static assets (images, videos, logos, favicons)
 4. API route adds contact to Brevo list + sends welcome email
 5. Success/error toast displayed via Sonner
 
+### Firebase Firestore - Location Voting System
+
+- **Project:** thu-tides-voting
+- **Database:** Firestore (NoSQL document database)
+- **Client SDK:** `lib/firebase.ts` - browser-side voting UI
+- **Admin SDK:** `lib/firebase-admin.ts` - server-side vote validation
+- **Collections:**
+  - `votes` - stores vote counts per location (11 documents)
+  - `voter_ips` - tracks hashed IP addresses to prevent duplicate voting
+- **Security:** SHA-256 IP hashing, Firestore security rules, rate limiting (10/min per IP)
+- **API Endpoints:**
+  - `GET /api/votes/results` - fetch current vote percentages (cached 60s)
+  - `POST /api/votes/location` - submit vote with validation
+
+See `FIREBASE_SETUP.md` for complete setup instructions and `IMPLEMENTATION_COMPLETE.md` for feature documentation.
+
 ## Environment Variables
 
 All environment variables are stored in `.env.local` (gitignored). Required variables:
@@ -156,9 +254,20 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 BREVO_API_KEY=xkeysib-...
 BREVO_LIST_ID=101
 BREVO_WELCOME_TEMPLATE_ID=    # Optional; if empty, welcome email is skipped
+
+# Firebase Client SDK (from Firebase Console → Project Settings)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=thu-tides-voting.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=thu-tides-voting
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=thu-tides-voting.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# Firebase Admin SDK (base64 encoded service account key)
+FIREBASE_SERVICE_ACCOUNT_KEY=your_base64_encoded_key
 ```
 
-Note: `NEXT_PUBLIC_` prefixed variables are exposed to the browser. Server-only secrets (Slack, Brevo) must NOT use this prefix.
+Note: `NEXT_PUBLIC_` prefixed variables are exposed to the browser. Server-only secrets (Slack, Brevo, Firebase Admin) must NOT use this prefix.
 
 ## Deployment
 
@@ -167,6 +276,7 @@ Note: `NEXT_PUBLIC_` prefixed variables are exposed to the browser. Server-only 
 - **Vercel Project:** thu-tides-website-2026
 - **Team:** coraltriangle-uat
 - **Auto-deploys:** Pushes to `main` branch trigger production deployments
+- **⚠️ BEFORE MERGING TO MAIN:** MUST run `/code-review-excellence` on ALL PRs (see Pull Request Workflow Requirements)
 - Environment variables must be configured in Vercel dashboard for production/preview
 
 ## Development Workflows
@@ -183,6 +293,11 @@ pnpm test:smoke       # Run smoke tests only
 pnpm test:responsive  # Run responsive UI tests only
 pnpm test:all         # Run all tests in tests/ directory
 pnpm test:dev         # Start dev server + run responsive tests concurrently
+
+# Firebase setup and utilities
+node scripts/validate-firebase-config.js  # Validate Firebase env vars
+node scripts/seed-firestore.js            # Seed Firestore with location data
+bash scripts/firebase-setup-wizard.sh     # Interactive Firebase setup
 ```
 
 ### Testing Setup
@@ -256,6 +371,192 @@ The contact form in `CollabSection` is a critical user interaction point. Use ag
 3. Submit and verify success/error handling
 4. Check console logs for API errors
 5. Verify toast notifications appear correctly
+
+## Pull Request Workflow Requirements
+
+⚠️ **CRITICAL: READ THIS BEFORE CREATING ANY PULL REQUEST** ⚠️
+
+### 🔴 MANDATORY: Code Review MUST Run BEFORE Merge
+
+**EVERY SINGLE PULL REQUEST MUST BE REVIEWED USING THE `/code-review-excellence` SKILL.**
+
+**This is NON-NEGOTIABLE. No exceptions. No shortcuts.**
+
+---
+
+### ✅ Standard PR Workflow (FOLLOW EXACTLY)
+
+```
+1. Create feature branch from `main`
+   git checkout -b feature/your-feature-name
+
+2. Implement changes with tests
+
+3. Run automated tests locally
+   pnpm lint
+   pnpm build
+   pnpm test:all
+
+4. Push branch and create PR
+   git push -u origin feature/your-feature-name
+   gh pr create --title "..." --body "..."
+
+5. 🔴 IMMEDIATELY INVOKE CODE REVIEW SKILL 🔴
+   /code-review-excellence
+
+   ⚠️ DO THIS AS SOON AS PR IS CREATED ⚠️
+   ⚠️ DO NOT SKIP THIS STEP ⚠️
+   ⚠️ DO NOT MERGE WITHOUT REVIEW ⚠️
+
+6. Address ALL feedback from code review
+   - Fix all 🔴 [blocking] issues
+   - Fix all 🟡 [important] issues
+   - Consider 💡 [suggestions]
+
+7. Re-run tests after fixes
+   pnpm test:all
+
+8. Only merge after:
+   ✅ Code review approved
+   ✅ All tests passing
+   ✅ All blocking issues resolved
+```
+
+---
+
+### How to Invoke Code Review (MEMORIZE THIS)
+
+**Command:**
+```
+/code-review-excellence
+```
+
+**Or with branch name:**
+```bash
+Skill tool with:
+- skill: "code-review-excellence"
+- args: "feature/your-branch-name"
+```
+
+**When to invoke:** IMMEDIATELY after creating the PR, BEFORE any merge consideration.
+
+---
+
+### What Code Review Checks
+
+The `/code-review-excellence` skill provides comprehensive review:
+- ✅ Code quality and maintainability
+- ✅ Security vulnerabilities
+- ✅ Performance issues
+- ✅ Test coverage completeness
+- ✅ Documentation quality
+- ✅ Best practices adherence
+- ✅ TypeScript type safety
+- ✅ React patterns and hooks usage
+- ✅ Accessibility compliance
+- ✅ Error handling
+
+---
+
+### ⚠️ Consequences of Skipping Code Review
+
+**DO NOT merge PRs without code review.** This leads to:
+- ❌ Bugs slipping into production
+- ❌ Security vulnerabilities
+- ❌ Performance regressions
+- ❌ Poor code quality accumulation
+- ❌ Missing test coverage
+- ❌ Technical debt buildup
+
+**The code review skill exists to PREVENT these problems. USE IT EVERY TIME.**
+
+### MANDATORY: Frontend Testing with agent-browser
+
+**Every PR that includes frontend changes (components, pages, UI) MUST be tested interactively with agent-browser in headed mode.**
+
+Required testing steps:
+1. Start dev server: `pnpm dev`
+2. Launch agent-browser in headed mode: `agent-browser --headed open http://localhost:3000`
+3. Test all modified components/pages:
+   - Take snapshot with `agent-browser --headed snapshot -i` to identify interactive elements
+   - Test user interactions (clicks, form fills, navigation)
+   - Verify responsive behavior at mobile/tablet/desktop viewports
+   - Check console logs for errors: `agent-browser --headed console`
+4. Take screenshots of key states: `agent-browser --headed screenshot screenshots/pr-[feature-name].png`
+5. Document test results in PR description
+
+**Critical test areas:**
+- Contact form submission and validation (`#contact`)
+- Location voting dropdown functionality (hero section badge button)
+- Navigation menu (desktop dropdown + mobile drawer)
+- Portfolio gallery interactions
+- All links and anchor navigation
+
+### Automated Test Requirements
+
+Before creating a PR:
+```bash
+pnpm lint              # Must pass without errors
+pnpm build             # Must build successfully
+pnpm test:all          # All tests must pass
+```
+
+If adding new features:
+- Add unit tests for new functions/utilities
+- Add integration tests for API routes
+- Add E2E tests for critical user flows
+
+## Deployment Monitoring
+
+### MANDATORY: Vercel Deployment Verification
+
+**After every deployment to production (merge to main), deployment logs MUST be checked for errors.**
+
+Process:
+1. Monitor Vercel deployment in real-time during build
+2. Check deployment logs in Vercel dashboard immediately after completion
+3. Verify build succeeded without warnings
+4. Test production URL: https://thutides.com
+5. Check browser console on production for runtime errors
+6. Verify all integrations working (analytics, Firebase, contact form)
+
+**Vercel Dashboard Checks:**
+- Build logs: No errors or warnings
+- Function logs: No runtime errors in `/api/*` routes
+- Analytics: Page views being tracked
+- Performance: Core Web Vitals within targets
+
+**Production Smoke Tests:**
+```bash
+# Use agent-browser to test production
+agent-browser --headed open https://thutides.com
+
+# Verify critical functionality
+agent-browser --headed snapshot -i
+agent-browser --headed console  # Check for errors
+
+# Test voting system
+# (Click badge button, verify dropdown loads with percentages)
+
+# Test contact form
+# (Navigate to #contact, fill form, submit - verify toast notification)
+```
+
+**Rollback Procedure:**
+If deployment logs show errors or production tests fail:
+1. Immediately revert to previous deployment in Vercel dashboard
+2. Investigate error in deployment logs
+3. Fix issue in feature branch
+4. Re-test locally before re-deploying
+
+### Environment Variable Changes
+
+When adding/modifying environment variables:
+1. Update `.env.local` locally
+2. Update Vercel dashboard: Project Settings → Environment Variables
+3. Set for all environments: Production, Preview, Development
+4. Trigger redeploy after adding variables
+5. Verify new variables in deployment logs
 
 ## Coding Standards and Patterns
 
