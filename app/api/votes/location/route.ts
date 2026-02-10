@@ -51,20 +51,7 @@ export async function POST(request: NextRequest) {
       limit.count++
     }
 
-    // Hash IP for privacy
-    const hashedIP = crypto.createHash('sha256').update(ip).digest('hex')
-
-    // Check if IP has already voted
-    const ipDoc = await adminDb.collection('vote_ips').doc(hashedIP).get()
-
-    if (ipDoc.exists) {
-      return NextResponse.json(
-        { error: 'You have already voted', success: false },
-        { status: 409 }
-      )
-    }
-
-    // Parse and validate request body
+    // Parse and validate request body first
     const body: VoteRequest = await request.json()
     const { location } = body
 
@@ -75,24 +62,49 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Atomic increment vote count in Firestore
-    await adminDb
-      .collection('votes')
-      .doc(location)
-      .update({
-        count: admin.firestore.FieldValue.increment(1),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      })
+    // Hash IP for privacy
+    const hashedIP = crypto.createHash('sha256').update(ip).digest('hex')
 
-    // Record IP vote
-    await adminDb
-      .collection('vote_ips')
-      .doc(hashedIP)
-      .set({
-        ip: hashedIP,
-        location,
-        votedAt: admin.firestore.FieldValue.serverTimestamp(),
+    // Use transaction to atomically check if voted and record vote
+    // This prevents race condition where two simultaneous requests could both pass the check
+    try {
+      await adminDb.runTransaction(async (transaction) => {
+        const ipDocRef = adminDb.collection('vote_ips').doc(hashedIP)
+        const ipDoc = await transaction.get(ipDocRef)
+
+        // Check if IP has already voted
+        if (ipDoc.exists) {
+          throw new Error('ALREADY_VOTED')
+        }
+
+        // Record IP vote
+        transaction.set(ipDocRef, {
+          ip: hashedIP,
+          location,
+          votedAt: admin.firestore.FieldValue.serverTimestamp(),
+        })
+
+        // Atomic increment vote count
+        const voteDocRef = adminDb.collection('votes').doc(location)
+        transaction.update(voteDocRef, {
+          count: admin.firestore.FieldValue.increment(1),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        })
       })
+    } catch (transactionError) {
+      // Handle "already voted" error from transaction
+      if (
+        transactionError instanceof Error &&
+        transactionError.message === 'ALREADY_VOTED'
+      ) {
+        return NextResponse.json(
+          { error: 'You have already voted', success: false },
+          { status: 409 }
+        )
+      }
+      // Re-throw other transaction errors to outer catch
+      throw transactionError
+    }
 
     // Fetch updated results
     const votesSnapshot = await adminDb.collection('votes').get()
