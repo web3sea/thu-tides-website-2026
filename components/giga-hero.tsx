@@ -1,11 +1,13 @@
 'use client'
 
 import * as React from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { TextHoverEffect } from '@/components/ui/text-hover-effect'
+import { LocationVoteDropdown } from '@/components/location-vote-dropdown'
 import { cn } from '@/lib/utils'
 
 export interface GigaHeroProps {
@@ -57,12 +59,33 @@ export function GigaHero({
   useHoverEffect = false,
   hoverEffectText,
 }: GigaHeroProps) {
-  const [triggerFlicker, setTriggerFlicker] = React.useState(false);
+  const [triggerFlicker, setTriggerFlicker] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const badgeRef = useRef<HTMLButtonElement>(null)
 
   const handleBadgeClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setTriggerFlicker(prev => !prev); // Toggle triggers animation via useEffect
-  };
+    e.preventDefault()
+    setTriggerFlicker((prev) => !prev) // Toggle triggers animation via useEffect
+    setDropdownOpen((prev) => !prev)
+  }
+
+  // Click-outside handler to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        badgeRef.current &&
+        !badgeRef.current.contains(event.target as Node) &&
+        dropdownOpen
+      ) {
+        setDropdownOpen(false)
+      }
+    }
+
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [dropdownOpen])
   return (
     <div
       className={cn(
@@ -141,18 +164,37 @@ export function GigaHero({
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <button
+              ref={badgeRef}
               onClick={handleBadgeClick}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group cursor-pointer"
-              aria-label={`${badge.text} - Click to animate logo`}
+              aria-label={`${badge.text} - Click to vote`}
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">
                 {badge.text}
               </span>
-              <svg className="w-3 h-3 text-white/70 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className={cn(
+                  'w-3 h-3 text-white/70 transition-transform',
+                  dropdownOpen ? 'rotate-90' : 'group-hover:translate-x-1'
+                )}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
+            <LocationVoteDropdown
+              isOpen={dropdownOpen}
+              onClose={() => setDropdownOpen(false)}
+              triggerRef={badgeRef}
+            />
           </motion.div>
         )}
 
