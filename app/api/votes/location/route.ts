@@ -1,7 +1,7 @@
 // POST endpoint for vote submission with IP-based rate limiting
 
 import { NextRequest, NextResponse } from 'next/server'
-import { adminDb, admin } from '@/lib/firebase-admin'
+import { getAdminDb, admin } from '@/lib/firebase-admin'
 import crypto from 'crypto'
 import type { VoteRequest, VoteResponse } from '@/types/votes'
 
@@ -25,6 +25,9 @@ const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW_MS = 60000 // 1 minute
 
 export async function POST(request: NextRequest) {
+  // Get Firebase instance with lazy initialization
+  const adminDb = getAdminDb()
+
   // Check if Firebase is initialized
   if (!adminDb) {
     return NextResponse.json(

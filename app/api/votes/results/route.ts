@@ -1,10 +1,13 @@
 // GET endpoint for fetching current poll results
 
 import { NextResponse } from 'next/server'
-import { adminDb } from '@/lib/firebase-admin'
+import { getAdminDb } from '@/lib/firebase-admin'
 import type { VoteResults } from '@/types/votes'
 
 export async function GET() {
+  // Get Firebase instance with lazy initialization
+  const adminDb = getAdminDb()
+
   // Check if Firebase is initialized
   if (!adminDb) {
     return NextResponse.json(
