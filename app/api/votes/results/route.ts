@@ -17,9 +17,12 @@ export async function GET() {
     )
   }
 
+  // Create non-null reference for TypeScript
+  const db = adminDb
+
   try {
     // Fetch all vote documents from Firestore
-    const votesSnapshot = await adminDb.collection('votes').get()
+    const votesSnapshot = await db.collection('votes').get()
 
     // Map documents to location objects
     const locations = votesSnapshot.docs.map((doc) => {

@@ -26,7 +26,7 @@ const RATE_LIMIT_WINDOW_MS = 60000 // 1 minute
 
 export async function POST(request: NextRequest) {
   // Check if Firebase is initialized
-  if (!adminDb) {
+  if (!db) {
     return NextResponse.json(
       {
         success: false,
@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
       { status: 503 }
     )
   }
+
+  // Create non-null reference for TypeScript
+  const db = db
 
   try {
     // Extract IP address from headers
@@ -49,10 +52,10 @@ export async function POST(request: NextRequest) {
 
     // Firestore-based rate limiting check with transaction for atomicity
     const now = Date.now()
-    const rateLimitRef = adminDb.collection('rate_limits').doc(hashedIPForRateLimit)
+    const rateLimitRef = db.collection('rate_limits').doc(hashedIPForRateLimit)
 
     try {
-      await adminDb.runTransaction(async (transaction) => {
+      await db.runTransaction(async (transaction) => {
         const rateLimitDoc = await transaction.get(rateLimitRef)
 
         if (rateLimitDoc.exists) {
@@ -122,8 +125,8 @@ export async function POST(request: NextRequest) {
     // Use transaction to atomically check if voted and record vote
     // This prevents race condition where two simultaneous requests could both pass the check
     try {
-      await adminDb.runTransaction(async (transaction) => {
-        const ipDocRef = adminDb.collection('vote_ips').doc(hashedIP)
+      await db.runTransaction(async (transaction) => {
+        const ipDocRef = db.collection('vote_ips').doc(hashedIP)
         const ipDoc = await transaction.get(ipDocRef)
 
         // Check if IP has already voted
@@ -139,7 +142,7 @@ export async function POST(request: NextRequest) {
         })
 
         // Atomic increment vote count
-        const voteDocRef = adminDb.collection('votes').doc(location)
+        const voteDocRef = db.collection('votes').doc(location)
         transaction.update(voteDocRef, {
           count: admin.firestore.FieldValue.increment(1),
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -161,7 +164,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch updated results
-    const votesSnapshot = await adminDb.collection('votes').get()
+    const votesSnapshot = await db.collection('votes').get()
 
     const locations = votesSnapshot.docs.map((doc) => {
       const data = doc.data()
