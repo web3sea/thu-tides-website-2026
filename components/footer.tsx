@@ -77,14 +77,32 @@ export function Footer({
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-cerulean/30 to-transparent" />
 
       <div className="max-w-5xl mx-auto px-6 py-16 lg:py-24 relative">
-        {/* Logo - Centered with brand-themed styling */}
-        <div className="flex justify-center mb-16">
+        {/* Logo - Large centerpiece with creative water texture effect */}
+        <div className="flex justify-center mb-20 relative">
+          {/* Watermark texture behind logo */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden">
+            <div className="text-[20rem] font-black text-brand-cerulean/50 select-none scale-150">
+              TT
+            </div>
+          </div>
+
+          {/* Radial gradient splash effect */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-[600px] h-[600px] bg-gradient-radial from-brand-cerulean/10 via-brand-cerulean/5 to-transparent rounded-full blur-3xl" />
+          </div>
+
+          {/* Subtle wave pattern overlay */}
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse" style={{ animationDuration: '8s' }} />
+
           <Link
             href="/"
-            className="relative group"
+            className="relative group z-10"
           >
-            <div className="absolute inset-0 bg-brand-cerulean/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full scale-150" />
-            <div className="relative text-foreground group-hover:text-brand-cerulean transition-colors duration-500">
+            {/* Glow effect on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-cerulean/30 via-brand-cerulean-2/20 to-brand-sage/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full scale-[2]" />
+
+            {/* Logo - Much larger scale */}
+            <div className="relative text-foreground group-hover:text-brand-cerulean transition-colors duration-500 transform scale-[2.5] md:scale-[3]">
               <Logo />
             </div>
           </Link>
