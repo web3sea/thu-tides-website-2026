@@ -38,13 +38,17 @@ if (!admin.apps.length) {
       throw error
     }
   } else {
-    throw new Error(
-      'FIREBASE_SERVICE_ACCOUNT_KEY environment variable is required in production. ' +
-      'For development, you can use Application Default Credentials (gcloud auth application-default login)'
-    )
+    // Build-time: Don't throw error, just log warning
+    // This allows the build to succeed without Firebase credentials
+    console.warn('⚠️  Firebase Admin not initialized - FIREBASE_SERVICE_ACCOUNT_KEY not set')
+    console.warn('⚠️  Voting system will not function until credentials are configured')
   }
 }
 
-const adminDb = admin.firestore()
+// Only export adminDb if Firebase is initialized
+let adminDb: admin.firestore.Firestore | null = null
+if (admin.apps.length > 0) {
+  adminDb = admin.firestore()
+}
 
 export { admin, adminDb }

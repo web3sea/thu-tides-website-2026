@@ -5,6 +5,18 @@ import { adminDb } from '@/lib/firebase-admin'
 import type { VoteResults } from '@/types/votes'
 
 export async function GET() {
+  // Check if Firebase is initialized
+  if (!adminDb) {
+    return NextResponse.json(
+      {
+        locations: [],
+        totalVotes: 0,
+        error: 'Voting system temporarily unavailable'
+      },
+      { status: 503 }
+    )
+  }
+
   try {
     // Fetch all vote documents from Firestore
     const votesSnapshot = await adminDb.collection('votes').get()

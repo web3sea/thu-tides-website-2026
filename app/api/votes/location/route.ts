@@ -25,6 +25,17 @@ const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW_MS = 60000 // 1 minute
 
 export async function POST(request: NextRequest) {
+  // Check if Firebase is initialized
+  if (!adminDb) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Voting system temporarily unavailable. Firebase credentials not configured.'
+      },
+      { status: 503 }
+    )
+  }
+
   try {
     // Extract IP address from headers
     const forwardedFor = request.headers.get('x-forwarded-for')
