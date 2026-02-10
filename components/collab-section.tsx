@@ -18,11 +18,25 @@ export function CollabSection() {
     // Store form reference before async operations
     const form = e.currentTarget
     const formData = new FormData(form)
+
+    // Trim all inputs to prevent whitespace-only submissions
+    const emailTrimmed = (formData.get('email') as string)?.trim() || ''
+    const whatsappTrimmed = (formData.get('whatsapp') as string)?.trim() || ''
+
     const data = {
       name: formData.get('name') as string,
-      whatsapp: formData.get('whatsapp') as string,
-      email: formData.get('email') as string,
+      whatsapp: whatsappTrimmed,
+      email: emailTrimmed,
       inquiry: formData.get('inquiry') as string,
+    }
+
+    // Validate that at least one contact method is provided
+    if (!emailTrimmed && !whatsappTrimmed) {
+      toast.error("Please provide either an email address or WhatsApp number.", {
+        position: "bottom-right",
+      })
+      setIsSubmitting(false)
+      return
     }
 
     try {
@@ -94,7 +108,7 @@ export function CollabSection() {
 
                   <div>
                     <label htmlFor="whatsapp" className="block text-sm font-medium text-white/90 mb-2">
-                      WhatsApp
+                      WhatsApp <span className="text-white/60 text-xs">(required if no email)</span>
                     </label>
                     <input
                       type="tel"
@@ -108,13 +122,12 @@ export function CollabSection() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                    Email
+                    Email <span className="text-white/60 text-xs">(required if no WhatsApp)</span>
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
                     placeholder="your@email.com"
                   />
