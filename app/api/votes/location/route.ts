@@ -20,9 +20,6 @@ const VALID_LOCATIONS = [
   'togean',
 ]
 
-// In-memory rate limiting map (IP -> { count, resetTime })
-const rateLimit = new Map<string, { count: number; resetTime: number }>()
-
 // Rate limit: 10 requests per minute per IP
 const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW_MS = 60000 // 1 minute
@@ -33,22 +30,51 @@ export async function POST(request: NextRequest) {
     const forwardedFor = request.headers.get('x-forwarded-for')
     const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown'
 
-    // Rate limiting check
+    // Hash IP for rate limiting (consistent with vote tracking)
+    const hashedIPForRateLimit = crypto
+      .createHash('sha256')
+      .update(ip)
+      .digest('hex')
+
+    // Firestore-based rate limiting check
     const now = Date.now()
-    const limit = rateLimit.get(ip)
+    const rateLimitRef = adminDb.collection('rate_limits').doc(hashedIPForRateLimit)
+    const rateLimitDoc = await rateLimitRef.get()
 
-    if (limit && limit.count >= RATE_LIMIT_MAX && now < limit.resetTime) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.', success: false },
-        { status: 429 }
-      )
-    }
+    if (rateLimitDoc.exists) {
+      const data = rateLimitDoc.data()
+      const count = data?.count || 0
+      const resetTime = data?.resetTime?.toMillis() || 0
 
-    // Update rate limit counter
-    if (!limit || now >= limit.resetTime) {
-      rateLimit.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS })
+      // Check if within rate limit window and over limit
+      if (count >= RATE_LIMIT_MAX && now < resetTime) {
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again later.', success: false },
+          { status: 429 }
+        )
+      }
+
+      // Update rate limit counter
+      if (now >= resetTime) {
+        // Window expired, reset counter
+        await rateLimitRef.set({
+          count: 1,
+          resetTime: admin.firestore.Timestamp.fromMillis(now + RATE_LIMIT_WINDOW_MS),
+          ip: hashedIPForRateLimit,
+        })
+      } else {
+        // Increment counter within window
+        await rateLimitRef.update({
+          count: admin.firestore.FieldValue.increment(1),
+        })
+      }
     } else {
-      limit.count++
+      // First request from this IP, create rate limit document
+      await rateLimitRef.set({
+        count: 1,
+        resetTime: admin.firestore.Timestamp.fromMillis(now + RATE_LIMIT_WINDOW_MS),
+        ip: hashedIPForRateLimit,
+      })
     }
 
     // Parse and validate request body first
@@ -62,8 +88,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Hash IP for privacy
-    const hashedIP = crypto.createHash('sha256').update(ip).digest('hex')
+    // Use the same hashed IP for vote tracking
+    const hashedIP = hashedIPForRateLimit
 
     // Use transaction to atomically check if voted and record vote
     // This prevents race condition where two simultaneous requests could both pass the check

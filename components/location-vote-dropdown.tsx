@@ -38,7 +38,24 @@ export function LocationVoteDropdown({
   const [isVoting, setIsVoting] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [hasVoted, setHasVoted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Detect mobile with resize listener
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    // Check on mount
+    checkMobile()
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile)
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Fetch results when dropdown opens
   useEffect(() => {
