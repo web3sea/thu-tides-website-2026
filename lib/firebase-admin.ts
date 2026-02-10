@@ -5,6 +5,8 @@ import * as admin from 'firebase-admin'
 // Initialize Firebase Admin with singleton pattern
 if (!admin.apps.length) {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
+  console.log('[Firebase Admin] Initializing... NODE_ENV:', process.env.NODE_ENV)
+  console.log('[Firebase Admin] FIREBASE_SERVICE_ACCOUNT_KEY present:', !!serviceAccountKey)
 
   if (serviceAccountKey) {
     // Method 1: Use service account key (production)
