@@ -27,6 +27,13 @@
 
 # image backups (from optimization script)
 /backup-images
+/public/backup-originals
+
+# large video files
+*.m4v
+*.mov
+*.avi
+/public/*.mp4
 
 # debug
 npm-debug.log*
