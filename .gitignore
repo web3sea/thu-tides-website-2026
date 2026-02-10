@@ -35,6 +35,11 @@
 *.avi
 /public/*.mp4
 
+# Exception: allow optimized video assets
+!public/website_banner_optimized.mp4
+!public/website_banner_optimized.webm
+!public/website_banner_poster.webp
+
 # debug
 npm-debug.log*
 yarn-debug.log*
