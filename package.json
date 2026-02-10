@@ -51,5 +51,10 @@
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "wait-on": "^9.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
   }
 }
