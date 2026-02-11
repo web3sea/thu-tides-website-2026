@@ -18,7 +18,6 @@ import {
   BrowserContext,
   elementExists,
 } from './helpers/test-setup';
-import { VALID_LOCATIONS } from './fixtures/test-data';
 
 describe('Voting System E2E Tests', () => {
   let context: BrowserContext;

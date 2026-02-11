@@ -11,7 +11,7 @@
  * - Firebase integration
  */
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import { VALID_LOCATIONS, INVALID_LOCATION } from '../fixtures/test-data';
 
 const API_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
