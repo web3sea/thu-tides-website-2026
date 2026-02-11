@@ -87,7 +87,7 @@ export async function waitForToast(
     );
 
     return toastText.trim();
-  } catch (error) {
+  } catch {
     throw new Error('Toast notification did not appear within timeout');
   }
 }
