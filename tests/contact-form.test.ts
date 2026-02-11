@@ -134,9 +134,11 @@ describe('Contact Form E2E Tests', () => {
 
       // Fill form with invalid email
       await fillContactForm(context.page, {
-        ...INVALID_EMAIL_FORMAT,
+        name: 'Invalid Email User',
         email: 'not-an-email',
-      } as any);
+        whatsapp: '',
+        inquiry: 'Test inquiry',
+      });
 
       await submitContactForm(context.page);
 

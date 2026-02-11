@@ -136,7 +136,7 @@ describe('Contact API Tests', () => {
 
       const brevoScope = nock('https://api.brevo.com')
         .post('/v3/contacts')
-        .reply((uri, requestBody: any) => {
+        .reply((uri, requestBody: { email: string; attributes: { FIRSTNAME: string } }) => {
           // Verify trimmed values are sent
           expect(requestBody.email).toBe('test@example.com');
           expect(requestBody.attributes.FIRSTNAME).toBe('Test User');
@@ -346,7 +346,7 @@ describe('Contact API Tests', () => {
         .reply(200, 'ok');
 
       const brevoScope = nock('https://api.brevo.com')
-        .post('/v3/contacts', (body: any) => {
+        .post('/v3/contacts', (body: { email: string; attributes: { FIRSTNAME: string }; listIds: number[]; updateEnabled: boolean }) => {
           // Verify contact data
           expect(body.email).toBe('jane@example.com');
           expect(body.attributes.FIRSTNAME).toBe('Jane Smith');
@@ -385,7 +385,7 @@ describe('Contact API Tests', () => {
       const brevoScope = nock('https://api.brevo.com')
         .post('/v3/contacts')
         .reply(200, { id: 789 })
-        .post('/v3/smtp/email', (body: any) => {
+        .post('/v3/smtp/email', (body: { to: Array<{ email: string; name: string }>; templateId: number; params: { NAME: string } }) => {
           // Verify email data
           expect(body.to[0].email).toBe('bob@example.com');
           expect(body.to[0].name).toBe('Bob Johnson');

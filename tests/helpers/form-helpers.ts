@@ -108,12 +108,8 @@ export async function hasSuccessToast(page: Page): Promise<boolean> {
  * Check if error toast is displayed
  */
 export async function hasErrorToast(page: Page): Promise<boolean> {
-  try {
-    const exists = await elementExists(page, '[data-sonner-toast][data-type="error"]', 3000);
-    return exists;
-  } catch {
-    return false;
-  }
+  const exists = await elementExists(page, '[data-sonner-toast][data-type="error"]', 3000);
+  return exists;
 }
 
 /**

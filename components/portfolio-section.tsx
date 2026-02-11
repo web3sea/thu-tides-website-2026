@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { H2 } from '@/components/typography'
+import { H2, P } from '@/components/typography'
 import { PortfolioItem } from '@/components/portfolio-item'
 import { portfolioItems, propertyTypes as importedPropertyTypes } from '@/data/portfolio'
 
