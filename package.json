@@ -12,6 +12,9 @@
     "test:responsive": "jest tests/responsive.test.ts",
     "test:responsive:watch": "jest tests/responsive.test.ts --watch",
     "test:dev": "concurrently \"pnpm dev\" \"wait-on http://localhost:3000 && pnpm test:responsive\"",
+    "test:contact": "jest tests/contact-form.test.ts tests/api/contact.test.ts",
+    "test:contact:e2e": "jest tests/contact-form.test.ts",
+    "test:contact:api": "jest tests/api/contact.test.ts",
     "test:all": "jest tests/"
   },
   "dependencies": {
@@ -47,6 +50,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jest": "^30.2.0",
+    "nock": "^14.0.11",
     "puppeteer": "^24.37.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4",
