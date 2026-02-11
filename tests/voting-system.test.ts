@@ -172,10 +172,16 @@ describe('Voting System E2E Tests', () => {
 
       // Click first location button
       const locationButtons = await context.page.$$('button');
-      const voteButton = locationButtons.find(async (btn) => {
+
+      // Find button with percentage text (more reliable than async find)
+      let voteButton;
+      for (const btn of locationButtons) {
         const text = await context.page.evaluate(el => el.textContent, btn);
-        return /\d+\.\d+%/.test(text || '');
-      });
+        if (/\d+\.\d+%/.test(text || '')) {
+          voteButton = btn;
+          break;
+        }
+      }
 
       if (voteButton) {
         await voteButton.click();
