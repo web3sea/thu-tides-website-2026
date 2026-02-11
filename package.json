@@ -15,6 +15,9 @@
     "test:contact": "jest tests/contact-form.test.ts tests/api/contact.test.ts",
     "test:contact:e2e": "jest tests/contact-form.test.ts",
     "test:contact:api": "jest tests/api/contact.test.ts",
+    "test:votes": "jest tests/voting-system.test.ts tests/api/votes.test.ts",
+    "test:votes:e2e": "jest tests/voting-system.test.ts",
+    "test:votes:api": "jest tests/api/votes.test.ts",
     "test:all": "jest tests/"
   },
   "dependencies": {

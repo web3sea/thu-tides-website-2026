@@ -142,7 +142,7 @@ describe('Contact Form E2E Tests', () => {
       await submitContactForm(context.page);
 
       // Wait a moment for potential API call
-      await context.page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Should either show HTML5 validation or error toast
       const hasError = await hasErrorToast(context.page);
@@ -204,7 +204,7 @@ describe('Contact Form E2E Tests', () => {
       await waitForToast(context.page);
 
       // Wait a moment for form reset
-      await context.page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Check if form is cleared
       const isCleared = await isFormCleared(context.page);
