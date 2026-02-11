@@ -14,21 +14,21 @@ const testimonials: Testimonial[] = [
     id: 'reconnect-resort',
     property: "Reconnect Resort",
     location: "Buka Buka Island, Indonesia",
-    logo: "/logo_reconnect.png",
+    logo: "/logo_reconnect.webp",
     website: "https://www.reconnect.id/",
   },
   {
     id: 'evolution-divers',
     property: "Evolution Divers",
     location: "Malapascua, Philippines",
-    logo: "/logo_evolution.png",
+    logo: "/logo_evolution.webp",
     website: "https://evolution.com.ph/",
   },
   {
     id: 'munduk-heaven',
     property: "Munduk Heaven",
     location: "Bali, Indonesia",
-    logo: "/logo_munduk_heaven.png",
+    logo: "/logo_munduk_heaven.webp",
     website: "https://mundukheavenluxuryvillas.com/",
   },
 ]
@@ -56,6 +56,7 @@ export function TestimonialsSection(): React.JSX.Element {
                   alt={`${testimonial.property} logo`}
                   width={200}
                   height={120}
+                  sizes="(max-width: 768px) 150px, 200px"
                   className="object-contain"
                 />
               </div>
