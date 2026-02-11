@@ -155,6 +155,7 @@ export function PortfolioSection(): React.JSX.Element {
                       src={item.image}
                       alt={item.title}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   </div>
