@@ -9,14 +9,8 @@
  * - Error handling
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
 import nock from 'nock';
-
-// Mock environment variables
-process.env.SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/TEST/WEBHOOK/URL';
-process.env.BREVO_API_KEY = 'test-brevo-api-key';
-process.env.BREVO_LIST_ID = '1';
-process.env.BREVO_WELCOME_TEMPLATE_ID = '1';
 
 const API_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
 const CONTACT_ENDPOINT = `${API_URL}/api/contact`;
@@ -29,14 +23,31 @@ interface ContactPayload {
 }
 
 describe('Contact API Tests', () => {
+  let originalEnv: NodeJS.ProcessEnv;
+
+  beforeAll(() => {
+    // Save original environment and set test values
+    originalEnv = { ...process.env };
+    process.env.SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/TEST/WEBHOOK/URL';
+    process.env.BREVO_API_KEY = 'test-brevo-api-key';
+    process.env.BREVO_LIST_ID = '1';
+    process.env.BREVO_WELCOME_TEMPLATE_ID = '1';
+  });
+
+  afterAll(() => {
+    // Restore original environment
+    process.env = originalEnv;
+  });
+
   beforeEach(() => {
     // Clean up any pending nock interceptors
     nock.cleanAll();
   });
 
   afterEach(() => {
-    // Verify all nock interceptors were used
-    nock.isDone();
+    // Clean up nock interceptors (don't use isDone() - too strict)
+    // Individual tests verify their own mocks with scope.done()
+    nock.cleanAll();
   });
 
   describe('Input Validation', () => {

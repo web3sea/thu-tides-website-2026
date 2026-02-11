@@ -51,5 +51,16 @@ const PortfolioItemComponent: React.FC<PortfolioItemProps> = ({ item }) => {
   );
 };
 
-// Memoize to prevent unnecessary re-renders
-export const PortfolioItem = React.memo(PortfolioItemComponent);
+// Memoize with custom comparison for precise re-render control
+export const PortfolioItem = React.memo(
+  PortfolioItemComponent,
+  (prevProps, nextProps) => {
+    // Only re-render if item core properties change
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.item.image === nextProps.item.image &&
+      prevProps.item.title === nextProps.item.title &&
+      prevProps.item.description === nextProps.item.description
+    );
+  }
+);

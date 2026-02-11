@@ -40,7 +40,9 @@ describe('Contact Form E2E Tests', () => {
   const baseUrl = getBaseUrl();
 
   beforeAll(async () => {
-    context = await setupBrowser(false); // Set to true for headless mode
+    // Use headless mode in CI, headed mode for local debugging
+    const headless = process.env.CI !== 'false';
+    context = await setupBrowser(headless);
   });
 
   afterAll(async () => {
