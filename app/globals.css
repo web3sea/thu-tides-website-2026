@@ -50,6 +50,9 @@
   --color-brand-cerulean-2: var(--brand-cerulean-2);
   --color-brand-sage-dry: var(--brand-sage-dry);
   --color-brand-olive-leaf: var(--brand-olive-leaf);
+  --color-brand-sand: var(--brand-sand);
+  --color-brand-sand-light: var(--brand-sand-light);
+  --color-brand-sand-dark: var(--brand-sand-dark);
 }
 
 :root {
@@ -91,6 +94,9 @@
   --brand-cerulean-2: #1E9BCC;
   --brand-sage-dry: #8FA998;
   --brand-olive-leaf: #7A8F4A;
+  --brand-sand: #C2A882;
+  --brand-sand-light: #D4C4A8;
+  --brand-sand-dark: #A08B6A;
 
   /* Semantic Color Tokens */
   --accent-primary: var(--brand-cerulean);
@@ -272,6 +278,34 @@
 
   .bg-brand-olive {
     background-color: var(--brand-olive-leaf);
+  }
+
+  .text-brand-sand {
+    color: var(--brand-sand);
+  }
+
+  .text-brand-sand-light {
+    color: var(--brand-sand-light);
+  }
+
+  .text-brand-sand-dark {
+    color: var(--brand-sand-dark);
+  }
+
+  .bg-brand-sand {
+    background-color: var(--brand-sand);
+  }
+
+  .bg-brand-sand-light {
+    background-color: var(--brand-sand-light);
+  }
+
+  .bg-brand-sand-dark {
+    background-color: var(--brand-sand-dark);
+  }
+
+  .border-brand-sand {
+    border-color: var(--brand-sand);
   }
 
   .border-brand-cerulean {
