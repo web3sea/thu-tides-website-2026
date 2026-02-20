@@ -99,10 +99,10 @@ export function Footer({
             className="relative group z-10"
           >
             {/* Glow effect on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-cerulean/30 via-brand-cerulean-2/20 to-brand-sage/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full scale-[2]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#C2A882]/30 via-[#D4C4A8]/20 to-[#A08B6A]/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full scale-[2]" />
 
             {/* Logo - Much larger scale */}
-            <div className="relative text-foreground group-hover:text-brand-cerulean transition-colors duration-500 transform scale-[2.5] md:scale-[3]">
+            <div className="relative text-foreground group-hover:text-brand-sand transition-colors duration-500 transform scale-[2.5] md:scale-[3]">
               <Logo />
             </div>
           </Link>

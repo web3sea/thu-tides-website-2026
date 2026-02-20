@@ -19,7 +19,7 @@ export function AnimatedWaveLogo({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <motion.div
-        className={`${iconClassName} rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden`}
+        className={`${iconClassName} rounded-full bg-[#C2A882]/10 backdrop-blur-sm border border-[#C2A882]/20 flex items-center justify-center overflow-hidden`}
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.2 }}
       >
@@ -30,36 +30,36 @@ export function AnimatedWaveLogo({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-5 h-5 text-white"
+          className="w-5 h-5 text-[#C2A882]"
           aria-label="Thu Tides wave logo"
         >
           <motion.path
             d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-            animate={{ x: [0, 3, 0] }}
+            animate={{ x: [0, 2, 0], y: [0, 0.5, 0] }}
             transition={{
-              duration: 1.5,
+              duration: 3,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
           />
           <motion.path
             d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-            animate={{ x: [0, 3, 0] }}
+            animate={{ x: [0, 2, 0], y: [0, -0.5, 0] }}
             transition={{
-              duration: 1.5,
+              duration: 3,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: 0.1,
+              delay: 0.15,
             }}
           />
           <motion.path
             d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-            animate={{ x: [0, 3, 0] }}
+            animate={{ x: [0, 2, 0], y: [0, 0.5, 0] }}
             transition={{
-              duration: 1.5,
+              duration: 3,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: 0.2,
+              delay: 0.3,
             }}
           />
         </svg>
