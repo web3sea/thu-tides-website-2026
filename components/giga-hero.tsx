@@ -28,6 +28,9 @@ export interface GigaHeroProps {
   className?: string
   useHoverEffect?: boolean
   hoverEffectText?: string
+  backgroundVideo?: string
+  backgroundVideoWebm?: string
+  backgroundVideoPoster?: string
 }
 
 const defaultLogos = [
@@ -58,6 +61,9 @@ export function GigaHero({
   className,
   useHoverEffect = false,
   hoverEffectText,
+  backgroundVideo,
+  backgroundVideoWebm,
+  backgroundVideoPoster,
 }: GigaHeroProps) {
   const [triggerFlicker, setTriggerFlicker] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -93,8 +99,28 @@ export function GigaHero({
         className
       )}
     >
-      {/* Background Image with Overlays */}
+      {/* Background Media with Overlays */}
       <div className="absolute inset-0 z-0">
+        {/* Video background — mobile only */}
+        {backgroundVideo && (
+          <div className="md:hidden absolute inset-0">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster={backgroundVideoPoster}
+              className="w-full h-full object-cover opacity-90"
+            >
+              {backgroundVideoWebm && (
+                <source src={backgroundVideoWebm} type="video/webm" />
+              )}
+              <source src={backgroundVideo} type="video/mp4" />
+            </video>
+          </div>
+        )}
+
+        {/* Static image — desktop only when video provided, all viewports otherwise */}
         <Image
           src={backgroundImage}
           alt={backgroundImageAlt}
@@ -102,7 +128,10 @@ export function GigaHero({
           sizes="100vw"
           quality={90}
           priority
-          className="w-full h-full object-cover opacity-90"
+          className={cn(
+            'w-full h-full object-cover opacity-90',
+            backgroundVideo && 'hidden md:block'
+          )}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/10 to-slate-900/90" />
       </div>
