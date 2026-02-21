@@ -39,6 +39,9 @@ export default function Page() {
       <GigaHero
         backgroundImage="/DJI_aerial_hero.webp"
         backgroundImageAlt="Aerial view of coastal tides"
+        backgroundVideo="/website_banner_optimized.mp4"
+        backgroundVideoWebm="/website_banner_optimized.webm"
+        backgroundVideoPoster="/website_banner_poster.webp"
         title="Creative collaboration for coastal hospitality brands."
         badge={{
           text: 'Where should we go next?',
