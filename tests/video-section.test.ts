@@ -43,7 +43,7 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
     const videoRequests = await page.evaluate(() => {
       return performance
         .getEntriesByType('resource')
-        .filter((entry: any) =>
+        .filter((entry: PerformanceEntry) =>
           entry.name.includes('website_banner_optimized')
         )
         .length;
@@ -83,7 +83,7 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
     let videoRequests = await page.evaluate(() => {
       return performance
         .getEntriesByType('resource')
-        .filter((entry: any) =>
+        .filter((entry: PerformanceEntry) =>
           entry.name.includes('website_banner_optimized')
         )
         .length;
@@ -102,7 +102,7 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
     videoRequests = await page.evaluate(() => {
       return performance
         .getEntriesByType('resource')
-        .filter((entry: any) =>
+        .filter((entry: PerformanceEntry) =>
           entry.name.includes('website_banner_optimized')
         )
         .length;
@@ -300,7 +300,7 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
     const videoRequests = await page.evaluate(() => {
       return performance
         .getEntriesByType('resource')
-        .filter((entry: any) =>
+        .filter((entry: PerformanceEntry) =>
           entry.name.includes('website_banner_optimized')
         )
         .length;

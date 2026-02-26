@@ -7,7 +7,6 @@
  * Run with: node scripts/convert-logos-to-webp.js
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');

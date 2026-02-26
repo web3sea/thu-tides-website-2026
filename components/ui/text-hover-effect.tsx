@@ -60,6 +60,7 @@ export const TextHoverEffect = ({
   // Handle flicker trigger
   useEffect(() => {
     if (flickerTrigger && svgRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFlickerActive(true);
 
       // SVGSVGElement.getElementById is scoped to this SVG fragment.
