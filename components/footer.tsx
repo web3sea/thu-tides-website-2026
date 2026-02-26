@@ -79,13 +79,6 @@ export function Footer({
       <div className="max-w-5xl mx-auto px-6 py-16 lg:py-24 relative">
         {/* Logo - Large centerpiece with creative water texture effect */}
         <div className="flex justify-center mb-20 relative">
-          {/* Watermark texture behind logo */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden">
-            <div className="text-[20rem] font-black text-brand-cerulean/50 select-none scale-150">
-              TT
-            </div>
-          </div>
-
           {/* Radial gradient splash effect */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-[600px] h-[600px] bg-gradient-radial from-brand-cerulean/10 via-brand-cerulean/5 to-transparent rounded-full blur-3xl" />
