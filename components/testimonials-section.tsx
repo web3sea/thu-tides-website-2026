@@ -50,14 +50,14 @@ export function TestimonialsSection(): React.JSX.Element {
               rel="noopener noreferrer"
               className="flex flex-col items-center text-center group"
             >
-              <div className="mb-6 flex items-center justify-center">
+              <div className="mb-6 flex items-center justify-center h-24 w-48">
                 <Image
                   src={testimonial.logo}
                   alt={`${testimonial.property} logo`}
                   width={200}
-                  height={120}
+                  height={96}
                   sizes="(max-width: 768px) 150px, 200px"
-                  className="object-contain"
+                  className="object-contain max-h-24 w-auto"
                 />
               </div>
 
