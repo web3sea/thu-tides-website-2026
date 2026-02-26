@@ -43,9 +43,13 @@ export async function POST(request: NextRequest) {
   const db = adminDb
 
   try {
-    // Extract IP address from headers
-    const forwardedFor = request.headers.get('x-forwarded-for')
-    const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown'
+    // Extract IP address — x-real-ip is set by Vercel's edge and cannot be
+    // spoofed by clients. Fallback uses the rightmost x-forwarded-for value
+    // (the hop added by Vercel), not the leftmost (which clients can forge).
+    const ip =
+      request.headers.get('x-real-ip') ??
+      request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() ??
+      'unknown'
 
     // Hash IP for rate limiting (consistent with vote tracking)
     const hashedIPForRateLimit = crypto

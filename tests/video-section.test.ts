@@ -316,19 +316,19 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
       }
     });
 
-    // Wait for lazy loading to potentially trigger
+    // Wait for IntersectionObserver to fire + 100ms LazyVideo delay + React re-render
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Video should start loading due to rootMargin preload (>= 0 handles both cases)
-    const videoRequests = await page.evaluate(() => {
-      return performance
-        .getEntriesByType('resource')
-        .filter((entry: PerformanceEntry) =>
-          entry.name.includes('website_banner_optimized')
-        )
-        .length;
+    // The section is 150px below the viewport bottom, within rootMargin "200px 0px".
+    // IntersectionObserver should have triggered, setting shouldLoad=true, which
+    // renders <video> in the DOM even though the section isn't fully visible yet.
+    const hasVideoBeforeVisible = await page.evaluate(() => {
+      const videoSection = Array.from(document.querySelectorAll('section')).find(s =>
+        s.querySelector('.bg-gradient-to-t') && s.querySelector('svg')
+      );
+      return videoSection?.querySelector('video') !== null;
     });
 
-    expect(videoRequests).toBeGreaterThanOrEqual(0);
+    expect(hasVideoBeforeVisible).toBe(true);
   }, TEST_TIMEOUT);
 });

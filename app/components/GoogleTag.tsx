@@ -6,10 +6,14 @@ interface GoogleTagProps {
   tagId: string;
 }
 
+const GT_ID_REGEX = /^GT-[A-Z0-9]+$/;
+
 export function GoogleTag({ tagId }: GoogleTagProps) {
-  if (!tagId) {
+  if (!tagId || !GT_ID_REGEX.test(tagId)) {
     return null;
   }
+
+  const safeId = JSON.stringify(tagId);
 
   return (
     <>
@@ -22,7 +26,7 @@ export function GoogleTag({ tagId }: GoogleTagProps) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${tagId}');
+          gtag('config', ${safeId});
         `}
       </Script>
     </>

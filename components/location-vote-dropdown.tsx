@@ -38,7 +38,10 @@ export function LocationVoteDropdown({
   const [hasError, setHasError] = useState(false)
   const [isVoting, setIsVoting] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
-  const [hasVoted, setHasVoted] = useState(false)
+  const [hasVoted, setHasVoted] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('thu-tides-voted') === 'true'
+  })
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const fetchResults = useCallback(async () => {
@@ -87,6 +90,7 @@ export function LocationVoteDropdown({
       if (!res.ok) {
         toast.error(data.error || 'Failed to vote')
         if (res.status === 409) {
+          localStorage.setItem('thu-tides-voted', 'true')
           setHasVoted(true)
         }
         return
@@ -94,6 +98,7 @@ export function LocationVoteDropdown({
 
       toast.success('Vote recorded! Thank you for participating.')
       setResults(data.results)
+      localStorage.setItem('thu-tides-voted', 'true')
       setHasVoted(true)
     } catch (error) {
       console.error('Error submitting vote:', error)

@@ -5,16 +5,11 @@ import { getAdminDb } from '@/lib/firebase-admin'
 import type { VoteResults } from '@/types/votes'
 
 export async function GET() {
-  // Debug: log environment check
-  console.log('[API /results] NODE_ENV:', process.env.NODE_ENV)
-  console.log('[API /results] FIREBASE_SERVICE_ACCOUNT_KEY present:', !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
-
   // Get Firebase instance with lazy initialization
   const adminDb = getAdminDb()
 
   // Check if Firebase is initialized
   if (!adminDb) {
-    console.error('[API /results] Firebase not initialized, returning 503')
     return NextResponse.json(
       {
         locations: [],
@@ -24,8 +19,6 @@ export async function GET() {
       { status: 503 }
     )
   }
-
-  console.log('[API /results] Firebase initialized successfully')
 
   // Create non-null reference for TypeScript
   const db = adminDb

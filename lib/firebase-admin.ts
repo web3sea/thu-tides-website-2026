@@ -9,8 +9,6 @@ function initializeFirebase() {
   }
 
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-  console.log('[Firebase Admin] Lazy init... NODE_ENV:', process.env.NODE_ENV)
-  console.log('[Firebase Admin] FIREBASE_SERVICE_ACCOUNT_KEY present:', !!serviceAccountKey)
 
   if (serviceAccountKey) {
     try {
@@ -21,11 +19,10 @@ function initializeFirebase() {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       })
-
-      console.log('✅ Firebase Admin initialized with service account key')
-    } catch (error) {
-      console.error('❌ Failed to initialize Firebase Admin:', error)
-      throw error
+    } catch {
+      // Re-throw a sanitized error — don't log the raw parse failure
+      // which may contain partial credential material
+      throw new Error('Firebase Admin initialization failed')
     }
   } else if (process.env.NODE_ENV === 'development') {
     try {
@@ -33,13 +30,11 @@ function initializeFirebase() {
         credential: admin.credential.applicationDefault(),
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
       })
-      console.log('✅ Firebase Admin initialized with ADC')
-    } catch (error) {
-      console.error('❌ Failed to initialize Firebase Admin with ADC')
-      throw error
+    } catch {
+      throw new Error('Firebase Admin initialization failed (ADC)')
     }
   } else {
-    console.warn('⚠️  Firebase Admin not initialized - no credentials')
+    console.warn('Firebase Admin not initialized: no credentials configured')
   }
 }
 

@@ -6,10 +6,14 @@ interface GoogleAnalyticsProps {
   measurementId: string;
 }
 
+const GA_ID_REGEX = /^G-[A-Z0-9]+$/;
+
 export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
-  if (!measurementId) {
+  if (!measurementId || !GA_ID_REGEX.test(measurementId)) {
     return null;
   }
+
+  const safeId = JSON.stringify(measurementId);
 
   return (
     <>
@@ -22,7 +26,7 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${measurementId}');
+          gtag('config', ${safeId});
         `}
       </Script>
     </>

@@ -28,6 +28,11 @@ function isRateLimited(ip: string): boolean {
 // Email format validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Escape Slack mrkdwn special characters to prevent <!channel>/<!here> injection
+function escapeSlack(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
 // Field length limits
 const MAX_NAME_LENGTH = 200
 const MAX_EMAIL_LENGTH = 254
@@ -54,8 +59,13 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 1
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting by IP
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+    // Rate limiting by IP — x-real-ip is set by Vercel's edge and cannot be
+    // spoofed by clients. Fallback uses the rightmost x-forwarded-for value
+    // (the hop added by Vercel), not the leftmost (which clients can forge).
+    const ip =
+      request.headers.get('x-real-ip') ??
+      request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() ??
+      'unknown'
     if (isRateLimited(ip)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
@@ -172,11 +182,11 @@ async function sendToSlack(data: ContactFormData) {
           fields: [
             {
               type: 'mrkdwn',
-              text: `*Name:*\n${data.name}`,
+              text: `*Name:*\n${escapeSlack(data.name)}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Email:*\n${data.email}`,
+              text: `*Email:*\n${escapeSlack(data.email)}`,
             },
           ],
         },
@@ -185,7 +195,7 @@ async function sendToSlack(data: ContactFormData) {
           fields: [
             {
               type: 'mrkdwn',
-              text: `*WhatsApp:*\n${data.whatsapp || 'Not provided'}`,
+              text: `*WhatsApp:*\n${data.whatsapp ? escapeSlack(data.whatsapp) : 'Not provided'}`,
             },
           ],
         },
@@ -193,7 +203,7 @@ async function sendToSlack(data: ContactFormData) {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Inquiry:*\n${data.inquiry}`,
+            text: `*Inquiry:*\n${escapeSlack(data.inquiry)}`,
           },
         },
         {
@@ -249,7 +259,11 @@ async function addToBrevo(data: ContactFormData) {
           // SMS field omitted - Brevo's phone validation is too strict
           // WhatsApp number is available in Slack notification
         },
-        listIds: brevoListId ? [parseInt(brevoListId)] : [],
+        listIds: brevoListId ? (() => {
+          const id = Number(brevoListId)
+          if (!Number.isInteger(id) || id <= 0) throw new Error('Invalid BREVO_LIST_ID')
+          return [id]
+        })() : [],
         updateEnabled: true, // Update if contact already exists
       }),
     }, 20000) // 20 second timeout for slow connections
@@ -283,7 +297,11 @@ async function addToBrevo(data: ContactFormData) {
             name: data.name,
           },
         ],
-        templateId: parseInt(templateId),
+        templateId: (() => {
+          const id = Number(templateId)
+          if (!Number.isInteger(id) || id <= 0) throw new Error('Invalid BREVO_WELCOME_TEMPLATE_ID')
+          return id
+        })(),
         params: {
           NAME: data.name,
         },
