@@ -45,8 +45,14 @@ function initializeFirebase() {
 
 // Getter function for adminDb with lazy initialization
 function getAdminDb(): admin.firestore.Firestore | null {
-  initializeFirebase()
-  return admin.apps.length > 0 ? admin.firestore() : null
+  try {
+    initializeFirebase()
+    return admin.apps.length > 0 ? admin.firestore() : null
+  } catch {
+    // initializeFirebase() already logged the error; return null so callers
+    // can respond with a 503 instead of propagating an unhandled exception.
+    return null
+  }
 }
 
 // Export getter instead of direct reference
