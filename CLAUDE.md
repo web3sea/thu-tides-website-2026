@@ -63,6 +63,26 @@ pnpm test:all # Must pass (if tests exist)
 
 ### Post-Deployment Monitoring (AFTER Merge)
 
+**STEP 1: Monitor GitHub Actions CI** (runs automatically on every push)
+
+```bash
+# Check CI status immediately after push
+gh run list --limit 3
+
+# If a run is "in_progress", watch it:
+gh run watch <run-id>
+
+# If a run shows "failure", get the failing logs:
+gh run view <run-id> --log-failed
+
+# CI jobs to watch:
+# - "Lint & Type Check" — ESLint + tsc, must pass
+# - "Build Check"       — pnpm build, must pass
+# - "Run Tests"         — Jest + Puppeteer, must pass
+```
+
+**STEP 2: Monitor Vercel Deployment**
+
 ```bash
 # Step 1: Wait for deployment to trigger (15-20 seconds)
 sleep 20
@@ -79,6 +99,31 @@ vercel inspect <deployment-url> --logs --scope uat
 # Step 5: If Status = "Ready", VERIFY PRODUCTION
 curl -I https://thutides.com  # Should return 200 OK
 ```
+
+### CI Monitoring Sub-Agent Instructions
+
+**After EVERY push or merge, automatically:**
+
+1. Run `gh run list --limit 3` immediately after push
+2. Identify the most recent run (status: `in_progress` or `completed`)
+3. If `in_progress`: run `gh run watch <id>` to follow in real time
+4. If `failure`: run `gh run view <id> --log-failed` and report the errors
+5. If `success`: confirm all three jobs passed and proceed with Vercel monitoring
+
+**CI failures to watch for and how to fix:**
+
+| Failure | Check | Fix |
+|---------|-------|-----|
+| ESLint errors | `gh run view <id> --log-failed` | Fix lint errors, push |
+| TypeScript errors | `pnpm exec tsc --noEmit` locally | Fix type errors |
+| Build errors | `pnpm build` locally | Fix compilation |
+| Test timeouts | Check if dev server started | Ensure server starts before tests |
+| 500 on test pages | Check page renders locally | Fix SSR errors |
+
+**Known CI limitations:**
+- Puppeteer tests require dev server with env vars; Firebase/Slack/Brevo are not configured in CI
+- `votes.test.ts` automatically skips when `FIREBASE_SERVICE_ACCOUNT_KEY` is absent
+- Contact form Slack/Brevo integration is non-blocking; validation tests run without credentials
 
 ### Common Deployment Failures & Fixes
 

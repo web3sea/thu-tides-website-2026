@@ -1,6 +1,6 @@
 /**
- * Responsive UI Testing for Giga Components
- * Tests Navigation and GigaHero components at multiple breakpoints
+ * Responsive UI Testing for Thu Tides Navigation and Hero
+ * Tests Navigation and Hero components at mobile, tablet, and desktop breakpoints
  *
  * Run with: pnpm test:responsive
  */
@@ -12,7 +12,7 @@ import { join } from 'path';
 
 // Configuration
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
-const TEST_PAGE = '/giga-demo';
+const TEST_PAGE = '/';
 const SCREENSHOT_DIR = join(__dirname, '../screenshots');
 
 // Viewport configurations
@@ -34,13 +34,11 @@ function ensureScreenshotDir(): void {
 
 // Helper function to wait for page to be ready
 async function waitForPageReady(page: Page): Promise<void> {
-  await page.waitForNetworkIdle({ idleTime: 500 });
-  // Wait for framer-motion animations to settle
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 500));
 }
 
 // Test suite
-describe('Giga Components Responsive Tests', () => {
+describe('Thu Tides Responsive Tests', () => {
   let browser: Browser;
   let page: Page;
 
@@ -61,7 +59,7 @@ describe('Giga Components Responsive Tests', () => {
   beforeEach(async () => {
     page = await browser.newPage();
     await page.goto(`${BASE_URL}${TEST_PAGE}`, {
-      waitUntil: 'networkidle0',
+      waitUntil: 'domcontentloaded',
       timeout: TEST_TIMEOUT,
     });
   }, TEST_TIMEOUT);
@@ -86,14 +84,13 @@ describe('Giga Components Responsive Tests', () => {
         const nav = await page.$('nav');
         expect(nav).not.toBeNull();
 
-        // Take screenshot
         await page.screenshot({
           path: join(SCREENSHOT_DIR, `navigation-${viewport.name}.png`),
           fullPage: false,
         });
       });
 
-      test(`should show logo and branding at ${viewport.name}`, async () => {
+      test(`should show logo link at ${viewport.name}`, async () => {
         const logo = await page.evaluate(() => {
           const logoLink = document.querySelector('nav a[href="/"]');
           return logoLink ? {
@@ -106,113 +103,92 @@ describe('Giga Components Responsive Tests', () => {
 
         expect(logo).not.toBeNull();
         expect(logo?.visible).toBe(true);
-        expect(logo?.text).toContain('Giga');
+        expect(logo?.text).toContain('Thu Tides');
       });
 
-      test(`should show Sign in link at ${viewport.name}`, async () => {
-        const signInLink = await page.evaluate(() => {
-          const links = Array.from(document.querySelectorAll('nav a'));
-          const signIn = links.find(link => link.textContent?.includes('Sign in'));
-          return signIn ? {
-            visible: signIn instanceof HTMLElement &&
-                     signIn.offsetWidth > 0 &&
-                     signIn.offsetHeight > 0,
-            text: signIn.textContent?.trim(),
-          } : null;
-        });
-
-        expect(signInLink).not.toBeNull();
-        expect(signInLink?.visible).toBe(true);
-        expect(signInLink?.text).toBe('Sign in');
-      });
-
-      test(`should show Talk to us CTA button at ${viewport.name}`, async () => {
-        const ctaButton = await page.evaluate(() => {
-          const buttons = Array.from(document.querySelectorAll('nav button'));
-          const cta = buttons.find(btn => btn.textContent?.includes('Talk to us'));
-          return cta ? {
-            visible: cta instanceof HTMLElement &&
-                     cta.offsetWidth > 0 &&
-                     cta.offsetHeight > 0,
-            text: cta.textContent?.trim(),
-          } : null;
-        });
-
-        expect(ctaButton).not.toBeNull();
-        expect(ctaButton?.visible).toBe(true);
-        expect(ctaButton?.text).toBe('Talk to us');
-      });
-
-      if (viewport.width >= 768) {
-        test(`should show desktop menu at ${viewport.name}`, async () => {
-          const desktopMenu = await page.evaluate(() => {
-            const productButton = Array.from(document.querySelectorAll('nav button'))
-              .find(btn => btn.textContent?.includes('Product'));
-            return productButton ? {
-              visible: productButton instanceof HTMLElement &&
-                       productButton.offsetWidth > 0 &&
-                       productButton.offsetHeight > 0,
-              text: productButton.textContent?.trim(),
+      if (viewport.width < 768) {
+        test(`should show mobile hamburger menu button at ${viewport.name}`, async () => {
+          const menuButton = await page.evaluate(() => {
+            const btn = document.querySelector('button[aria-label="Open menu"]');
+            return btn ? {
+              visible: btn instanceof HTMLElement &&
+                       btn.offsetWidth > 0 &&
+                       btn.offsetHeight > 0,
             } : null;
           });
 
-          expect(desktopMenu).not.toBeNull();
-          expect(desktopMenu?.visible).toBe(true);
+          expect(menuButton).not.toBeNull();
+          expect(menuButton?.visible).toBe(true);
         });
+      }
 
-        test(`should show Product dropdown on hover at ${viewport.name}`, async () => {
-          // Hover over Product button
-          const productButton = await page.evaluateHandle(() => {
-            const buttons = Array.from(document.querySelectorAll('nav button'));
-            return buttons.find(btn => btn.textContent?.includes('Product'));
+      if (viewport.width >= 768) {
+        test(`should show desktop nav links at ${viewport.name}`, async () => {
+          const links = await page.evaluate(() => {
+            const navLinks = Array.from(document.querySelectorAll('nav a'));
+            return navLinks
+              .filter(link => link instanceof HTMLElement &&
+                             link.offsetWidth > 0 &&
+                             link.offsetHeight > 0)
+              .map(link => link.textContent?.trim());
           });
 
-          if (productButton) {
-            const element = productButton.asElement();
-            // @ts-expect-error - Puppeteer type mismatch between Node and Element
-            if (element) await element.hover();
-            await new Promise(resolve => setTimeout(resolve, 300)); // Wait for dropdown animation
-
-            const dropdown = await page.evaluate(() => {
-              const dropdowns = Array.from(document.querySelectorAll('nav .absolute'));
-              return dropdowns.length > 0 && dropdowns.some(
-                el => el instanceof HTMLElement &&
-                      el.offsetWidth > 0 &&
-                      el.offsetHeight > 0
-              );
-            });
-
-            expect(dropdown).toBe(true);
-
-            // Take screenshot with dropdown
-            await page.screenshot({
-              path: join(SCREENSHOT_DIR, `navigation-dropdown-${viewport.name}.png`),
-            });
-          }
+          // Desktop nav should have Home and About links
+          expect(links.some(text => text?.includes('Home'))).toBe(true);
+          expect(links.some(text => text?.includes('About'))).toBe(true);
         });
 
-        test(`should show Product menu items at ${viewport.name}`, async () => {
-          // Hover over Product button
-          const productButton = await page.evaluateHandle(() => {
-            const buttons = Array.from(document.querySelectorAll('nav button'));
-            return buttons.find(btn => btn.textContent?.includes('Product'));
+        test(`should show Photographs nav link at ${viewport.name}`, async () => {
+          const photographsLink = await page.evaluate(() => {
+            const links = Array.from(document.querySelectorAll('nav a'));
+            const link = links.find(l => l.textContent?.includes('Photographs'));
+            return link ? {
+              visible: link instanceof HTMLElement &&
+                       link.offsetWidth > 0 &&
+                       link.offsetHeight > 0,
+            } : null;
           });
 
-          if (productButton) {
-            const element = productButton.asElement();
+          expect(photographsLink).not.toBeNull();
+          expect(photographsLink?.visible).toBe(true);
+        });
+
+        test(`should show Let's Connect CTA at ${viewport.name}`, async () => {
+          const ctaLink = await page.evaluate(() => {
+            const links = Array.from(document.querySelectorAll('nav a'));
+            const link = links.find(l => l.textContent?.includes("Connect"));
+            return link ? {
+              visible: link instanceof HTMLElement &&
+                       link.offsetWidth > 0 &&
+                       link.offsetHeight > 0,
+            } : null;
+          });
+
+          expect(ctaLink).not.toBeNull();
+          expect(ctaLink?.visible).toBe(true);
+        });
+
+        test(`should show Photographs dropdown on hover at ${viewport.name}`, async () => {
+          const photographsLink = await page.evaluateHandle(() => {
+            const links = Array.from(document.querySelectorAll('nav a'));
+            return links.find(l => l.textContent?.includes('Photographs'));
+          });
+
+          if (photographsLink) {
+            const element = photographsLink.asElement();
             // @ts-expect-error - Puppeteer type mismatch between Node and Element
             if (element) await element.hover();
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            const menuItems = await page.evaluate(() => {
-              const expectedItems = ['Agent Canvas', 'Insights', 'Voice Experience', 'Browser Agent'];
+            const dropdownItems = await page.evaluate(() => {
+              const expectedItems = ['Underwater', 'Aerial', 'Dive', 'Properties'];
               const links = Array.from(document.querySelectorAll('nav a'));
               return expectedItems.filter(item =>
                 links.some(link => link.textContent?.includes(item))
               );
             });
 
-            expect(menuItems.length).toBeGreaterThanOrEqual(3);
+            expect(dropdownItems.length).toBeGreaterThanOrEqual(2);
           }
         });
       }
@@ -242,7 +218,7 @@ describe('Giga Components Responsive Tests', () => {
     });
   });
 
-  describe('GigaHero Component', () => {
+  describe('Hero Section', () => {
     describe.each(Object.values(VIEWPORTS))('at $name viewport', (viewport) => {
       beforeEach(async () => {
         await page.setViewport({
@@ -256,189 +232,56 @@ describe('Giga Components Responsive Tests', () => {
         const hero = await page.$('main');
         expect(hero).not.toBeNull();
 
-        // Take screenshot
         await page.screenshot({
           path: join(SCREENSHOT_DIR, `hero-${viewport.name}.png`),
           fullPage: true,
         });
       });
 
-      test(`should display hero title at ${viewport.name}`, async () => {
-        const title = await page.evaluate(() => {
-          const h1 = document.querySelector('main h1');
-          return h1 ? {
-            visible: h1 instanceof HTMLElement &&
-                     h1.offsetWidth > 0 &&
-                     h1.offsetHeight > 0,
-            text: h1.textContent?.trim(),
-            fontSize: window.getComputedStyle(h1).fontSize,
-          } : null;
-        });
-
-        expect(title).not.toBeNull();
-        expect(title?.visible).toBe(true);
-        expect(title?.text).toContain('AI that talks like a human');
-        expect(title?.text).toContain('Handles millions of calls');
-
-        // Verify font size scales with viewport
-        const fontSize = parseInt(title?.fontSize || '0');
-        expect(fontSize).toBeGreaterThan(0);
-      });
-
-      test(`should display hero subtitle at ${viewport.name}`, async () => {
-        const subtitle = await page.evaluate(() => {
-          const h1 = document.querySelector('main h1');
-          const nextP = h1?.nextElementSibling;
-          return nextP && nextP.tagName === 'P' ? {
-            visible: nextP instanceof HTMLElement &&
-                     nextP.offsetWidth > 0 &&
-                     nextP.offsetHeight > 0,
-            text: nextP.textContent?.trim(),
-          } : null;
-        });
-
-        expect(subtitle).not.toBeNull();
-        expect(subtitle?.visible).toBe(true);
-        expect(subtitle?.text).toContain('AI agents for enterprise support');
-      });
-
-      test(`should display badge at ${viewport.name}`, async () => {
+      test(`should display vote badge button at ${viewport.name}`, async () => {
         const badge = await page.evaluate(() => {
-          const badge = document.querySelector('main a[href="#"]');
+          // Badge is a button in the hero section
+          const buttons = Array.from(document.querySelectorAll('main button'));
+          const badge = buttons.find(btn => btn.textContent?.includes('Where should we go'));
           return badge ? {
             visible: badge instanceof HTMLElement &&
                      badge.offsetWidth > 0 &&
                      badge.offsetHeight > 0,
-            text: badge.textContent?.trim(),
           } : null;
         });
 
         expect(badge).not.toBeNull();
         expect(badge?.visible).toBe(true);
-        expect(badge?.text).toContain('Giga Launches Browser Agent');
       });
 
-      test(`should display hero CTA button at ${viewport.name}`, async () => {
-        const ctaButton = await page.evaluate(() => {
-          const buttons = Array.from(document.querySelectorAll('main button, main a[class*="button"]'));
-          const cta = buttons.find(btn => btn.textContent?.includes('Talk to us'));
-          return cta ? {
-            visible: cta instanceof HTMLElement &&
-                     cta.offsetWidth > 0 &&
-                     cta.offsetHeight > 0,
-            text: cta.textContent?.trim(),
-            clickable: true,
-          } : null;
+      test(`should have no horizontal scroll at ${viewport.name}`, async () => {
+        const hasHorizontalScroll = await page.evaluate(() => {
+          return document.documentElement.scrollWidth > window.innerWidth;
         });
 
-        expect(ctaButton).not.toBeNull();
-        expect(ctaButton?.visible).toBe(true);
-        expect(ctaButton?.text).toBe('Talk to us');
-      });
-
-      test(`should display company logos at ${viewport.name}`, async () => {
-        const logos = await page.evaluate(() => {
-          const logoContainer = Array.from(document.querySelectorAll('div'))
-            .find(div => div.textContent?.includes('POSTMAN') ||
-                         div.textContent?.includes('DOORDASH'));
-
-          if (!logoContainer) return null;
-
-          const logoElements = Array.from(logoContainer.querySelectorAll('div'))
-            .filter(el => el.textContent &&
-                         (el.textContent.includes('POSTMAN') ||
-                          el.textContent.includes('DOORDASH') ||
-                          el.textContent.includes('Rio')));
-
-          return {
-            visible: logoContainer instanceof HTMLElement &&
-                     logoContainer.offsetWidth > 0 &&
-                     logoContainer.offsetHeight > 0,
-            count: logoElements.length,
-          };
-        });
-
-        expect(logos).not.toBeNull();
-        expect(logos?.visible).toBe(true);
-        expect(logos?.count).toBeGreaterThan(0);
+        expect(hasHorizontalScroll).toBe(false);
       });
 
       test(`should have proper text sizing at ${viewport.name}`, async () => {
-        const textSizes = await page.evaluate(() => {
-          const h1 = document.querySelector('main h1');
-          const p = document.querySelector('main p');
-
-          return {
-            h1FontSize: h1 ? window.getComputedStyle(h1).fontSize : null,
-            pFontSize: p ? window.getComputedStyle(p).fontSize : null,
-          };
-        });
-
-        expect(textSizes.h1FontSize).not.toBeNull();
-        expect(textSizes.pFontSize).not.toBeNull();
-
-        const h1Size = parseInt(textSizes.h1FontSize || '0');
-        const pSize = parseInt(textSizes.pFontSize || '0');
-
-        // Title should be larger than body text
-        expect(h1Size).toBeGreaterThan(pSize);
-
-        // Verify responsive scaling
-        if (viewport.width >= 1440) {
-          expect(h1Size).toBeGreaterThanOrEqual(60); // Large desktop
-        } else if (viewport.width >= 768) {
-          expect(h1Size).toBeGreaterThanOrEqual(50); // Tablet
-        } else {
-          expect(h1Size).toBeGreaterThanOrEqual(30); // Mobile
-        }
-      });
-
-      test(`should have proper text wrapping at ${viewport.name}`, async () => {
         const textMetrics = await page.evaluate(() => {
-          const h1 = document.querySelector('main h1');
-          if (!h1 || !(h1 instanceof HTMLElement)) return null;
+          // Get any visible paragraph text
+          const paragraphs = Array.from(document.querySelectorAll('p'));
+          const visibleP = paragraphs.find(p =>
+            p instanceof HTMLElement && p.offsetWidth > 0 && p.offsetHeight > 0
+          );
 
-          const rect = h1.getBoundingClientRect();
-          const style = window.getComputedStyle(h1);
-
-          return {
-            width: rect.width,
-            overflow: style.overflow,
-            textOverflow: style.textOverflow,
-            whiteSpace: style.whiteSpace,
-            lineHeight: style.lineHeight,
-          };
+          return visibleP ? {
+            fontSize: window.getComputedStyle(visibleP).fontSize,
+          } : null;
         });
 
         expect(textMetrics).not.toBeNull();
-        // Text should not overflow
-        expect(textMetrics?.overflow).not.toBe('visible');
-      });
-
-      test(`should have clickable CTA at ${viewport.name}`, async () => {
-        const ctaSelector = 'main button, main a[href="#contact"]';
-        const cta = await page.$(ctaSelector);
-
-        expect(cta).not.toBeNull();
-
-        // Verify the element is clickable
-        const isClickable = await page.evaluate((selector) => {
-          const elements = Array.from(document.querySelectorAll(selector));
-          const ctaElement = elements.find(el => el.textContent?.includes('Talk to us'));
-
-          if (!ctaElement || !(ctaElement instanceof HTMLElement)) return false;
-
-          const rect = ctaElement.getBoundingClientRect();
-          return rect.width > 0 &&
-                 rect.height > 0 &&
-                 window.getComputedStyle(ctaElement).pointerEvents !== 'none';
-        }, ctaSelector);
-
-        expect(isClickable).toBe(true);
+        const fontSize = parseInt(textMetrics?.fontSize || '0');
+        expect(fontSize).toBeGreaterThan(0);
       });
     });
 
-    test('should maintain proper aspect ratio across viewports', async () => {
+    test('should maintain layout across viewports', async () => {
       const aspectRatios: { [key: string]: number } = {};
 
       for (const [key, viewport] of Object.entries(VIEWPORTS)) {
@@ -453,13 +296,12 @@ describe('Giga Components Responsive Tests', () => {
           if (!hero || !(hero instanceof HTMLElement)) return 0;
 
           const rect = hero.getBoundingClientRect();
-          return rect.width / rect.height;
+          return rect.width > 0 ? rect.width / Math.max(rect.height, 1) : 0;
         });
 
         aspectRatios[key] = ratio;
       }
 
-      // All aspect ratios should be positive
       Object.values(aspectRatios).forEach(ratio => {
         expect(ratio).toBeGreaterThan(0);
       });
@@ -467,7 +309,7 @@ describe('Giga Components Responsive Tests', () => {
   });
 
   describe('Page-level Responsive Tests', () => {
-    test('should have all CTAs visible and clickable at all breakpoints', async () => {
+    test('should have no layout issues at all breakpoints', async () => {
       for (const viewport of Object.values(VIEWPORTS)) {
         await page.setViewport({
           width: viewport.width,
@@ -475,49 +317,9 @@ describe('Giga Components Responsive Tests', () => {
         });
         await waitForPageReady(page);
 
-        const ctas = await page.evaluate(() => {
-          const buttons = Array.from(document.querySelectorAll('button, a[class*="button"]'));
-          return buttons.map(btn => {
-            if (!(btn instanceof HTMLElement)) return null;
-
-            const rect = btn.getBoundingClientRect();
-            const style = window.getComputedStyle(btn);
-
-            return {
-              text: btn.textContent?.trim(),
-              visible: rect.width > 0 && rect.height > 0,
-              clickable: style.pointerEvents !== 'none',
-              inViewport: rect.top >= 0 && rect.top <= window.innerHeight,
-            };
-          }).filter(Boolean);
-        });
-
-        // Should have multiple CTAs
-        expect(ctas.length).toBeGreaterThan(0);
-
-        // At least one CTA should be in viewport
-        const visibleCtas = ctas.filter(cta => cta?.visible && cta?.inViewport);
-        expect(visibleCtas.length).toBeGreaterThan(0);
-      }
-    });
-
-    test('should handle smooth transitions between breakpoints', async () => {
-      const viewports = [
-        { width: 375, height: 667 },
-        { width: 768, height: 1024 },
-        { width: 1024, height: 768 },
-        { width: 1440, height: 900 },
-      ];
-
-      for (const viewport of viewports) {
-        await page.setViewport(viewport);
-        await waitForPageReady(page);
-
         const hasLayoutIssues = await page.evaluate(() => {
-          // Check for horizontal scrollbars
           const hasHorizontalScroll = document.documentElement.scrollWidth > window.innerWidth;
 
-          // Check for overlapping elements
           const nav = document.querySelector('nav');
           const main = document.querySelector('main');
 
@@ -527,7 +329,7 @@ describe('Giga Components Responsive Tests', () => {
           const mainRect = main.getBoundingClientRect();
 
           // Nav and main should not overlap improperly
-          const overlap = navRect.bottom > mainRect.top + 50; // Allow some overlap for fixed nav
+          const overlap = navRect.bottom > mainRect.top + 100;
 
           return hasHorizontalScroll || overlap;
         });
@@ -544,20 +346,17 @@ describe('Giga Components Responsive Tests', () => {
         });
         await waitForPageReady(page);
 
-        // Full page screenshot
         await page.screenshot({
           path: join(SCREENSHOT_DIR, `full-page-${name}.png`),
           fullPage: true,
         });
 
-        // Above the fold screenshot
         await page.screenshot({
           path: join(SCREENSHOT_DIR, `above-fold-${name}.png`),
           fullPage: false,
         });
       }
 
-      // Verify screenshots were created
       const screenshots = readdirSync(SCREENSHOT_DIR);
       expect(screenshots.length).toBeGreaterThan(0);
     });

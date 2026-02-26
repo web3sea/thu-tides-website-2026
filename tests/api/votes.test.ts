@@ -14,6 +14,11 @@
 import { describe, it, expect } from '@jest/globals';
 import { VALID_LOCATIONS, INVALID_LOCATION } from '../fixtures/test-data';
 
+// These tests require a running server with Firebase configured.
+// Skip in CI environments where Firebase credentials are not available.
+const hasFirebaseConfig = !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+const describeWithFirebase = hasFirebaseConfig ? describe : describe.skip;
+
 const API_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
 const RESULTS_ENDPOINT = `${API_URL}/api/votes/results`;
 const VOTE_ENDPOINT = `${API_URL}/api/votes/location`;
@@ -40,7 +45,7 @@ interface VoteResponse {
   error?: string;
 }
 
-describe('Voting API Tests', () => {
+describeWithFirebase('Voting API Tests', () => {
   describe('GET /api/votes/results', () => {
     it('should return all 11 locations with counts', async () => {
       const response = await fetch(RESULTS_ENDPOINT);

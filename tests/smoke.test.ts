@@ -36,14 +36,14 @@ describe('Smoke Test - Infrastructure Validation', () => {
     expect(page).toBeDefined();
   });
 
-  test('should navigate to giga-demo page', async () => {
-    await page.goto(`${BASE_URL}/giga-demo`, {
-      waitUntil: 'networkidle0',
+  test('should navigate to homepage', async () => {
+    await page.goto(`${BASE_URL}/`, {
+      waitUntil: 'domcontentloaded',
       timeout: TEST_TIMEOUT,
     });
 
     const url = page.url();
-    expect(url).toContain('/giga-demo');
+    expect(url).toContain(new URL(BASE_URL).host);
   });
 
   test('should find navigation element', async () => {
