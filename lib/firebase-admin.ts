@@ -48,8 +48,9 @@ function getAdminDb(): admin.firestore.Firestore | null {
   try {
     initializeFirebase()
     return admin.apps.length > 0 ? admin.firestore() : null
-  } catch (error) {
-    console.error('❌ Firebase Admin failed to initialize:', error)
+  } catch {
+    // initializeFirebase() already logged the error; return null so callers
+    // can respond with a 503 instead of propagating an unhandled exception.
     return null
   }
 }
