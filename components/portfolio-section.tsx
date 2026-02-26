@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { H2, P } from '@/components/typography'
 import { PortfolioItem } from '@/components/portfolio-item'
 import { portfolioItems, propertyTypes as importedPropertyTypes } from '@/data/portfolio'
@@ -165,6 +166,16 @@ export function PortfolioSection(): React.JSX.Element {
             </P>
           </div>
         )}
+
+        {/* More Button */}
+        <div className="text-center mt-12">
+          <Link
+            href="/photography"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-gray-300 text-gray-700 text-sm font-medium hover:border-brand-cerulean hover:text-brand-cerulean transition-all duration-300"
+          >
+            View Full Gallery
+          </Link>
+        </div>
       </div>
     </section>
   )
