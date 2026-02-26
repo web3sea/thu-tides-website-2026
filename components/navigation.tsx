@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Logo } from '@/components/logo'
+import { AnimatedWaveLogo } from '@/components/animated-wave-logo'
 
 export interface NavigationProps {
   className?: string
@@ -75,8 +75,11 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
       {/* Left Section - Logo and Menu */}
       <div className="flex items-center gap-12">
         {/* Logo */}
-        <Link href="/" className="text-white hover:opacity-90 transition-opacity">
-          <Logo />
+        <Link href="/" className="hover:opacity-90 transition-opacity">
+          <AnimatedWaveLogo
+            iconClassName="w-10 h-10"
+            textClassName="text-base font-light tracking-widest text-white"
+          />
         </Link>
 
         {/* Desktop Menu */}
@@ -190,7 +193,10 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
-                <Logo />
+                <AnimatedWaveLogo
+                  iconClassName="w-9 h-9"
+                  textClassName="text-sm font-light tracking-widest text-white"
+                />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
