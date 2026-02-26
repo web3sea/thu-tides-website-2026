@@ -68,13 +68,13 @@ pnpm test:all # Must pass (if tests exist)
 sleep 20
 
 # Step 2: Check deployment status
-vercel ls --scope coraltriangle-uat | head -8
+vercel ls --scope uat | head -8
 
 # Step 3: Monitor until complete (Building → Ready or Error)
 # Watch the "Status" column - wait for "Ready" or "Error"
 
 # Step 4: If Status = "Error", GET LOGS IMMEDIATELY
-vercel inspect <deployment-url> --logs --scope coraltriangle-uat
+vercel inspect <deployment-url> --logs --scope uat
 
 # Step 5: If Status = "Ready", VERIFY PRODUCTION
 curl -I https://thutides.com  # Should return 200 OK
@@ -352,8 +352,9 @@ Note: `NEXT_PUBLIC_` prefixed variables are exposed to the browser. Server-only 
 
 - **Platform:** Vercel (Hobby plan)
 - **Production URL:** https://thutides.com
-- **Vercel Project:** thu-tides-website-2026
-- **Team:** coraltriangle-uat
+- **Vercel Project:** thu-tides (CLI: `vercel ls thu-tides --scope coraltriangle`)
+- **Project ID:** prj_gaaH855ee0JEsS7KUsp1ZsCOVd41
+- **Team:** coraltriangle (Team ID: team_j6i26igCnr23k5HYZyL5ewKi)
 - **Auto-deploys:** Pushes to `main` branch trigger production deployments
 - **⚠️ BEFORE MERGING TO MAIN:** MUST run `/code-review-excellence` on ALL PRs (see Pull Request Workflow Requirements)
 - Environment variables must be configured in Vercel dashboard for production/preview

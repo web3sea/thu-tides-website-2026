@@ -5,7 +5,7 @@ import { LazyVideo } from '@/components/lazy-video'
 
 export function VideoLoopSection() {
   return (
-    <section className="hidden md:block relative w-full overflow-hidden pb-8 md:pb-12 bg-white">
+    <section className="relative w-full overflow-hidden pb-8 md:pb-12 bg-white">
       <div className="relative w-full h-[400px] md:h-[500px]">
         {/* Lazy-loaded background video */}
         <LazyVideo
