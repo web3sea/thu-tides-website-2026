@@ -2,6 +2,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+const WAVE_POINTS_START = "0,0.46 0.17,0.45 0.34,0.50 0.56,0.61 0.69,0.62 0.86,0.60 1,0.51 1,1 0,1";
+const WAVE_POINTS_MID   = "0,0.59 0.16,0.64 0.33,0.65 0.52,0.61 0.70,0.52 0.85,0.47 1,0.48 1,1 0,1";
+
 export const TextHoverEffect = ({
   text,
   duration,
@@ -70,6 +73,21 @@ export const TextHoverEffect = ({
       className="select-none"
     >
       <defs>
+        {/* Wave clip path – fills the text from the bottom with an animated wave top edge */}
+        <clipPath id="waveClip" clipPathUnits="objectBoundingBox">
+          <polygon points={WAVE_POINTS_START}>
+            <animate
+              attributeName="points"
+              dur="4s"
+              repeatCount="indefinite"
+              values={`${WAVE_POINTS_START}; ${WAVE_POINTS_MID}; ${WAVE_POINTS_START}`}
+              calcMode="spline"
+              keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"
+              keyTimes="0;0.5;1"
+            />
+          </polygon>
+        </clipPath>
+
         <linearGradient
           id="textGradient"
           gradientUnits="userSpaceOnUse"
@@ -148,14 +166,27 @@ export const TextHoverEffect = ({
           />
         </linearGradient>
       </defs>
-      {/* Base visible text - always readable */}
+      {/* Base outline text – letter strokes always visible above the wave */}
       <text
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        strokeWidth="0.5"
-        className={`fill-white stroke-white font-[helvetica] ${textSize} font-bold`}
+        strokeWidth="1"
+        className={`fill-transparent stroke-white font-[helvetica] ${textSize} font-bold`}
+        style={{ opacity: hovered ? 0.5 : 0.9 }}
+      >
+        {text}
+      </text>
+
+      {/* Wave-fill text – white fill clipped by the animated wave polygon */}
+      <text
+        x="50%"
+        y="50%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        className={`fill-white font-[helvetica] ${textSize} font-bold`}
+        clipPath="url(#waveClip)"
         style={{ opacity: hovered ? 0.3 : 1 }}
       >
         {text}
