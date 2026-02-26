@@ -133,8 +133,8 @@ export function PortfolioSection(): React.JSX.Element {
           tabIndex={0}
         >
           {/* Gradient Overlays for visual effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/50 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/50 to-transparent z-10 pointer-events-none hidden md:block" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/50 to-transparent z-10 pointer-events-none hidden md:block" />
 
           {/* Scrollable Carousel */}
           <div
@@ -148,7 +148,7 @@ export function PortfolioSection(): React.JSX.Element {
               WebkitOverflowScrolling: 'touch'
             }}
           >
-            <div className="flex gap-6 px-8">
+            <div className="flex gap-6 px-4 md:px-8">
               {filteredItems.map((item) => (
                 <PortfolioItem key={item.id} item={item} />
               ))}
