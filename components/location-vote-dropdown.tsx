@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { toast } from 'sonner'
 import type { VoteResults } from '@/types/votes'
@@ -41,33 +41,29 @@ export function LocationVoteDropdown({
   const [hasVoted, setHasVoted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const fetchResults = () => {
+  const fetchResults = useCallback(async () => {
     setIsLoading(true)
     setHasError(false)
-    fetch('/api/votes/results')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch results')
-        return res.json()
-      })
-      .then((data: VoteResults) => {
-        setResults(data)
-        setIsLoading(false)
-      })
-      .catch((error) => {
-        console.error('Error fetching results:', error)
-        toast.error('Failed to load voting results')
-        setHasError(true)
-        setIsLoading(false)
-      })
-  }
+    try {
+      const res = await fetch('/api/votes/results')
+      if (!res.ok) throw new Error('Failed to fetch results')
+      const data: VoteResults = await res.json()
+      setResults(data)
+    } catch (error) {
+      console.error('Error fetching results:', error)
+      toast.error('Failed to load voting results')
+      setHasError(true)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
-  // Fetch results when dropdown opens
+  // Fetch results each time the dropdown opens so the poll stays fresh.
   useEffect(() => {
-    if (isOpen && !results) {
+    if (isOpen) {
       fetchResults()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen])
+  }, [isOpen, fetchResults])
 
   // Handle vote submission
   async function handleVote(location: string) {
@@ -130,7 +126,9 @@ export function LocationVoteDropdown({
         <div className="text-center py-8 text-white/70 space-y-3">
           <p>Failed to load results</p>
           <button
+            type="button"
             onClick={fetchResults}
+            aria-label="Try again to load voting results"
             className="text-sm text-white/50 hover:text-white/80 underline transition-colors"
           >
             Try again
