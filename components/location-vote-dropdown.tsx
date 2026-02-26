@@ -35,31 +35,39 @@ export function LocationVoteDropdown({
 }: LocationVoteDropdownProps) {
   const [results, setResults] = useState<VoteResults | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
   const [isVoting, setIsVoting] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [hasVoted, setHasVoted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const fetchResults = () => {
+    setIsLoading(true)
+    setHasError(false)
+    fetch('/api/votes/results')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch results')
+        return res.json()
+      })
+      .then((data: VoteResults) => {
+        setResults(data)
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.error('Error fetching results:', error)
+        toast.error('Failed to load voting results')
+        setHasError(true)
+        setIsLoading(false)
+      })
+  }
+
   // Fetch results when dropdown opens
   useEffect(() => {
     if (isOpen && !results) {
-      setIsLoading(true)
-      fetch('/api/votes/results')
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch results')
-          return res.json()
-        })
-        .then((data: VoteResults) => {
-          setResults(data)
-          setIsLoading(false)
-        })
-        .catch((error) => {
-          console.error('Error fetching results:', error)
-          toast.error('Failed to load voting results')
-          setIsLoading(false)
-        })
+      fetchResults()
     }
-  }, [isOpen, results])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   // Handle vote submission
   async function handleVote(location: string) {
@@ -118,11 +126,17 @@ export function LocationVoteDropdown({
     }
 
     if (!results) {
-      return (
-        <div className="text-center py-8 text-white/70">
-          Failed to load results
+      return hasError ? (
+        <div className="text-center py-8 text-white/70 space-y-3">
+          <p>Failed to load results</p>
+          <button
+            onClick={fetchResults}
+            className="text-sm text-white/50 hover:text-white/80 underline transition-colors"
+          >
+            Try again
+          </button>
         </div>
-      )
+      ) : null
     }
 
     return (
