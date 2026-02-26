@@ -226,7 +226,7 @@ describe('Contact API Tests', () => {
 
       expect(rateLimitedResponse.status).toBe(429);
       const data = await rateLimitedResponse.json();
-      expect(data.error.toLowerCase()).toContain('rate');
+      expect(data.error.toLowerCase()).toContain('too many');
     }, 30000);
   });
 

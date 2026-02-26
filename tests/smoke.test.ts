@@ -19,9 +19,13 @@ describe('Smoke Test - Infrastructure Validation', () => {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
+    page = await browser.newPage();
   }, TEST_TIMEOUT);
 
   afterAll(async () => {
+    if (page) {
+      await page.close();
+    }
     if (browser) {
       await browser.close();
     }
@@ -31,8 +35,7 @@ describe('Smoke Test - Infrastructure Validation', () => {
     expect(browser).toBeDefined();
   });
 
-  test('should create new page', async () => {
-    page = await browser.newPage();
+  test('should create new page', () => {
     expect(page).toBeDefined();
   });
 
@@ -71,11 +74,5 @@ describe('Smoke Test - Infrastructure Validation', () => {
       return 2 + 2;
     });
     expect(result).toBe(4);
-  });
-
-  afterAll(async () => {
-    if (page) {
-      await page.close();
-    }
   });
 });

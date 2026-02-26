@@ -19,7 +19,12 @@ import {
   elementExists,
 } from './helpers/test-setup';
 
-describe('Voting System E2E Tests', () => {
+// The voting system requires Firebase (for /api/votes/results and /api/votes/location).
+// Skip in CI environments where Firebase credentials are not available.
+const hasFirebaseConfig = !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+const describeVoting = hasFirebaseConfig ? describe : describe.skip;
+
+describeVoting('Voting System E2E Tests', () => {
   let context: BrowserContext;
   const baseUrl = getBaseUrl();
 
