@@ -126,14 +126,19 @@ export const photoCategories: PhotoCategory[] = [
     displayComponent: 'grid',
     images: [
       {
-        src: '/dive 8.webp',
-        alt: 'Dive scene',
-        title: 'Dive Adventure 1',
+        src: '/dive_shop_reconnect.webp',
+        alt: 'Dive shop at Reconnect Resort',
+        title: 'Dive Shop',
       },
       {
-        src: '/dive 9.webp',
-        alt: 'Dive scene',
-        title: 'Dive Adventure 2',
+        src: '/dive_tanks_reconnect.webp',
+        alt: 'Dive tanks at Reconnect Resort',
+        title: 'Dive Tanks',
+      },
+      {
+        src: '/pier_reconnect.webp',
+        alt: 'Pier at Reconnect Resort',
+        title: 'Pier',
       },
       {
         src: '/uw_mariona.webp',
@@ -149,11 +154,6 @@ export const photoCategories: PhotoCategory[] = [
         src: '/uw_top_reef_atoll.webp',
         alt: 'Underwater at Top Reef Atoll',
         title: 'Top Reef Atoll',
-      },
-      {
-        src: '/common 19.webp',
-        alt: 'Common dive scene',
-        title: 'Marine Life',
       },
     ],
     galleryConfig: {
@@ -179,24 +179,24 @@ export const photoCategories: PhotoCategory[] = [
         title: 'Villa Bath',
       },
       {
-        src: '/AC 2.webp',
-        alt: 'Accommodation view',
-        title: 'Coastal Room',
+        src: '/villa_reconnect.webp',
+        alt: 'Villa at Reconnect Resort',
+        title: 'Villa',
       },
       {
-        src: '/AC 5.webp',
-        alt: 'Accommodation view',
-        title: 'Ocean View',
+        src: '/villa_sign_reconnect.webp',
+        alt: 'Villa sign at Reconnect Resort',
+        title: 'Villa Sign',
       },
       {
-        src: '/Athena 10.webp',
-        alt: 'Athena property',
-        title: 'Athena',
+        src: '/villa_athena_reconnect.webp',
+        alt: 'Villa Athena at Reconnect Resort',
+        title: 'Villa Athena',
       },
       {
-        src: '/Coco 8.webp',
-        alt: 'Coco property',
-        title: 'Coco',
+        src: '/villa_coco_reconnect.webp',
+        alt: 'Villa Coco at Reconnect Resort',
+        title: 'Villa Coco',
       },
     ],
     galleryConfig: {
@@ -212,34 +212,34 @@ export const photoCategories: PhotoCategory[] = [
     displayComponent: 'carousel',
     images: [
       {
-        src: '/Sunrise 2.webp',
-        alt: 'Sunrise view',
+        src: '/villa_sunrise_reconnect.webp',
+        alt: 'Sunrise at Reconnect Resort',
         title: 'Dawn',
       },
       {
-        src: '/sunset6_reconnect_buka_buka.webp',
+        src: '/villa_sunset_reconnect_buka_buka.webp',
         alt: 'Sunset at Buka Buka',
         title: 'Buka Buka Sunset',
       },
       {
-        src: '/DSC00012.webp',
-        alt: 'Landscape view',
-        title: 'Coastal Scene',
+        src: '/DJI_arial_waterfall_casaroro.webp',
+        alt: 'Aerial view of Casaroro Waterfall',
+        title: 'Casaroro Falls',
       },
       {
-        src: '/DSC00057.webp',
-        alt: 'Landscape view',
-        title: 'Island Vista',
+        src: '/DJI_arial_waterfall_pasalan.webp',
+        alt: 'Aerial view of Pasalan Waterfall',
+        title: 'Pasalan Falls',
       },
       {
-        src: '/DSC00090.webp',
-        alt: 'Landscape view',
-        title: 'Beach Panorama',
+        src: '/DJ_aerial_reconnect.webp',
+        alt: 'Aerial view of Reconnect Resort',
+        title: 'Coastal Aerial',
       },
       {
-        src: '/DSC00366.webp',
-        alt: 'Landscape view',
-        title: 'Tropical Paradise',
+        src: '/maison_coco_reconnect.webp',
+        alt: 'Maison Coco at Reconnect Resort',
+        title: 'Maison Coco',
       },
     ],
     galleryConfig: {
@@ -259,29 +259,29 @@ export const photoCategories: PhotoCategory[] = [
         title: 'Tarsier',
       },
       {
-        src: '/LUS03355-2.webp',
-        alt: 'Nature scene',
-        title: 'Natural Beauty',
-      },
-      {
-        src: '/DJI_20251117042317_0009_D.webp',
-        alt: 'Aerial nature view',
-        title: 'From Above',
-      },
-      {
         src: '/uw_jellyfish_mariona.webp',
         alt: 'Jellyfish at Mariona',
         title: 'Jellyfish',
       },
       {
+        src: '/uw_jacks.webp',
+        alt: 'School of jacks underwater',
+        title: 'Jacks',
+      },
+      {
+        src: '/uw_seafan.webp',
+        alt: 'Sea fan coral',
+        title: 'Sea Fan',
+      },
+      {
+        src: '/uw_turtle.webp',
+        alt: 'Sea turtle underwater',
+        title: 'Sea Turtle',
+      },
+      {
         src: '/uw_buka_buka.webp',
         alt: 'Marine life at Buka Buka',
         title: 'Marine Ecosystem',
-      },
-      {
-        src: '/common 19.webp',
-        alt: 'Wildlife scene',
-        title: 'Biodiversity',
       },
     ],
     galleryConfig: {
@@ -306,7 +306,7 @@ export const featuredPhotos = [
     href: '/photography#aerials',
   },
   {
-    src: '/dive 8.webp',
+    src: '/dive_shop_reconnect.webp',
     alt: 'Dive photography',
     title: 'Dive Photography',
     href: '/photography#dive',
