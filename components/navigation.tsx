@@ -93,7 +93,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
 
           {/* About Link */}
           <Link
-            href="#about"
+            href="/#about"
             className="text-sm font-medium text-white/90 hover:text-white transition-colors"
           >
             About
@@ -154,7 +154,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
       {/* Right Section - CTA and Mobile Menu Button */}
       <div className="flex items-center gap-4">
         <Link
-          href="#contact"
+          href="/#contact"
           className="hidden md:block border border-white/90 hover:bg-white/10 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
         >
           Let&apos;s Connect
@@ -217,7 +217,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
                 </Link>
 
                 <Link
-                  href="#about"
+                  href="/#about"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-lg font-medium text-white/90 hover:text-white transition-colors"
                 >
@@ -249,7 +249,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
 
                 {/* CTA Button */}
                 <Link
-                  href="#contact"
+                  href="/#contact"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="mt-4 border border-white/90 hover:bg-white/10 text-white px-6 py-3 rounded-full text-center font-semibold transition-all"
                 >
