@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { AnimatedWaveLogo } from '@/components/animated-wave-logo'
@@ -47,6 +48,15 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
   const [isPhotographsOpen, setIsPhotographsOpen] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const photographsTimeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined)
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
+  const handleHomeAnchorClick = (hash: string) => (e: React.MouseEvent) => {
+    if (!isHome) {
+      e.preventDefault()
+      window.location.href = `/${hash}`
+    }
+  }
 
   const handlePhotographsMouseEnter = () => {
     if (photographsTimeoutRef.current) clearTimeout(photographsTimeoutRef.current)
@@ -94,6 +104,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
           {/* About Link */}
           <Link
             href="/#about"
+            onClick={handleHomeAnchorClick('#about')}
             className="text-sm font-medium text-white/90 hover:text-white transition-colors"
           >
             About
@@ -155,6 +166,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
       <div className="flex items-center gap-4">
         <Link
           href="/#contact"
+          onClick={handleHomeAnchorClick('#contact')}
           className="hidden md:block border border-white/90 hover:bg-white/10 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
         >
           Let&apos;s Connect
@@ -218,7 +230,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
 
                 <Link
                   href="/#about"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => { handleHomeAnchorClick('#about')(e); setIsMobileMenuOpen(false) }}
                   className="text-lg font-medium text-white/90 hover:text-white transition-colors"
                 >
                   About
@@ -250,7 +262,7 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
                 {/* CTA Button */}
                 <Link
                   href="/#contact"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => { handleHomeAnchorClick('#contact')(e); setIsMobileMenuOpen(false) }}
                   className="mt-4 border border-white/90 hover:bg-white/10 text-white px-6 py-3 rounded-full text-center font-semibold transition-all"
                 >
                   Let&apos;s Connect
