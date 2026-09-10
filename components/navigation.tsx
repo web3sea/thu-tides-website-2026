@@ -110,6 +110,13 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
             About
           </Link>
 
+          <Link
+            href="/guides"
+            className="text-sm font-medium text-white/90 hover:text-white transition-colors"
+          >
+            Guides
+          </Link>
+
           {/* Photographs Dropdown */}
           <div
             className="relative"
@@ -234,6 +241,14 @@ export function Navigation({ className }: NavigationProps): React.JSX.Element {
                   className="text-lg font-medium text-white/90 hover:text-white transition-colors"
                 >
                   About
+                </Link>
+
+                <Link
+                  href="/guides"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-medium text-white/90 hover:text-white transition-colors"
+                >
+                  Guides
                 </Link>
 
                 {/* Photographs Section */}

@@ -1,4 +1,5 @@
-import { H2, H3, P } from '@/components/typography'
+import Link from 'next/link'
+import { H3, P } from '@/components/typography'
 
 export function ServicesSection() {
   const services = [
@@ -17,6 +18,13 @@ export function ServicesSection() {
       icon: 'settings_suggest',
       description: 'Modern websites and smart automation that work together seamlessly. We build fast, mobile-responsive sites that convert visitors into bookings, plus automation solutions that streamline operations and enhance guest experiences.',
     },
+    {
+      title: 'Travel Guides',
+      icon: 'map',
+      description: 'Mobile travel guides built from our own trips across Indonesia: seasons, permits, real budgets and the islands we would go back to. Raja Ampat is out now, with Lombok and Bali to follow.',
+      href: '/guides',
+      cta: 'Browse the guides',
+    },
   ]
 
   return (
@@ -30,11 +38,11 @@ export function ServicesSection() {
           </P>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg mx-auto">
           {services.map((service) => (
             <div
               key={service.title}
-              className="bg-white card-padding-lg rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white card-padding-lg rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col"
             >
               <div className="flex items-center justify-center w-16 h-16 mb-6 mx-auto bg-blue-50 rounded-full">
                 <span className="material-symbols-outlined text-4xl text-blue-600">
@@ -47,6 +55,15 @@ export function ServicesSection() {
               <P className="text-gray-600 font-light text-center leading-relaxed">
                 {service.description}
               </P>
+              {service.href && (
+                <Link
+                  href={service.href}
+                  className="mt-6 self-center inline-flex items-center gap-1 text-sm font-semibold text-brand-cerulean hover:text-brand-cerulean-2 transition-colors"
+                >
+                  {service.cta}
+                  <span className="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+                </Link>
+              )}
             </div>
           ))}
         </div>
