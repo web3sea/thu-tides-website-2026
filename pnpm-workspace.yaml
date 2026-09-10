@@ -1,6 +1,9 @@
 packages:
   - '.'
 
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  '@firebase/util': true
+  protobufjs: true
+  puppeteer: true
+  sharp: true
+  unrs-resolver: true
