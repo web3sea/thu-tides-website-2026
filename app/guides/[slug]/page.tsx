@@ -25,15 +25,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     openGraph: {
       title: `${guide.title} Travel Guide by Thu Tides`,
       description: guide.tagline,
-      images: [{ url: guide.image, width: 1080, height: 1400 }],
+      images: [{ url: guide.image }],
     },
   }
 }
 
 export default async function GuideSalesPage({ params }: Params) {
   const { slug } = await params
-  const guide = guideBySlug(slug)
-  if (!guide || guide.status !== 'available' || !guide.buyUrl) notFound()
+  const guide = guidesOnSale().find((g) => g.slug === slug)
+  if (!guide) notFound()
 
   return (
     <GigaLayout>
@@ -82,6 +82,7 @@ export default async function GuideSalesPage({ params }: Params) {
       </section>
 
       {/* What's inside */}
+      {guide.chapters?.length ? (
       <section aria-labelledby="chapters" className="px-6 pb-20">
         <div className="max-w-6xl mx-auto">
           <H2 id="chapters" className="text-white mb-10 text-3xl md:text-4xl">
@@ -103,7 +104,10 @@ export default async function GuideSalesPage({ params }: Params) {
         </div>
       </section>
 
+      ) : null}
+
       {/* How it works */}
+      {guide.highlights?.length ? (
       <section aria-labelledby="how" className="px-6 pb-20">
         <div className="max-w-6xl mx-auto">
           <H2 id="how" className="text-white mb-10 text-3xl md:text-4xl">
@@ -122,6 +126,8 @@ export default async function GuideSalesPage({ params }: Params) {
           </div>
         </div>
       </section>
+
+      ) : null}
 
       {/* Buy */}
       <section aria-labelledby="buy" className="px-6 pb-28">
