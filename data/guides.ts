@@ -19,6 +19,10 @@ export type Guide = {
   /** Where existing buyers sign in. */
   appUrl?: string
   chapters?: { title: string; intro: string }[]
+  /** Search and social description for the sales page. */
+  seoDescription?: string
+  /** "How it works" cards on the sales page. Material Symbols icon names. */
+  highlights?: { icon: string; title: string; text: string }[]
 }
 
 export const guides: Guide[] = [
@@ -35,6 +39,14 @@ export const guides: Guide[] = [
     price: '$12',
     buyUrl: 'https://buy.stripe.com/dRm5kE1uweQH9x96djdMI0j',
     appUrl: 'https://rajaampat.thutides.com',
+    seoDescription:
+      'A mobile guide to Raja Ampat from Thu Tides: seasons and permits, a 12-day itinerary with a real budget, Kri, Arborek, Piaynemo, Misool and where to stay. US$12, reads on two devices.',
+    highlights: [
+      { icon: 'phone_iphone', title: 'Built for your phone', text: 'A small web app you open with a code from your email. No app store, no PDF to pinch and zoom.' },
+      { icon: 'devices', title: 'Two devices', text: 'Register the phone and tablet you will actually read on. Both stay signed in for 30 days at a time.' },
+      { icon: 'payments', title: 'A real budget', text: 'What a 12-day trip cost us, line by line, and how to trim it or spend more where it matters.' },
+      { icon: 'sailing', title: 'Homestay to liveaboard', text: 'Honest notes on the three ways to sleep in Raja Ampat and what each changes about your trip.' },
+    ],
     chapters: [
       { title: 'Useful info', intro: 'Seasons, visas, getting there, permits, money, data, packing and where to stay.' },
       { title: 'Itinerary & budget', intro: 'Sorong, Waisai, how to build a budget, and three itineraries we would do again.' },
@@ -68,3 +80,6 @@ export const guides: Guide[] = [
 ]
 
 export const guideBySlug = (slug: string) => guides.find((g) => g.slug === slug)
+
+/** Guides with a sales page: on sale, with a Stripe link. */
+export const guidesOnSale = () => guides.filter((g) => g.status === 'available' && g.buyUrl)

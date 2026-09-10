@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { GigaLayout } from '@/components/giga-layout'
 import { H1, H2, P } from '@/components/typography'
-import { guides, type Guide } from '@/data/guides'
+import { guides, guidesOnSale, type Guide } from '@/data/guides'
 
 export const metadata: Metadata = {
   title: 'Travel Guides',
@@ -19,7 +19,7 @@ const statusLabel: Record<Guide['status'], string> = {
 }
 
 export default function GuidesPage() {
-  const featured = guides.find((g) => g.status === 'available') ?? guides[0]
+  const featured = guidesOnSale()[0] ?? guides[0]
   const rest = guides.filter((g) => g !== featured)
 
   return (
@@ -60,13 +60,15 @@ export default function GuidesPage() {
             <P className="text-white/60 text-sm mb-5">{featured.region}</P>
             <P className="text-white/85 text-lg font-light leading-relaxed mb-8">{featured.description}</P>
             <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href={`/guides/${featured.slug}`}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
-              >
-                See what is inside
-                <span className="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
-              </Link>
+              {featured.buyUrl && (
+                <Link
+                  href={`/guides/${featured.slug}`}
+                  className="inline-flex items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
+                >
+                  See what is inside
+                  <span className="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+                </Link>
+              )}
               {featured.price && (
                 <span className="text-white/80 text-sm">
                   {featured.price} <span className="text-white/50">one-time, two devices</span>

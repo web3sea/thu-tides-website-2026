@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/giga-demo/'],
       },
     ],
-    sitemap: 'https://thu-tides-website-2026-8zuawrgms-coraltriangle-uat.vercel.app/sitemap.xml',
+    sitemap: 'https://thutides.com/sitemap.xml',
   }
 }

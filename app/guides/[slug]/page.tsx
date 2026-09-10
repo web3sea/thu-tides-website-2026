@@ -4,36 +4,41 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { GigaLayout } from '@/components/giga-layout'
 import { H1, H2, P } from '@/components/typography'
-import { guideBySlug } from '@/data/guides'
+import { guideBySlug, guidesOnSale } from '@/data/guides'
 
-const guide = guideBySlug('raja-ampat')
+type Params = { params: Promise<{ slug: string }> }
 
-export const metadata: Metadata = {
-  title: 'Raja Ampat Travel Guide',
-  description:
-    'A mobile guide to Raja Ampat from Thu Tides: seasons and permits, a 12-day itinerary with a real budget, Kri, Arborek, Piaynemo, Misool and where to stay. US$12, reads on two devices.',
-  alternates: { canonical: '/guides/raja-ampat' },
-  openGraph: {
-    title: 'Raja Ampat Travel Guide by Thu Tides',
-    description: 'Seasons, permits, a 12-day itinerary with a real budget, and the islands we would go back to.',
-    images: [{ url: '/guides/raja-ampat-cover.webp', width: 1080, height: 1400 }],
-  },
+// Only guides that are on sale get a page; the rest 404 until they launch.
+export const dynamicParams = false
+export function generateStaticParams() {
+  return guidesOnSale().map((g) => ({ slug: g.slug }))
 }
 
-const included = [
-  { icon: 'phone_iphone', title: 'Built for your phone', text: 'A small web app you open with a code from your email. No app store, no PDF to pinch and zoom.' },
-  { icon: 'devices', title: 'Two devices', text: 'Register the phone and tablet you will actually read on. Both stay signed in for 30 days at a time.' },
-  { icon: 'payments', title: 'A real budget', text: 'What a 12-day trip cost us, line by line, and how to trim it or spend more where it matters.' },
-  { icon: 'sailing', title: 'Homestay to liveaboard', text: 'Honest notes on the three ways to sleep in Raja Ampat and what each changes about your trip.' },
-]
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params
+  const guide = guideBySlug(slug)
+  if (!guide) return {}
+  return {
+    title: `${guide.title} Travel Guide`,
+    description: guide.seoDescription ?? guide.description,
+    alternates: { canonical: `/guides/${guide.slug}` },
+    openGraph: {
+      title: `${guide.title} Travel Guide by Thu Tides`,
+      description: guide.tagline,
+      images: [{ url: guide.image }],
+    },
+  }
+}
 
-export default function RajaAmpatGuidePage() {
-  if (!guide || !guide.buyUrl) notFound()
+export default async function GuideSalesPage({ params }: Params) {
+  const { slug } = await params
+  const guide = guidesOnSale().find((g) => g.slug === slug)
+  if (!guide) notFound()
 
   return (
     <GigaLayout>
       {/* Hero */}
-      <section aria-label="Raja Ampat guide" className="relative min-h-[70vh] flex items-end overflow-hidden">
+      <section aria-label={`${guide.title} guide`} className="relative min-h-[70vh] flex items-end overflow-hidden">
         <Image
           src={guide.image}
           alt={guide.imageAlt}
@@ -77,6 +82,7 @@ export default function RajaAmpatGuidePage() {
       </section>
 
       {/* What's inside */}
+      {guide.chapters?.length ? (
       <section aria-labelledby="chapters" className="px-6 pb-20">
         <div className="max-w-6xl mx-auto">
           <H2 id="chapters" className="text-white mb-10 text-3xl md:text-4xl">
@@ -98,14 +104,17 @@ export default function RajaAmpatGuidePage() {
         </div>
       </section>
 
+      ) : null}
+
       {/* How it works */}
+      {guide.highlights?.length ? (
       <section aria-labelledby="how" className="px-6 pb-20">
         <div className="max-w-6xl mx-auto">
           <H2 id="how" className="text-white mb-10 text-3xl md:text-4xl">
             How it works
           </H2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {included.map((item) => (
+            {guide.highlights?.map((item) => (
               <div key={item.title} className="rounded-2xl bg-white/5 border border-white/10 p-6">
                 <span className="material-symbols-outlined text-3xl text-brand-cerulean-2" aria-hidden="true">
                   {item.icon}
@@ -117,6 +126,8 @@ export default function RajaAmpatGuidePage() {
           </div>
         </div>
       </section>
+
+      ) : null}
 
       {/* Buy */}
       <section aria-labelledby="buy" className="px-6 pb-28">
@@ -130,14 +141,14 @@ export default function RajaAmpatGuidePage() {
           </P>
           <a
             href={guide.buyUrl}
-              rel="noopener noreferrer"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-8 py-4 text-base font-semibold text-white transition-colors"
           >
-            Get the Raja Ampat guide
+            Get the {guide.title} guide
             <span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span>
           </a>
           <P className="text-white/50 text-xs mt-6">
-            Payments are processed by Stripe. Lombok and Bali guides are next; see all{' '}
+            Payments are processed by Stripe. More guides are on the way; see all{' '}
             <Link href="/guides" className="underline hover:text-white/80">guides</Link>.
           </P>
         </div>

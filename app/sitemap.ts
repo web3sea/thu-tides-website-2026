@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { readdirSync } from 'fs'
 import { join } from 'path'
+import { guidesOnSale } from '@/data/guides'
 
 /**
  * Dynamic sitemap for Thu Tides
@@ -25,8 +26,10 @@ function discoverRoutes(dir: string, basePath = ''): string[] {
 
     for (const entry of entries) {
       // Skip special Next.js files and folders
+      // Dynamic segments like [slug] are listed explicitly below.
       if (entry.name.startsWith('_') ||
           entry.name.startsWith('.') ||
+          entry.name.startsWith('[') ||
           entry.name === 'api' ||
           entry.name === 'sitemap.ts' ||
           entry.name === 'robots.txt') {
@@ -69,7 +72,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Use a static date for better caching - update manually when content changes
   // or use git commit date in production
-  const lastModified = new Date('2026-02-06')
+  const lastModified = new Date('2026-09-10')
 
   // Discover all routes
   const appDir = join(process.cwd(), 'app')
@@ -93,6 +96,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
+    })
+  }
+
+  for (const guide of guidesOnSale()) {
+    sitemapEntries.push({
+      url: `${baseUrl}/guides/${guide.slug}`,
+      lastModified: lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
     })
   }
 
