@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { GigaLayout } from '@/components/giga-layout'
 import { H1, H2, P } from '@/components/typography'
-import { guides, type Guide } from '@/data/guides'
+import { guides, guidesOnSale, type Guide } from '@/data/guides'
 
 export const metadata: Metadata = {
   title: 'Travel Guides',
