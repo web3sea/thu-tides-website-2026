@@ -23,14 +23,15 @@ function isPreviewPage(): boolean {
 }
 
 function rewriteMedia(root: ParentNode) {
-  root.querySelectorAll<HTMLImageElement>('img[src^="/"]').forEach((el) => {
+  // `^="/"` alone also matches protocol-relative `//cdn...` URLs; exclude those.
+  root.querySelectorAll<HTMLImageElement>('img[src^="/"]:not([src^="//"])').forEach((el) => {
     el.src = `${ORIGIN}/_next/image?url=${encodeURIComponent(el.getAttribute('src')!)}&w=1200&q=75`;
   });
-  root.querySelectorAll<HTMLElement>('video[poster^="/"]').forEach((el) => {
+  root.querySelectorAll<HTMLElement>('video[poster^="/"]:not([poster^="//"])').forEach((el) => {
     el.setAttribute('poster', `${ORIGIN}/_next/image?url=${encodeURIComponent(el.getAttribute('poster')!)}&w=1200&q=75`);
   });
   // never pull multi-MB originals into a capture: drop the video source, keep the poster
-  root.querySelectorAll<HTMLElement>('video[src^="/"], source[src^="/"]').forEach((el) => el.removeAttribute('src'));
+  root.querySelectorAll<HTMLElement>('video[src^="/"]:not([src^="//"]), source[src^="/"]:not([src^="//"])').forEach((el) => el.removeAttribute('src'));
 }
 
 function activate() {

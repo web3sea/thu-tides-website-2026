@@ -23,10 +23,13 @@ for (const f of files) {
   for (const m of s.matchAll(/^export\s+(?:default\s+)?(?:function|const|class)\s+([A-Z][A-Za-z0-9]*)/gm)) names.add(m[1]);
   for (const m of s.matchAll(/^export\s*\{([^}]+)\}/gm))
     for (const n of m[1].split(',')) { const t = n.trim().split(/\s+as\s+/).pop().trim(); if (/^[A-Z][A-Za-z0-9]*$/.test(t)) names.add(t); }
-  if (![...names].some((n) => !SKIP.has(n))) continue;
-  const mod = `../../../${f.replace(/\.tsx$/, '')}`; // relative, not '@/': tsc keeps specifiers verbatim and ts-morph has no alias map
+  // `export default Name` (declared separately or inline) counts as a component too.
   const dm = s.match(/^export default (?:function\s+)?([A-Z][A-Za-z0-9]*)/m);
-  if (dm && !SKIP.has(dm[1])) lines.push(`export { default as ${dm[1]} } from '${mod}';`);
+  const hasNamed = [...names].some((n) => !SKIP.has(n));
+  const hasDefault = !!dm && !SKIP.has(dm[1]);
+  if (!hasNamed && !hasDefault) continue;
+  const mod = `../../../${f.replace(/\.tsx$/, '')}`; // relative, not '@/': tsc keeps specifiers verbatim and ts-morph has no alias map
+  if (hasDefault) lines.push(`export { default as ${dm[1]} } from '${mod}';`);
   lines.push(`export * from '${mod}';`);
 }
 writeFileSync(`${PKG}/index.ts`, lines.join('\n') + '\n');
@@ -49,7 +52,7 @@ execSync(`node_modules/.bin/tsc -p ${PKG}/tsconfig.json`, { stdio: 'inherit' });
 writeFileSync(`${PKG}/types/index.d.ts`, '// design-sync: types root entry so the ts-morph parse sees the whole tree\nexport * from "./.design-sync/.cache/pkg/index";\n');
 
 // 3. stylesheet --------------------------------------------------------
-execSync(`node .ds-sync/node_modules/.bin/tailwindcss -i .design-sync/styles.src.css -o ${PKG}/compiled.css`, { stdio: 'inherit' });
+execSync(`.ds-sync/node_modules/.bin/tailwindcss -i .design-sync/styles.src.css -o ${PKG}/compiled.css`, { stdio: 'inherit' });
 annotateTokenKinds(`${PKG}/compiled.css`);
 
 // 4. token kinds -----------------------------------------------------------
