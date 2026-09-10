@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Claude Design sync tooling: authored preview compositions, browser shims and
+    // generated output compiled by esbuild for the design-system bundle, not by Next.
+    ".design-sync/**",
+    ".ds-sync/**",
+    "ds-bundle/**",
   ]),
   // Scripts are standalone Node.js utilities using CommonJS require() intentionally.
   {
