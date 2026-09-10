@@ -100,3 +100,23 @@ Repo-specific facts a future sync needs. Config lives in `config.json`; this fil
 - Toolchain: Tailwind CLI 4.3.x, esbuild 0.28, ts-morph 28, Playwright 1.63 with Puppeteer's Chrome 145
   via `DS_CHROMIUM_PATH`. A fresh clone must re-run the `.ds-sync/` npm install and recreate the
   `.design-sync/node_modules` symlink.
+
+## Baked-in app fixes (2026-09-10, second sync)
+Claude Design's self-check reads every `--name: value;` in the styles.css @import closure as a token
+and honours a trailing `/* @kind color|spacing|radius|shadow|font|other */`; it also flags any
+non-system family named in a `--font-*` token as a brand font that needs an `@font-face`. Three
+fixes that were being made by hand in the app after each sync now live in the sources:
+- `prepare.mjs` annotates every declaration in `compiled.css` with `@kind` by name (`--tw-*`, eases,
+  animations -> `other`). Tailwind's per-utility `--tw-*` internals cannot be removed from the CSS
+  without breaking the utilities; annotating them `other` is the source-level equivalent of filtering.
+- `styles.src.css` overrides Tailwind's default `--font-serif` to drop Cambria, so the app no longer
+  demands a Cambria @font-face. The site never uses a serif face. (The app previously carried a
+  hand-uploaded `fonts/Cambria-Font-For-MAC.ttf`; it is not in the repo for licensing reasons.)
+- `cfg.provider` is gone. `shims/preview-provider.tsx` now self-activates only on preview-card pages
+  (it detects the card runtime's `__dsPreview`/`.ds-cell` markers), so the generated README and
+  `.prompt.md` files no longer tell the design agent to wrap designs in `PreviewMotionProvider`.
+- Slow networks: the staged validator waits 15 s for `networkidle` per card; image-heavy cards (galleries,
+  Navigation, PhotoCategorySection) then time out at random. Warm the optimizer cache first
+  (curl every `/_next/image?url=...` the previews reference) and, if it still flakes, raise the timeout
+  in `.ds-sync/package-validate.mjs` (`timeout: 15000` -> `45000`) for that run. `MasonryGallery`'s
+  preview was trimmed to six images for the same reason.

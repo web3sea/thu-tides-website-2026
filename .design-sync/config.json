@@ -348,8 +348,5 @@
   "extraEntries": [
     "../../shims/preview-provider.tsx",
     "../../shims/toast.ts"
-  ],
-  "provider": {
-    "component": "PreviewMotionProvider"
-  }
+  ]
 }

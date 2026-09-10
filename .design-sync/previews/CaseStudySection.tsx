@@ -2,6 +2,8 @@ import * as React from 'react';
 import { CaseStudySection, P } from 'thu-tides-website';
 
 export const ChallengeImageRight = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudySection
     type="challenge"
     title="A resort that photographs better than it markets"
@@ -10,9 +12,12 @@ export const ChallengeImageRight = () => (
     layout="right"
     backgroundColor="muted"
   />
+  </div>
 );
 
 export const GoalImageLeft = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudySection
     type="goal"
     title="One visual language, from reef to rooftop"
@@ -22,9 +27,12 @@ export const GoalImageLeft = () => (
     accent="olive"
     backgroundColor="light"
   />
+  </div>
 );
 
 export const OutcomeFullWidth = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudySection
     type="outcome"
     title="A complete image library in ten working days"
@@ -34,9 +42,12 @@ export const OutcomeFullWidth = () => (
     accent="sage"
     backgroundColor="transparent"
   />
+  </div>
 );
 
 export const WithChildrenNoImage = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudySection
     type="outcome"
     title="What we delivered"
@@ -51,4 +62,5 @@ export const WithChildrenNoImage = () => (
       <li className="rounded-lg bg-white p-4 shadow-sm"><P className="font-semibold">10 working days</P><P className="text-sm text-muted-foreground">From shoot to final delivery</P></li>
     </ul>
   </CaseStudySection>
+  </div>
 );

@@ -50,4 +50,35 @@ writeFileSync(`${PKG}/types/index.d.ts`, '// design-sync: types root entry so th
 
 // 3. stylesheet --------------------------------------------------------
 execSync(`node .ds-sync/node_modules/.bin/tailwindcss -i .design-sync/styles.src.css -o ${PKG}/compiled.css`, { stdio: 'inherit' });
+annotateTokenKinds(`${PKG}/compiled.css`);
+
+// 4. token kinds -----------------------------------------------------------
+// Claude Design reads every `--name: value;` in the styles.css @import closure as a
+// token and honours a trailing `/* @kind color|spacing|radius|shadow|font|other */`.
+// Without it, Tailwind's per-utility `--tw-*` internals, eases, animations and other
+// unclassifiable values surface as "unclassified" findings on every sync. Annotate by
+// name so the classification is declared, not guessed. (These edits were previously made
+// by hand in the app and wiped by each sync.)
+function kindFor(name) {
+  if (/^--tw-/.test(name)) return 'other';
+  if (/^--(color-|brand-|background$|foreground$|card|popover|primary|secondary|muted|accent|destructive|border$|input$|ring$|chart-|sidebar|text-muted$)/.test(name)) return 'color';
+  if (/^--(radius)/.test(name)) return 'radius';
+  if (/^--(shadow|drop-shadow|inset-shadow|text-shadow)/.test(name)) return 'shadow';
+  if (/^--(font|text-|leading-|tracking-|default-font|default-mono-font)/.test(name)) return 'font';
+  if (/^--(spacing|space-|container-|breakpoint-|blur-|perspective-)/.test(name)) return 'spacing';
+  return 'other';
+}
+function annotateTokenKinds(file) {
+  const DECL = /^(\s*)(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+);[ \t]*$/;
+  let n = 0;
+  const out = readFileSync(file, 'utf8').split('\n').map((line) => {
+    const m = DECL.exec(line);
+    if (!m || line.includes('@kind')) return line;
+    n++;
+    return `${line} /* @kind ${kindFor(m[2])} */`;
+  });
+  writeFileSync(file, out.join('\n'));
+  console.error(`prepare: annotated ${n} token declarations with @kind`);
+}
+
 console.error(`prepare: ${files.length} component files -> ${PKG}/index.ts, types/, compiled.css`);

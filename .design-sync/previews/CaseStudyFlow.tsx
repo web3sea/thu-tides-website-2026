@@ -2,6 +2,8 @@ import * as React from 'react';
 import { CaseStudyFlow, CaseStudySection } from 'thu-tides-website';
 
 export const ChallengeGoalOutcome = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudyFlow>
     <CaseStudySection
       type="challenge"
@@ -29,9 +31,12 @@ export const ChallengeGoalOutcome = () => (
       backgroundColor="transparent"
     />
   </CaseStudyFlow>
+  </div>
 );
 
 export const TwoSteps = () => (
+  <div>
+    <span className="sr-only">Case study</span>
   <CaseStudyFlow>
     <CaseStudySection
       type="challenge"
@@ -50,4 +55,5 @@ export const TwoSteps = () => (
       backgroundColor="light"
     />
   </CaseStudyFlow>
+  </div>
 );

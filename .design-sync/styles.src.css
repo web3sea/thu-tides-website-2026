@@ -27,6 +27,12 @@
 @source inline("{bg,text,border}-{white,black,brand-cerulean,foreground,background,muted-foreground}/{5,10,20,30,40,50,60,70,80,90,95}");
 @source inline("{rounded,rounded-{sm,md,lg,xl,2xl,3xl,4xl,full,none},rounded-{t,b,l,r}-{lg,xl,2xl},border,border-{0,2,t,b,l,r},shadow,shadow-{sm,md,lg,xl,2xl,none},ring-1,ring-2,opacity-{0,25,50,75,100},backdrop-blur-{sm,md,lg},transition,transition-{all,colors,opacity,transform},duration-{150,200,300,500},aspect-{square,video,\[4/3\],\[3/2\],\[3/4\]},cursor-pointer,select-none,pointer-events-none,sr-only,truncate,line-clamp-{1,2,3},divide-y,list-disc,list-none,z-{0,10,20,30,40,50}}");
 
+/* Tailwind's default serif stack names Cambria, which Claude Design treats as a brand font
+   needing an @font-face. The site never uses serif; drop it so no font is demanded. */
+@theme {
+  --font-serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+}
+
 /* next/font sets these variables on <html>; provide them statically here. */
 :root {
   --font-sans: "Noto Sans", ui-sans-serif, system-ui, sans-serif;
