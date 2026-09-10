@@ -52,10 +52,10 @@ export default function RajaAmpatGuidePage() {
           <div className="flex flex-wrap items-center gap-4">
             <a
               href={guide.buyUrl}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-7 py-3.5 text-base font-semibold text-white transition-colors"
+              className="inline-flex max-w-full items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-6 py-3.5 text-base font-semibold text-white transition-colors"
             >
-              Get the guide, {guide.price}
-              <span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span>
+              <span>Get the guide, {guide.price}</span>
+              <span className="material-symbols-outlined shrink-0 text-lg" aria-hidden="true">arrow_forward</span>
             </a>
             <a
               href={guide.appUrl}
