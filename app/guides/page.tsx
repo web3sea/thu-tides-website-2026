@@ -19,7 +19,8 @@ const statusLabel: Record<Guide['status'], string> = {
 }
 
 export default function GuidesPage() {
-  const [featured, ...rest] = guides
+  const featured = guides.find((g) => g.status === 'available') ?? guides[0]
+  const rest = guides.filter((g) => g !== featured)
 
   return (
     <GigaLayout>

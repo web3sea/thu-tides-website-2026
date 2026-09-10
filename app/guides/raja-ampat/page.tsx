@@ -52,6 +52,7 @@ export default function RajaAmpatGuidePage() {
           <div className="flex flex-wrap items-center gap-4">
             <a
               href={guide.buyUrl}
+              rel="noopener noreferrer"
               className="inline-flex max-w-full items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-6 py-3.5 text-base font-semibold text-white transition-colors"
             >
               <span>Get the guide, {guide.price}</span>
@@ -59,6 +60,7 @@ export default function RajaAmpatGuidePage() {
             </a>
             <a
               href={guide.appUrl}
+              rel="noopener noreferrer"
               className="inline-flex items-center rounded-full border border-white/40 hover:bg-white/10 px-6 py-3.5 text-sm font-semibold text-white transition-colors"
             >
               Already bought it? Open the guide
@@ -128,6 +130,7 @@ export default function RajaAmpatGuidePage() {
           </P>
           <a
             href={guide.buyUrl}
+              rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-brand-cerulean hover:bg-brand-cerulean-2 px-8 py-4 text-base font-semibold text-white transition-colors"
           >
             Get the Raja Ampat guide
