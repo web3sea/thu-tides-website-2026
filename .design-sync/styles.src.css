@@ -1,0 +1,35 @@
+/* design-sync stylesheet source: the site's real globals.css plus the fonts
+   next/font would normally inject at runtime. Compiled by cfg.buildCmd into
+   .design-sync/.cache/compiled.css (cfg.cssEntry). */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+/* app/layout.tsx links Material Symbols in <head>; components render icons as ligature text (e.g. "photo_camera"). */
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap");
+@import "../app/globals.css";
+@source "../components";
+@source "../app";
+@source "../data";
+/* Authored preview compositions use their own layout glue. */
+@source "../.design-sync/previews";
+/* Tailwind only emits classes it finds in source. Designs built with this DS in
+   claude.ai/design receive ONLY this compiled stylesheet, so safelist the common
+   layout, spacing and typography utilities the design agent will reach for. */
+@source inline("{,sm:,md:,lg:,xl:}{flex,inline-flex,grid,block,inline-block,hidden,relative,absolute,fixed,sticky,inset-0,flex-col,flex-row,flex-wrap,flex-1,items-start,items-center,items-end,items-stretch,justify-start,justify-center,justify-end,justify-between,justify-around,grid-cols-{1,2,3,4,5,6,12},col-span-{1,2,3,4,6,12},w-full,w-fit,w-auto,h-full,h-auto,h-screen,min-h-screen,min-w-0,mx-auto,text-left,text-center,text-right,overflow-hidden,overflow-auto,object-cover,object-contain}");
+@source inline("{,sm:,md:,lg:}{gap,p,px,py,pt,pb,pl,pr,m,mx,my,mt,mb,ml,mr,space-x,space-y}-{0,0.5,1,1.5,2,2.5,3,4,5,6,8,10,12,16,20,24,32}");
+@source inline("{,sm:,md:,lg:}{max-w-{xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,prose,full,none,screen-xl},w-{1/2,1/3,2/3,1/4,3/4,8,10,12,16,20,24,32,40,48,64,96},h-{8,10,12,16,20,24,32,40,48,64,96,\[300px\],\[400px\],\[500px\]}}");
+@source inline("{,sm:,md:,lg:}text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl}");
+@source inline("{max-h,min-h,h}-{32,40,48,56,64,72,80,96,screen,full,\[300px\],\[400px\],\[500px\],\[600px\],\[70vh\]}");
+@source inline("bg-gradient-to-{t,b,l,r,tr,br}");
+@source inline("{basis-{1/2,1/3,1/4,2/3,full,auto},h-{28,36,44,52,56,60},my-{14,20},gap-{x,y}-{1,2,3,4,6,8},brightness-{50,75,90},text-slate-{300,400,500},bg-slate-{900,950},grayscale,shrink-0,grow,self-{start,center,end},place-items-center,text-balance,text-pretty}");
+@source inline("{from,via,to}-{white,black,transparent,background,foreground,primary,brand-cerulean,brand-cerulean-2,brand-sand,brand-sand-light,brand-olive-leaf,brand-sage-dry,slate-{900,950},cyan-{900,950},sky-{900,950}}");
+@source inline("{from,via,to}-{white,black,brand-cerulean,foreground,background}/{0,10,20,30,40,50,60,70,80,90}");
+@source inline("{font-{sans,mono,light,normal,medium,semibold,bold},italic,uppercase,tracking-{tight,tighter,normal,wide,wider,widest},leading-{tight,snug,normal,relaxed,loose}}");
+@source inline("{,hover:}{bg,text,border,ring}-{background,foreground,card,card-foreground,popover,primary,primary-foreground,secondary,secondary-foreground,muted,muted-foreground,accent,accent-foreground,destructive,border,input,ring,white,black,transparent,brand-cerulean,brand-cerulean-2,brand-sage-dry,brand-olive-leaf,brand-sand,brand-sand-light,brand-sand-dark}");
+@source inline("{bg,text,border}-{white,black,brand-cerulean,foreground,background,muted-foreground}/{5,10,20,30,40,50,60,70,80,90,95}");
+@source inline("{rounded,rounded-{sm,md,lg,xl,2xl,3xl,4xl,full,none},rounded-{t,b,l,r}-{lg,xl,2xl},border,border-{0,2,t,b,l,r},shadow,shadow-{sm,md,lg,xl,2xl,none},ring-1,ring-2,opacity-{0,25,50,75,100},backdrop-blur-{sm,md,lg},transition,transition-{all,colors,opacity,transform},duration-{150,200,300,500},aspect-{square,video,\[4/3\],\[3/2\],\[3/4\]},cursor-pointer,select-none,pointer-events-none,sr-only,truncate,line-clamp-{1,2,3},divide-y,list-disc,list-none,z-{0,10,20,30,40,50}}");
+
+/* next/font sets these variables on <html>; provide them statically here. */
+:root {
+  --font-sans: "Noto Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}

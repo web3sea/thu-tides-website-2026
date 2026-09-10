@@ -1,0 +1,355 @@
+{
+  "pkg": "thu-tides-website",
+  "globalName": "ThuTides",
+  "shape": "package",
+  "srcDir": "../../../components",
+  "tsconfig": "../../tsconfig.json",
+  "buildCmd": "node .design-sync/prepare.mjs",
+  "cssEntry": "compiled.css",
+  "guidelinesGlob": [
+    "../../../DESIGN_SYSTEM.md",
+    "../../../COMPONENT_API.md",
+    "../../../components/*.md"
+  ],
+  "componentSrcMap": {
+    "AboutSection": "../../../components/about-section.tsx",
+    "AnimatedWaveLogo": "../../../components/animated-wave-logo.tsx",
+    "CarouselGallery": "../../../components/carousel-gallery.tsx",
+    "CaseStudySection": "../../../components/case-study-section.tsx",
+    "CaseStudyFlow": "../../../components/case-study-section.tsx",
+    "CaseStudyTemplate": "../../../components/case-study-template.tsx",
+    "CollabSection": "../../../components/collab-section.tsx",
+    "ExampleWrapper": null,
+    "Example": null,
+    "Footer": "../../../components/footer.tsx",
+    "GigaHero": "../../../components/giga-hero.tsx",
+    "GigaLayout": "../../../components/giga-layout.tsx",
+    "HeroWithImage": "../../../components/hero-with-image.tsx",
+    "HeroWithImageAndCTA": "../../../components/hero-with-image.tsx",
+    "ImageCarousel": "../../../components/image-carousel.tsx",
+    "ImageCarouselRow": "../../../components/image-carousel.tsx",
+    "ImageGallery": "../../../components/image-gallery.tsx",
+    "MasonryGallery": "../../../components/image-gallery.tsx",
+    "LazyVideo": "../../../components/lazy-video.tsx",
+    "LocationVoteDropdown": "../../../components/location-vote-dropdown.tsx",
+    "Logo": "../../../components/logo.tsx",
+    "Navigation": "../../../components/navigation.tsx",
+    "OceanQuote": "../../../components/ocean-quote.tsx",
+    "PhotoCategorySection": "../../../components/photo-category-section.tsx",
+    "PhotographyPreview": "../../../components/photography-preview.tsx",
+    "PortfolioItem": "../../../components/portfolio-item.tsx",
+    "PortfolioSection": "../../../components/portfolio-section.tsx",
+    "ScrollReveal": "../../../components/scroll-reveal.tsx",
+    "ScrollRevealStagger": "../../../components/scroll-reveal.tsx",
+    "ServicesSection": "../../../components/services-section.tsx",
+    "TestimonialsSection": "../../../components/testimonials-section.tsx",
+    "Typography": "../../../components/typography.tsx",
+    "H1": "../../../components/typography.tsx",
+    "H2": "../../../components/typography.tsx",
+    "H3": "../../../components/typography.tsx",
+    "P": "../../../components/typography.tsx",
+    "Caption": "../../../components/typography.tsx",
+    "Quote": "../../../components/typography.tsx",
+    "VideoLoopSection": "../../../components/video-loop-section.tsx",
+    "AlertDialog": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogAction": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogCancel": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogContent": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogDescription": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogFooter": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogHeader": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogMedia": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogOverlay": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogPortal": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogTitle": "../../../components/ui/alert-dialog.tsx",
+    "AlertDialogTrigger": "../../../components/ui/alert-dialog.tsx",
+    "Badge": "../../../components/ui/badge.tsx",
+    "Button": "../../../components/ui/button.tsx",
+    "Card": "../../../components/ui/card.tsx",
+    "CardHeader": "../../../components/ui/card.tsx",
+    "CardFooter": "../../../components/ui/card.tsx",
+    "CardTitle": "../../../components/ui/card.tsx",
+    "CardAction": "../../../components/ui/card.tsx",
+    "CardDescription": "../../../components/ui/card.tsx",
+    "CardContent": "../../../components/ui/card.tsx",
+    "Carousel": "../../../components/ui/carousel.tsx",
+    "CarouselContent": "../../../components/ui/carousel.tsx",
+    "CarouselItem": "../../../components/ui/carousel.tsx",
+    "CarouselPrevious": "../../../components/ui/carousel.tsx",
+    "CarouselNext": "../../../components/ui/carousel.tsx",
+    "Combobox": "../../../components/ui/combobox.tsx",
+    "ComboboxInput": "../../../components/ui/combobox.tsx",
+    "ComboboxContent": "../../../components/ui/combobox.tsx",
+    "ComboboxList": "../../../components/ui/combobox.tsx",
+    "ComboboxItem": "../../../components/ui/combobox.tsx",
+    "ComboboxGroup": "../../../components/ui/combobox.tsx",
+    "ComboboxLabel": "../../../components/ui/combobox.tsx",
+    "ComboboxCollection": "../../../components/ui/combobox.tsx",
+    "ComboboxEmpty": "../../../components/ui/combobox.tsx",
+    "ComboboxSeparator": "../../../components/ui/combobox.tsx",
+    "ComboboxChips": "../../../components/ui/combobox.tsx",
+    "ComboboxChip": "../../../components/ui/combobox.tsx",
+    "ComboboxChipsInput": "../../../components/ui/combobox.tsx",
+    "ComboboxTrigger": "../../../components/ui/combobox.tsx",
+    "ComboboxValue": "../../../components/ui/combobox.tsx",
+    "DropdownMenu": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuPortal": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuTrigger": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuContent": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuGroup": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuLabel": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuItem": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuCheckboxItem": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuRadioGroup": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuRadioItem": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuSeparator": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuShortcut": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuSub": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuSubTrigger": "../../../components/ui/dropdown-menu.tsx",
+    "DropdownMenuSubContent": "../../../components/ui/dropdown-menu.tsx",
+    "Field": "../../../components/ui/field.tsx",
+    "FieldLabel": "../../../components/ui/field.tsx",
+    "FieldDescription": "../../../components/ui/field.tsx",
+    "FieldError": "../../../components/ui/field.tsx",
+    "FieldGroup": "../../../components/ui/field.tsx",
+    "FieldLegend": "../../../components/ui/field.tsx",
+    "FieldSeparator": "../../../components/ui/field.tsx",
+    "FieldSet": "../../../components/ui/field.tsx",
+    "FieldContent": "../../../components/ui/field.tsx",
+    "FieldTitle": "../../../components/ui/field.tsx",
+    "GlassCard": "../../../components/ui/glass-card.tsx",
+    "InputGroup": "../../../components/ui/input-group.tsx",
+    "InputGroupAddon": "../../../components/ui/input-group.tsx",
+    "InputGroupButton": "../../../components/ui/input-group.tsx",
+    "InputGroupText": "../../../components/ui/input-group.tsx",
+    "InputGroupInput": "../../../components/ui/input-group.tsx",
+    "InputGroupTextarea": "../../../components/ui/input-group.tsx",
+    "Input": "../../../components/ui/input.tsx",
+    "Label": "../../../components/ui/label.tsx",
+    "Select": "../../../components/ui/select.tsx",
+    "SelectContent": "../../../components/ui/select.tsx",
+    "SelectGroup": "../../../components/ui/select.tsx",
+    "SelectItem": "../../../components/ui/select.tsx",
+    "SelectLabel": "../../../components/ui/select.tsx",
+    "SelectScrollDownButton": "../../../components/ui/select.tsx",
+    "SelectScrollUpButton": "../../../components/ui/select.tsx",
+    "SelectSeparator": "../../../components/ui/select.tsx",
+    "SelectTrigger": "../../../components/ui/select.tsx",
+    "SelectValue": "../../../components/ui/select.tsx",
+    "Separator": "../../../components/ui/separator.tsx",
+    "Toaster": "../../../components/ui/sonner.tsx",
+    "TextHoverEffect": "../../../components/ui/text-hover-effect.tsx",
+    "Textarea": "../../../components/ui/textarea.tsx",
+    "ComponentExample": null,
+    "FooterExample": null,
+    "TextHoverEffectDemo": null
+  },
+  "dtsPropsFor": {},
+  "libOverrides": {
+    "dts.mjs": "H1/H2/H3 exports are components; relax the ALL-CAPS constant filter for H1-H6"
+  },
+  "overrides": {
+    "CaseStudyTemplate": {
+      "cardMode": "single",
+      "viewport": "900x2000"
+    },
+    "Logo": {
+      "cardMode": "column"
+    },
+    "Combobox": {
+      "cardMode": "single"
+    },
+    "ComboboxChip": {
+      "cardMode": "single"
+    },
+    "ComboboxChips": {
+      "cardMode": "single"
+    },
+    "ComboboxChipsInput": {
+      "cardMode": "single"
+    },
+    "ComboboxCollection": {
+      "cardMode": "single"
+    },
+    "ComboboxContent": {
+      "cardMode": "single"
+    },
+    "ComboboxEmpty": {
+      "cardMode": "single"
+    },
+    "ComboboxGroup": {
+      "cardMode": "single"
+    },
+    "ComboboxInput": {
+      "cardMode": "single"
+    },
+    "ComboboxItem": {
+      "cardMode": "single"
+    },
+    "ComboboxLabel": {
+      "cardMode": "single"
+    },
+    "ComboboxList": {
+      "cardMode": "single"
+    },
+    "ComboboxSeparator": {
+      "cardMode": "single"
+    },
+    "ComboboxTrigger": {
+      "cardMode": "single"
+    },
+    "ComboboxValue": {
+      "cardMode": "column"
+    },
+    "Select": {
+      "cardMode": "single"
+    },
+    "SelectContent": {
+      "cardMode": "single"
+    },
+    "SelectGroup": {
+      "cardMode": "single"
+    },
+    "SelectItem": {
+      "cardMode": "single"
+    },
+    "SelectLabel": {
+      "cardMode": "single"
+    },
+    "SelectScrollDownButton": {
+      "cardMode": "single"
+    },
+    "SelectScrollUpButton": {
+      "cardMode": "single"
+    },
+    "SelectSeparator": {
+      "cardMode": "single"
+    },
+    "SelectTrigger": {
+      "cardMode": "column"
+    },
+    "ScrollRevealStagger": {
+      "cardMode": "column"
+    },
+    "AlertDialog": {
+      "cardMode": "single"
+    },
+    "AlertDialogAction": {
+      "cardMode": "single"
+    },
+    "AlertDialogCancel": {
+      "cardMode": "single"
+    },
+    "AlertDialogContent": {
+      "cardMode": "single"
+    },
+    "AlertDialogDescription": {
+      "cardMode": "single"
+    },
+    "AlertDialogFooter": {
+      "cardMode": "single"
+    },
+    "AlertDialogHeader": {
+      "cardMode": "single"
+    },
+    "AlertDialogMedia": {
+      "cardMode": "single"
+    },
+    "AlertDialogOverlay": {
+      "cardMode": "single"
+    },
+    "AlertDialogPortal": {
+      "cardMode": "single"
+    },
+    "AlertDialogTitle": {
+      "cardMode": "single"
+    },
+    "AlertDialogTrigger": {
+      "cardMode": "single"
+    },
+    "DropdownMenu": {
+      "cardMode": "single"
+    },
+    "DropdownMenuCheckboxItem": {
+      "cardMode": "single"
+    },
+    "DropdownMenuContent": {
+      "cardMode": "single"
+    },
+    "DropdownMenuGroup": {
+      "cardMode": "single"
+    },
+    "DropdownMenuItem": {
+      "cardMode": "single"
+    },
+    "DropdownMenuLabel": {
+      "cardMode": "single"
+    },
+    "DropdownMenuPortal": {
+      "cardMode": "single"
+    },
+    "DropdownMenuRadioGroup": {
+      "cardMode": "single"
+    },
+    "DropdownMenuRadioItem": {
+      "cardMode": "single"
+    },
+    "DropdownMenuSeparator": {
+      "cardMode": "single"
+    },
+    "DropdownMenuShortcut": {
+      "cardMode": "single"
+    },
+    "DropdownMenuSub": {
+      "cardMode": "single"
+    },
+    "DropdownMenuSubContent": {
+      "cardMode": "single"
+    },
+    "DropdownMenuSubTrigger": {
+      "cardMode": "single"
+    },
+    "DropdownMenuTrigger": {
+      "cardMode": "single"
+    },
+    "Toaster": {
+      "cardMode": "single"
+    },
+    "CaseStudyFlow": {
+      "cardMode": "column"
+    },
+    "CaseStudySection": {
+      "cardMode": "column"
+    },
+    "GigaLayout": {
+      "cardMode": "column"
+    },
+    "Navigation": {
+      "cardMode": "column"
+    },
+    "PortfolioItem": {
+      "cardMode": "column"
+    },
+    "Separator": {
+      "cardMode": "column"
+    },
+    "H1": {
+      "cardMode": "column"
+    },
+    "ImageGallery": {
+      "cardMode": "column",
+      "viewport": "1200x900"
+    }
+  },
+  "entry": ".design-sync/.cache/pkg/index.ts",
+  "docsDir": "../../docs",
+  "projectId": "582715b6-486f-46ef-8bbd-712bbed0028c",
+  "readmeHeader": ".design-sync/conventions.md",
+  "extraEntries": [
+    "../../shims/preview-provider.tsx",
+    "../../shims/toast.ts"
+  ],
+  "provider": {
+    "component": "PreviewMotionProvider"
+  }
+}
