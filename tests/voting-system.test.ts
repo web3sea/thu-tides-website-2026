@@ -33,7 +33,8 @@ const BADGE = 'button[aria-label$="Click to vote"]';
 // viewport. Puppeteer's visible wait only inspects the first match of a selector, so the
 // two need distinct ids or the hidden mobile one shadows the visible desktop one.
 const DROPDOWN = '[data-testid="vote-dropdown-desktop"]';
-// Location rows are buttons whose text ends in a percentage, e.g. "Flores23.5%".
+// Location rows are buttons whose text ends in a percentage, e.g. "Flores23.5%". Always
+// query them inside DROPDOWN: the hidden mobile panel holds an identical set of rows.
 const PERCENT = /\d+\.\d+%/;
 const RESULTS_URL = '/api/votes/results';
 const VOTE_URL = '/api/votes/location';
@@ -125,34 +126,35 @@ describe('Voting System E2E Tests', () => {
 
   async function waitForLocationRows() {
     await context.page.waitForFunction(
-      (re: string, n: number) =>
-        Array.from(document.querySelectorAll('button')).filter((b) =>
+      (sel: string, re: string, n: number) =>
+        Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).filter((b) =>
           new RegExp(re).test(b.textContent || '')
         ).length === n,
       { timeout: 5000 },
+      DROPDOWN,
       PERCENT.source,
       LOCATION_COUNT
     );
   }
 
   function readRows() {
-    return context.page.evaluate((re: string) => {
-      return Array.from(document.querySelectorAll('button'))
+    return context.page.evaluate((sel: string, re: string) => {
+      return Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`))
         .filter((b) => new RegExp(re).test(b.textContent || ''))
         .map((b) => {
           const m = (b.textContent || '').match(/(\d+\.\d+)%/);
           return { text: b.textContent || '', percentage: m ? parseFloat(m[1]) : 0 };
         });
-    }, PERCENT.source);
+    }, DROPDOWN, PERCENT.source);
   }
 
   function clickFirstRow() {
-    return context.page.evaluate((re: string) => {
-      const row = Array.from(document.querySelectorAll('button')).find((b) =>
+    return context.page.evaluate((sel: string, re: string) => {
+      const row = Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).find((b) =>
         new RegExp(re).test(b.textContent || '')
       );
       row?.click();
-    }, PERCENT.source);
+    }, DROPDOWN, PERCENT.source);
   }
 
   describe('Vote Dropdown Display', () => {
@@ -208,15 +210,15 @@ describe('Voting System E2E Tests', () => {
       // Rows are disabled after a vote, so the component's own guard cannot fire from a
       // click. Simulate the server rejecting a second vote from the same visitor instead.
       voteReply = () => ({ status: 409, body: { error: 'You have already voted', success: false } });
-      await context.page.evaluate((re: string) => {
-        const row = Array.from(document.querySelectorAll('button')).find((b) =>
+      await context.page.evaluate((sel: string, re: string) => {
+        const row = Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).find((b) =>
           new RegExp(re).test(b.textContent || '')
         ) as HTMLButtonElement | undefined;
         if (row) {
           row.disabled = false;
           row.click();
         }
-      }, PERCENT.source);
+      }, DROPDOWN, PERCENT.source);
 
       const toast = await elementExists(
         context.page,
