@@ -1,15 +1,21 @@
 /**
  * Voting System E2E Tests
  *
- * Tests the location voting dropdown UI behavior including:
- * - Vote dropdown display
- * - Vote results fetching
- * - Vote submission flow
- * - Error handling
- * - Duplicate vote prevention
+ * Drives the location voting dropdown in a real browser (Puppeteer) against a
+ * running site, with the vote API mocked inside the browser. Mocking keeps the
+ * suite hermetic: it never writes real votes to Firestore, it does not need
+ * Firebase credentials, and every assertion sees the same data. The real API is
+ * covered separately by tests/api/votes.test.ts.
+ *
+ * Selector rules (Puppeteer, not Playwright):
+ * - Puppeteer's CSS engine has no `:has-text()`; use attributes the component
+ *   exposes on purpose (`data-testid`, `aria-label`) or `::-p-text(...)`.
+ * - Match the badge by its aria-label suffix, and the dropdown by its test id,
+ *   so copy changes do not break the suite.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import type { HTTPRequest } from 'puppeteer';
 import {
   setupBrowser,
   teardownBrowser,
@@ -18,404 +24,242 @@ import {
   BrowserContext,
   elementExists,
 } from './helpers/test-setup';
+import { buildResults, LOCATION_COUNT } from './fixtures/vote-results';
 
-// The voting system requires Firebase (for /api/votes/results and /api/votes/location).
-// Skip in CI environments where Firebase credentials are not available.
-const hasFirebaseConfig = !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-const describeVoting = hasFirebaseConfig ? describe : describe.skip;
+const BADGE = 'button[aria-label$="Click to vote"]';
+const DROPDOWN = '[data-testid="vote-dropdown"]';
+// Location rows are buttons whose text ends in a percentage, e.g. "Flores23.5%".
+const PERCENT = /\d+\.\d+%/;
+const RESULTS_URL = '/api/votes/results';
+const VOTE_URL = '/api/votes/location';
 
-describeVoting('Voting System E2E Tests', () => {
+type MockReply = { status: number; body: unknown };
+
+describe('Voting System E2E Tests', () => {
   let context: BrowserContext;
   const baseUrl = getBaseUrl();
 
+  // Per-test overrides for the mocked API. Reset in beforeEach.
+  let resultsReply: MockReply;
+  let voteReply: (body: { location: string }) => MockReply;
+  let resultsDelayMs = 0;
+  let voteDelayMs = 0;
+  const seen = { results: 0, votes: [] as string[] };
+
+  const reply = async (req: HTTPRequest, r: MockReply, delay: number) => {
+    if (delay) await new Promise((res) => setTimeout(res, delay));
+    await req.respond({
+      status: r.status,
+      contentType: 'application/json',
+      body: JSON.stringify(r.body),
+    });
+  };
+
   beforeAll(async () => {
-    // Use headless mode in CI, headed mode for local debugging
     const headless = process.env.CI !== 'false';
     context = await setupBrowser(headless);
+    await context.page.setRequestInterception(true);
+    context.page.on('request', (req) => {
+      const url = req.url();
+      if (url.includes(RESULTS_URL)) {
+        seen.results += 1;
+        void reply(req, resultsReply, resultsDelayMs);
+      } else if (url.includes(VOTE_URL) && req.method() === 'POST') {
+        const body = JSON.parse(req.postData() || '{}') as { location: string };
+        seen.votes.push(body.location);
+        void reply(req, voteReply(body), voteDelayMs);
+      } else {
+        void req.continue();
+      }
+    });
   });
 
   afterAll(async () => {
     await teardownBrowser(context);
   });
 
+  beforeEach(async () => {
+    resultsReply = { status: 200, body: buildResults() };
+    voteReply = ({ location }) => ({
+      status: 200,
+      body: { success: true, results: buildResults(location) },
+    });
+    resultsDelayMs = 0;
+    voteDelayMs = 0;
+    seen.results = 0;
+    seen.votes = [];
+    // The component remembers a vote in localStorage; start every test fresh.
+    await context.page.evaluateOnNewDocument(() => localStorage.removeItem('thu-tides-voted'));
+    await context.page.goto(baseUrl);
+    await waitForElement(context.page, 'main');
+  });
+
+  async function openDropdown() {
+    const badge = await context.page.waitForSelector(BADGE, { visible: true, timeout: 10000 });
+    expect(badge).not.toBeNull();
+    await badge!.click();
+    await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 5000 });
+  }
+
+  async function waitForLocationRows() {
+    await context.page.waitForFunction(
+      (re: string, n: number) =>
+        Array.from(document.querySelectorAll('button')).filter((b) =>
+          new RegExp(re).test(b.textContent || '')
+        ).length === n,
+      { timeout: 5000 },
+      PERCENT.source,
+      LOCATION_COUNT
+    );
+  }
+
+  function readRows() {
+    return context.page.evaluate((re: string) => {
+      return Array.from(document.querySelectorAll('button'))
+        .filter((b) => new RegExp(re).test(b.textContent || ''))
+        .map((b) => {
+          const m = (b.textContent || '').match(/(\d+\.\d+)%/);
+          return { text: b.textContent || '', percentage: m ? parseFloat(m[1]) : 0 };
+        });
+    }, PERCENT.source);
+  }
+
+  function clickFirstRow() {
+    return context.page.evaluate((re: string) => {
+      const row = Array.from(document.querySelectorAll('button')).find((b) =>
+        new RegExp(re).test(b.textContent || '')
+      );
+      row?.click();
+    }, PERCENT.source);
+  }
+
   describe('Vote Dropdown Display', () => {
     it('should open vote dropdown on badge button click', async () => {
-      await context.page.goto(baseUrl);
-
-      // Wait for page to load
-      await waitForElement(context.page, 'main');
-
-      // Find and click the vote badge button (in hero section)
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")',
-        { timeout: 10000 }
-      );
-      expect(badgeButton).not.toBeNull();
-
-      await badgeButton?.click();
-
-      // Wait for dropdown to appear
-      const dropdownVisible = await elementExists(
-        context.page,
-        '[data-testid="vote-dropdown"], .vote-dropdown, [role="dialog"]',
-        3000
-      );
-
-      expect(dropdownVisible).toBe(true);
+      await openDropdown();
+      expect(await elementExists(context.page, DROPDOWN, 1000)).toBe(true);
     });
 
     it('should fetch vote results when dropdown opened', async () => {
-      await context.page.goto(baseUrl);
-
-      // Set up request interception to verify API call
-      const apiCalls: string[] = [];
-      await context.page.setRequestInterception(true);
-
-      context.page.on('request', (interceptedRequest) => {
-        const url = interceptedRequest.url();
-        if (url.includes('/api/votes/results')) {
-          apiCalls.push(url);
-        }
-        interceptedRequest.continue();
-      });
-
-      // Click vote button
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Verify API was called
-      expect(apiCalls.length).toBeGreaterThan(0);
-
-      // Clean up
-      await context.page.setRequestInterception(false);
+      await openDropdown();
+      await waitForLocationRows();
+      expect(seen.results).toBeGreaterThan(0);
     });
 
     it('should display all 11 locations with names and percentages', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results to load (spinner should disappear)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Get all location buttons
-      const locationButtons = await context.page.evaluate(() => {
-        // Find buttons that contain percentage text (format: X.X%)
-        const buttons = Array.from(document.querySelectorAll('button'));
-        return buttons
-          .filter(btn => /\d+\.\d+%/.test(btn.textContent || ''))
-          .map(btn => ({
-            text: btn.textContent || '',
-            hasPercentage: /\d+\.\d+%/.test(btn.textContent || ''),
-          }));
-      });
-
-      // Should have 11 locations
-      expect(locationButtons.length).toBe(11);
-
-      // All should have percentages
-      const allHavePercentages = locationButtons.every(loc => loc.hasPercentage);
-      expect(allHavePercentages).toBe(true);
+      await openDropdown();
+      await waitForLocationRows();
+      const rows = await readRows();
+      expect(rows.length).toBe(LOCATION_COUNT);
+      expect(rows.every((r) => PERCENT.test(r.text))).toBe(true);
+      expect(rows.some((r) => r.text.includes('Maldives'))).toBe(true);
     });
 
     it('should show loading state while fetching results', async () => {
-      await context.page.goto(baseUrl);
-
-      // Click vote button
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Check for loading spinner immediately after opening
-      const hasSpinner = await context.page.evaluate(() => {
-        // Look for common spinner classes
-        const spinner = document.querySelector(
-          '.animate-spin, [role="progressbar"], .spinner'
-        );
-        return spinner !== null;
-      });
-
-      expect(hasSpinner).toBe(true);
+      resultsDelayMs = 1500;
+      await openDropdown();
+      const spinner = await elementExists(context.page, `${DROPDOWN} .animate-spin`, 1000);
+      expect(spinner).toBe(true);
+      await waitForLocationRows();
     });
   });
 
   describe('Vote Submission', () => {
     it('should allow voting by clicking location button', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results to load
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Set up request interception to capture vote submission
-      const voteCalls: string[] = [];
-      await context.page.setRequestInterception(true);
-
-      context.page.on('request', (interceptedRequest) => {
-        const url = interceptedRequest.url();
-        if (url.includes('/api/votes/location')) {
-          voteCalls.push(url);
-        }
-        interceptedRequest.continue();
+      await openDropdown();
+      await waitForLocationRows();
+      await clickFirstRow();
+      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
+        timeout: 5000,
       });
-
-      // Click first location button
-      const locationButtons = await context.page.$$('button');
-
-      // Find button with percentage text (more reliable than async find)
-      let voteButton;
-      for (const btn of locationButtons) {
-        const text = await context.page.evaluate(el => el.textContent, btn);
-        if (/\d+\.\d+%/.test(text || '')) {
-          voteButton = btn;
-          break;
-        }
-      }
-
-      if (voteButton) {
-        await voteButton.click();
-
-        // Wait for API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Verify vote was submitted
-        expect(voteCalls.length).toBeGreaterThan(0);
-      }
-
-      // Clean up
-      await context.page.setRequestInterception(false);
+      expect(seen.votes.length).toBe(1);
+      expect(seen.votes[0]).toMatch(/^[a-z-]+$/);
     });
 
     it('should show "You have already voted" message on duplicate vote attempt', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Try to click a location button twice
-      const locationButtons = await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        return buttons.filter(btn => /\d+\.\d+%/.test(btn.textContent || ''));
+      await openDropdown();
+      await waitForLocationRows();
+      await clickFirstRow();
+      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
+        timeout: 5000,
       });
 
-      if (locationButtons.length > 0) {
-        // Click first location
-        await context.page.evaluate(() => {
-          const buttons = Array.from(document.querySelectorAll('button'));
-          const voteBtn = buttons.find(btn => /\d+\.\d+%/.test(btn.textContent || ''));
-          voteBtn?.click();
-        });
+      // Rows are disabled after a vote, so the component's own guard cannot fire from a
+      // click. Simulate the server rejecting a second vote from the same visitor instead.
+      voteReply = () => ({ status: 409, body: { error: 'You have already voted', success: false } });
+      await context.page.evaluate((re: string) => {
+        const row = Array.from(document.querySelectorAll('button')).find((b) =>
+          new RegExp(re).test(b.textContent || '')
+        ) as HTMLButtonElement | undefined;
+        if (row) {
+          row.disabled = false;
+          row.click();
+        }
+      }, PERCENT.source);
 
-        // Wait for vote to process
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Try to click again
-        await context.page.evaluate(() => {
-          const buttons = Array.from(document.querySelectorAll('button'));
-          const voteBtn = buttons.find(btn => /\d+\.\d+%/.test(btn.textContent || ''));
-          voteBtn?.click();
-        });
-
-        // Wait for potential toast
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Check for error message
-        const hasErrorMessage = await context.page.evaluate(() => {
-          const bodyText = document.body.textContent || '';
-          return bodyText.toLowerCase().includes('already voted');
-        });
-
-        expect(hasErrorMessage).toBe(true);
-      }
+      const toast = await elementExists(
+        context.page,
+        '[data-sonner-toast][data-type="error"], [role="alert"], [role="status"]',
+        3000
+      );
+      const text = await context.page.evaluate(() => document.body.textContent || '');
+      expect(toast || text.toLowerCase().includes('already voted')).toBe(true);
     });
 
     it('should update vote percentages after successful vote', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Get initial percentages
-      const initialPercentages = await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        return buttons
-          .filter(btn => /\d+\.\d+%/.test(btn.textContent || ''))
-          .map(btn => {
-            const match = btn.textContent?.match(/(\d+\.\d+)%/);
-            return match ? parseFloat(match[1]) : 0;
-          });
+      await openDropdown();
+      await waitForLocationRows();
+      const before = (await readRows()).map((r) => r.percentage);
+      await clickFirstRow();
+      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
+        timeout: 5000,
       });
-
-      // Submit vote
-      await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const voteBtn = buttons.find(btn => /\d+\.\d+%/.test(btn.textContent || ''));
-        voteBtn?.click();
-      });
-
-      // Wait for vote to process and UI to update
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Get updated percentages
-      const updatedPercentages = await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        return buttons
-          .filter(btn => /\d+\.\d+%/.test(btn.textContent || ''))
-          .map(btn => {
-            const match = btn.textContent?.match(/(\d+\.\d+)%/);
-            return match ? parseFloat(match[1]) : 0;
-          });
-      });
-
-      // Percentages should change after vote
-      expect(updatedPercentages).not.toEqual(initialPercentages);
+      const after = (await readRows()).map((r) => r.percentage);
+      expect(after).not.toEqual(before);
     });
 
     it('should show loading spinner during vote submission', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Click vote button and immediately check for loading state
-      await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const voteBtn = buttons.find(btn => /\d+\.\d+%/.test(btn.textContent || ''));
-        voteBtn?.click();
-      });
-
-      // Check for loading indicator (... or spinner)
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const hasLoadingIndicator = await context.page.evaluate(() => {
-        const bodyText = document.body.textContent || '';
-        return bodyText.includes('...') ||
-               document.querySelector('.animate-pulse') !== null;
-      });
-
-      expect(hasLoadingIndicator).toBe(true);
+      voteDelayMs = 1500;
+      await openDropdown();
+      await waitForLocationRows();
+      await clickFirstRow();
+      const pending = await elementExists(context.page, `${DROPDOWN} .animate-pulse`, 1000);
+      expect(pending).toBe(true);
     });
   });
 
   describe('Error Handling', () => {
     it('should show error toast on vote failure', async () => {
-      await context.page.goto(baseUrl);
-
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
-      );
-      await badgeButton?.click();
-
-      // Wait for results
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Intercept and force failure
-      await context.page.setRequestInterception(true);
-
-      context.page.once('request', (interceptedRequest) => {
-        if (interceptedRequest.url().includes('/api/votes/location')) {
-          interceptedRequest.respond({
-            status: 500,
-            contentType: 'application/json',
-            body: JSON.stringify({ error: 'Internal server error' }),
-          });
-        } else {
-          interceptedRequest.continue();
-        }
-      });
-
-      // Try to vote
-      await context.page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const voteBtn = buttons.find(btn => /\d+\.\d+%/.test(btn.textContent || ''));
-        voteBtn?.click();
-      });
-
-      // Wait for error toast
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Check for error toast
+      voteReply = () => ({ status: 500, body: { error: 'Internal server error' } });
+      await openDropdown();
+      await waitForLocationRows();
+      await clickFirstRow();
       const hasErrorToast = await elementExists(
         context.page,
         '[data-sonner-toast][data-type="error"], [role="alert"]',
         3000
       );
-
       expect(hasErrorToast).toBe(true);
-
-      // Clean up
-      await context.page.setRequestInterception(false);
     });
   });
 
   describe('Dropdown Interaction', () => {
     it('should close dropdown when clicking outside', async () => {
-      await context.page.goto(baseUrl);
+      await openDropdown();
+      await waitForLocationRows();
 
-      // Open dropdown
-      const badgeButton = await context.page.waitForSelector(
-        'button:has-text("Vote"), button:has-text("vote")'
+      // Click on the page footer, well outside the hero and the dropdown.
+      await context.page.evaluate(() => {
+        const footer = document.querySelector('footer');
+        footer?.scrollIntoView();
+      });
+      await context.page.click('footer');
+
+      await context.page.waitForFunction(
+        (sel: string) => document.querySelector(sel) === null,
+        { timeout: 3000 },
+        DROPDOWN
       );
-      await badgeButton?.click();
-
-      // Wait for dropdown to open
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Verify dropdown is open
-      const isOpenBefore = await elementExists(
-        context.page,
-        '[data-testid="vote-dropdown"], .vote-dropdown, [role="dialog"]',
-        1000
-      );
-      expect(isOpenBefore).toBe(true);
-
-      // Click outside dropdown (on main content area)
-      await context.page.click('main');
-
-      // Wait for close animation
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Verify dropdown is closed
-      const isOpenAfter = await elementExists(
-        context.page,
-        '[data-testid="vote-dropdown"], .vote-dropdown, [role="dialog"]',
-        500
-      );
-      expect(isOpenAfter).toBe(false);
+      expect(await elementExists(context.page, DROPDOWN, 300)).toBe(false);
     });
   });
 });

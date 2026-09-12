@@ -193,6 +193,9 @@ export function LocationVoteDropdown({
             exit="exit"
             className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
             onClick={handleBackdropClick}
+            role="dialog"
+            aria-label="Vote for the next destination"
+            data-testid="vote-dropdown"
           >
             <GlassCard variant="strong" padding="sm" className="w-full max-w-md">
               {renderContent()}
@@ -206,6 +209,9 @@ export function LocationVoteDropdown({
             animate="visible"
             exit="exit"
             className="hidden md:block w-full mt-6"
+            role="region"
+            aria-label="Vote for the next destination"
+            data-testid="vote-dropdown"
           >
             <GlassCard variant="strong" padding="sm" className="max-w-2xl mx-auto">
               {renderContent()}
