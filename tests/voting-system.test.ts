@@ -67,17 +67,29 @@ describe('Voting System E2E Tests', () => {
     await context.page.setRequestInterception(true);
     context.page.on('request', (req) => {
       const url = req.url();
+      // Navigation between tests aborts in-flight requests, so respond/continue can
+      // reject after the fact; that is expected and must not surface as an unhandled
+      // rejection in the next test.
+      const swallow = () => {};
       if (url.includes(RESULTS_URL)) {
         seen.results += 1;
-        void reply(req, resultsReply, resultsDelayMs);
+        reply(req, resultsReply, resultsDelayMs).catch(swallow);
       } else if (url.includes(VOTE_URL) && req.method() === 'POST') {
-        const body = JSON.parse(req.postData() || '{}') as { location: string };
+        let body: { location: string };
+        try {
+          body = JSON.parse(req.postData() || '{}');
+        } catch {
+          reply(req, { status: 400, body: { error: 'bad json' } }, 0).catch(swallow);
+          return;
+        }
         seen.votes.push(body.location);
-        void reply(req, voteReply(body), voteDelayMs);
+        reply(req, voteReply(body), voteDelayMs).catch(swallow);
       } else {
-        void req.continue();
+        req.continue().catch(swallow);
       }
     });
+    // The component remembers a vote in localStorage; start every page load fresh.
+    await context.page.evaluateOnNewDocument(() => localStorage.removeItem('thu-tides-voted'));
   });
 
   afterAll(async () => {
@@ -94,8 +106,6 @@ describe('Voting System E2E Tests', () => {
     voteDelayMs = 0;
     seen.results = 0;
     seen.votes = [];
-    // The component remembers a vote in localStorage; start every test fresh.
-    await context.page.evaluateOnNewDocument(() => localStorage.removeItem('thu-tides-voted'));
     await context.page.goto(baseUrl);
     await waitForElement(context.page, 'main');
   });
@@ -118,8 +128,9 @@ describe('Voting System E2E Tests', () => {
     try {
       await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 3000 });
     } catch {
-      // One retry covers the rare click that lands in the same tick as hydration.
-      await badge!.click();
+      // One retry covers the rare click that lands in the same tick as hydration,
+      // but only if nothing opened; a second click on an open panel would close it.
+      if (!(await context.page.$(DROPDOWN))) await badge!.click();
       await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 5000 });
     }
   }
@@ -211,12 +222,13 @@ describe('Voting System E2E Tests', () => {
         () => (document.body.textContent || '').toLowerCase().includes('already voted'),
         { timeout: 5000 }
       );
-      const rowsLocked = await context.page.evaluate(
+      const rows = await context.page.evaluate(
         (sel: string) =>
-          Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).every((b) => b.disabled),
+          Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).map((b) => b.disabled),
         DROPDOWN
       );
-      expect(rowsLocked).toBe(true);
+      expect(rows.length).toBe(LOCATION_COUNT);
+      expect(rows.every(Boolean)).toBe(true);
       expect(seen.votes.length).toBe(1);
     });
 
@@ -262,12 +274,9 @@ describe('Voting System E2E Tests', () => {
       await openDropdown();
       await waitForLocationRows();
 
-      // Click on the page footer, well outside the hero and the dropdown.
-      await context.page.evaluate(() => {
-        const footer = document.querySelector('footer');
-        footer?.scrollIntoView();
-      });
-      await context.page.click('footer');
+      // The hero closes the panel on any mousedown outside the badge. Click the top-left
+      // corner of the viewport, which is empty; the footer's centre is a column of links.
+      await context.page.mouse.click(5, 5);
 
       await context.page.waitForFunction(
         (sel: string) => document.querySelector(sel) === null,
