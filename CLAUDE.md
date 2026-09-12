@@ -122,7 +122,7 @@ curl -I https://thutides.com  # Should return 200 OK
 
 **Known CI limitations:**
 - Puppeteer tests require dev server with env vars; Firebase/Slack/Brevo are not configured in CI
-- `votes.test.ts` automatically skips when `FIREBASE_SERVICE_ACCOUNT_KEY` is absent
+- `tests/api/votes.test.ts` (real API) skips when `FIREBASE_SERVICE_ACCOUNT_KEY` is absent; `tests/voting-system.test.ts` (browser) mocks the vote API in-page and always runs
 - Contact form Slack/Brevo integration is non-blocking; validation tests run without credentials
 
 ### Common Deployment Failures & Fixes
@@ -204,6 +204,17 @@ Maldives, Misool, Java, Lombok & Sumba, California, Flores, Kalimantan, Namibia,
 
 See `IMPLEMENTATION_COMPLETE.md` and `FIREBASE_SETUP.md` for detailed documentation.
 
+### Travel Guides (Stripe)
+
+Guides are sold from `/guides` (overview) and `/guides/[slug]` (sales page), both static and driven
+entirely by `data/guides.ts`. Raja Ampat is on sale at $12; Lombok and Bali launch by setting their
+status to `available` and adding a Stripe Payment Link. The Buy button is a Stripe Payment Link on
+the Automation Architecture AI Stripe account; after payment Stripe redirects to
+`rajaampat.thutides.com/welcome`, where the guide app (repo `web3sea/thu-tides-raja-ampat`) records
+the purchase and signs the buyer in with its email OTP flow. Any change to the purchase gate must
+deploy in the guide app before the storefront depends on it. Stripe secrets belong to the guide app,
+not this site.
+
 ## Tech Stack
 
 | Layer | Technology | Version |
@@ -250,6 +261,8 @@ app/
     GoogleAnalytics.tsx
     GoogleTag.tsx
   photography/page.tsx  # Photography gallery page
+  guides/page.tsx       # Guides overview (featured guide on sale, coming next)
+  guides/[slug]/page.tsx # Guide sales page, generateStaticParams from data/guides.ts
   giga-demo/page.tsx    # Demo/prototype page (excluded from sitemap)
   giga/page.tsx         # Demo/prototype page (excluded from sitemap)
 
@@ -271,6 +284,9 @@ components/
   typography.tsx        # Design system typography with cva variants
   scroll-reveal.tsx     # Scroll-triggered reveal animation wrapper
   ui/                   # shadcn/ui components (button, card, input, etc.)
+
+data/
+  guides.ts             # Travel guides: slug, status, price, Stripe link, chapters, highlights
 
 lib/
   utils.ts              # cn() utility function
@@ -294,6 +310,9 @@ product/                # Product documentation
 tests/
   smoke.test.ts         # Basic infrastructure validation with Puppeteer
   responsive.test.ts    # Responsive UI testing at mobile/tablet/desktop breakpoints
+  voting-system.test.ts # Vote dropdown browser tests, API mocked in-page
+  api/                  # Real API tests (contact form, votes; votes need Firebase admin key)
+  fixtures/             # Canned data incl. vote-results.ts
 
 test-voting-responsive.js  # Standalone voting system responsive tests (Puppeteer)
 test-responsive-simple.js  # Simplified responsive test runner
@@ -346,7 +365,7 @@ public/                 # Static assets (images, videos, logos, favicons)
 
 ### Firebase Firestore - Location Voting System
 
-- **Project:** thu-tides-voting
+- **Project:** thu-tides (Firebase project id; the 1Password item username says thu-tides-voting)
 - **Database:** Firestore (NoSQL document database)
 - **Client SDK:** `lib/firebase.ts` - browser-side voting UI
 - **Admin SDK:** `lib/firebase-admin.ts` - server-side vote validation
@@ -362,36 +381,36 @@ See `FIREBASE_SETUP.md` for complete setup instructions and `IMPLEMENTATION_COMP
 
 ## Environment Variables
 
-All environment variables are stored in `.env.local` (gitignored). Required variables:
+All variables live in `.env.local` (gitignored). Every secret has exactly one home in 1Password:
+the **Thu Tides** vault (id `ljymbxmmqymgacuxkqvabpu46y`). Never paste a value into docs, tickets or
+commits; reference the item.
+
+| Variable | Kind | 1Password (Thu Tides vault) |
+|---|---|---|
+| `NEXT_PUBLIC_FIREBASE_*` (6 keys) | public web config | "Firebase - ThuTides" (`credential` = API key, rest in notes) |
+| `FIREBASE_SERVICE_ACCOUNT_KEY` | secret, base64 JSON | "thu-tides-website - FIREBASE_SERVICE_ACCOUNT_KEY" (base64) and the raw JSON as document "Firebase - ThuTides admin service account" |
+| `SLACK_WEBHOOK_URL` | secret | "Slack Webhook Thu Tides", field `url` (posts to #thu-tides-prod) |
+| `BREVO_API_KEY` | secret | "Brevo thu-tide", field `credential` (shared Automation Architecture AI Brevo account) |
+| `BREVO_LIST_ID` | config, `101` | same item, field `BREVO_LIST_ID` |
+| `BREVO_WELCOME_TEMPLATE_ID` | intentionally empty | no Thu Tides template exists; the route skips the email. Documented in `.credential-sync-ignore` |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GOOGLE_TAG_ID` | public | visible in the site HTML |
+| `NEXT_PUBLIC_SITE_URL` | public | `https://thutides.com` |
+
+The Firebase project id is **`thu-tides`** (not `thu-tides-voting`, which is only the 1Password
+username). `NEXT_PUBLIC_` variables are exposed to the browser; server-only secrets must not use it.
+
+### Rebuilding or auditing `.env.local`
 
 ```bash
-# Google Analytics
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-
-# Google Tag Manager
-NEXT_PUBLIC_GOOGLE_TAG_ID=GT-XXXXXXXX
-
-# Slack - contact form notifications
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
-
-# Brevo - email marketing automation
-BREVO_API_KEY=xkeysib-...
-BREVO_LIST_ID=101
-BREVO_WELCOME_TEMPLATE_ID=    # Optional; if empty, welcome email is skipped
-
-# Firebase Client SDK (from Firebase Console → Project Settings)
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=thu-tides-voting.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=thu-tides-voting
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=thu-tides-voting.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-
-# Firebase Admin SDK (base64 encoded service account key)
-FIREBASE_SERVICE_ACCOUNT_KEY=your_base64_encoded_key
+op read "op://Thu Tides/Brevo thu-tide/credential"          # one value at a time
+~/.claude/skills/env-credential-sync/scripts/env_1p_audit.py --project-dir . --vault "Thu Tides" --no-vercel
 ```
 
-Note: `NEXT_PUBLIC_` prefixed variables are exposed to the browser. Server-only secrets (Slack, Brevo, Firebase Admin) must NOT use this prefix.
+The audit compares by fingerprint and was clean on 2026-09-12. Two known limits: the Slack webhook
+is classified as public config by the script (a URL), so compare it by hand with `shasum`; and the
+Vercel half cannot run from the Automation Architecture Vercel login because the project belongs to
+the coraltriangle team. If the 1Password service account is rate-limited, run the same commands as
+`env -u OP_SERVICE_ACCOUNT_TOKEN op ...` under Brad's own session.
 
 ## Deployment
 
@@ -436,6 +455,8 @@ bash scripts/firebase-setup-wizard.sh     # Interactive Firebase setup
 - **Screenshots:** Saved to `screenshots/` directory (gitignored)
 - Tests require the dev server to be running (`pnpm dev`) before execution
 - The responsive tests target `/giga-demo` page specifically
+- `tests/voting-system.test.ts` drives the vote dropdown with the API mocked in the browser (fixture in `tests/fixtures/vote-results.ts`), so it never writes to Firestore and needs no credentials. Selector conventions (no Playwright `:has-text()`, wait for hydration, distinct test ids per responsive variant, scope queries to the visible panel) are in the runbook page listed under "Runbook index" below
+- `next build` needs Google Fonts reachable (`next/font`); on a network that blocks it the build fails and `next start` refuses to run, which shows up in tests as `net::ERR_CONNECTION_REFUSED`
 
 #### Interactive Testing (agent-browser)
 
@@ -677,11 +698,13 @@ If deployment logs show errors or production tests fail:
 ### Environment Variable Changes
 
 When adding/modifying environment variables:
-1. Update `.env.local` locally
-2. Update Vercel dashboard: Project Settings → Environment Variables
-3. Set for all environments: Production, Preview, Development
-4. Trigger redeploy after adding variables
-5. Verify new variables in deployment logs
+1. Save the value in the **Thu Tides** 1Password vault first (or update the existing item)
+2. Update `.env.local` locally from `op read`
+3. Update Vercel dashboard: Project Settings → Environment Variables (coraltriangle team)
+4. Set for all environments: Production, Preview, Development
+5. Trigger redeploy after adding variables
+6. Verify new variables in deployment logs
+7. Re-run the credential audit (see Environment Variables) and, if the gap is intentional, add a line to `.credential-sync-ignore`
 
 ## Coding Standards and Patterns
 
@@ -732,7 +755,7 @@ The `product/` folder contains detailed product documentation:
 The landing page (`app/page.tsx`) renders sections in this order:
 
 1. **GigaHero** -- Full-screen hero with aerial background image and "THU TIDES" text hover effect
-2. **ServicesSection** -- Photography and video service offerings
+2. **ServicesSection** -- Photography, video, automations and a Travel Guides card linking to `/guides`
 3. **OceanQuote** -- Decorative quote/divider
 4. **PortfolioSection** -- Gallery of previous work
 5. **AboutSection** -- Story and team introduction
@@ -740,9 +763,18 @@ The landing page (`app/page.tsx`) renders sections in this order:
 7. **VideoLoopSection** -- Background video showcase
 8. **CollabSection** -- Contact form (id="contact") for collaboration inquiries
 
+## Runbook index
+
+Pages in `Automation-Architecture/aaa-runbooks` this project depends on:
+
+- `integrations/slack-incoming-webhooks.md` — creating a webhook and marker-verifying where it posts
+- `reference/puppeteer-e2e-conventions.md` — Puppeteer selectors, in-browser API mocking, hydration and responsive-twin gotchas (written from this repo's voting suite)
+
 ## Notes
 
 - The `/giga-demo` and `/giga` routes are prototype/demo pages and are excluded from sitemap and robots
 - The photography page (`/photography`) has category sections navigable via hash anchors (e.g., `#underwater`, `#aerials`)
 - Navigation uses hash links (`#about`, `#contact`) for same-page scrolling on homepage
 - The Vercel OIDC token in `.env.local` is auto-generated by Vercel CLI for local development
+- The Vercel project belongs to the **coraltriangle** team; the Automation Architecture Vercel login cannot see it, so `vercel env pull` and the Vercel half of the credential audit need a member of that team
+- Design-system sync inputs for Claude Design live in `.design-sync/` (see `.design-sync/NOTES.md`); run `/design-sync` to re-sync
