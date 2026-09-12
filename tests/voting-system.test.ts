@@ -200,33 +200,24 @@ describe('Voting System E2E Tests', () => {
     });
 
     it('should show "You have already voted" message on duplicate vote attempt', async () => {
+      // A returning visitor whose browser state was cleared: the server still knows the IP
+      // and answers 409. The component must surface the message and lock the rows.
+      voteReply = () => ({ status: 409, body: { error: 'You have already voted', success: false } });
       await openDropdown();
       await waitForLocationRows();
       await clickFirstRow();
-      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
-        timeout: 5000,
-      });
 
-      // Rows are disabled after a vote, so the component's own guard cannot fire from a
-      // click. Simulate the server rejecting a second vote from the same visitor instead.
-      voteReply = () => ({ status: 409, body: { error: 'You have already voted', success: false } });
-      await context.page.evaluate((sel: string, re: string) => {
-        const row = Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).find((b) =>
-          new RegExp(re).test(b.textContent || '')
-        ) as HTMLButtonElement | undefined;
-        if (row) {
-          row.disabled = false;
-          row.click();
-        }
-      }, DROPDOWN, PERCENT.source);
-
-      const toast = await elementExists(
-        context.page,
-        '[data-sonner-toast][data-type="error"], [role="alert"], [role="status"]',
-        3000
+      await context.page.waitForFunction(
+        () => (document.body.textContent || '').toLowerCase().includes('already voted'),
+        { timeout: 5000 }
       );
-      const text = await context.page.evaluate(() => document.body.textContent || '');
-      expect(toast || text.toLowerCase().includes('already voted')).toBe(true);
+      const rowsLocked = await context.page.evaluate(
+        (sel: string) =>
+          Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).every((b) => b.disabled),
+        DROPDOWN
+      );
+      expect(rowsLocked).toBe(true);
+      expect(seen.votes.length).toBe(1);
     });
 
     it('should update vote percentages after successful vote', async () => {
