@@ -97,8 +97,25 @@ describe('Voting System E2E Tests', () => {
   async function openDropdown() {
     const badge = await context.page.waitForSelector(BADGE, { visible: true, timeout: 10000 });
     expect(badge).not.toBeNull();
+    // The badge is server-rendered inside a framer-motion fade-in, so it is visible before
+    // React has hydrated and attached its click handler. The fade-in only completes after
+    // hydration, so waiting for full opacity is the cheapest "hydrated" signal.
+    await context.page.waitForFunction(
+      (sel: string) => {
+        const el = document.querySelector(sel) as HTMLElement | null;
+        return !!el && getComputedStyle(el.parentElement as HTMLElement).opacity === '1';
+      },
+      { timeout: 15000 },
+      BADGE
+    );
     await badge!.click();
-    await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 5000 });
+    try {
+      await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 3000 });
+    } catch {
+      // One retry covers the rare click that lands in the same tick as hydration.
+      await badge!.click();
+      await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 5000 });
+    }
   }
 
   async function waitForLocationRows() {
