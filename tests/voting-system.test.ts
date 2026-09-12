@@ -12,6 +12,8 @@
  *   exposes on purpose (`data-testid`, `aria-label`) or `::-p-text(...)`.
  * - Match the badge by its aria-label suffix, and the dropdown by its test id,
  *   so copy changes do not break the suite.
+ * - waitForSelector(sel, { visible: true }) checks only the FIRST element that
+ *   matches; a hidden responsive twin earlier in the DOM makes it wait forever.
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
@@ -27,7 +29,10 @@ import {
 import { buildResults, LOCATION_COUNT } from './fixtures/vote-results';
 
 const BADGE = 'button[aria-label$="Click to vote"]';
-const DROPDOWN = '[data-testid="vote-dropdown"]';
+// The component renders a mobile and a desktop container; the suite runs at the desktop
+// viewport. Puppeteer's visible wait only inspects the first match of a selector, so the
+// two need distinct ids or the hidden mobile one shadows the visible desktop one.
+const DROPDOWN = '[data-testid="vote-dropdown-desktop"]';
 // Location rows are buttons whose text ends in a percentage, e.g. "Flores23.5%".
 const PERCENT = /\d+\.\d+%/;
 const RESULTS_URL = '/api/votes/results';

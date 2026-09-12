@@ -195,7 +195,7 @@ export function LocationVoteDropdown({
             onClick={handleBackdropClick}
             role="dialog"
             aria-label="Vote for the next destination"
-            data-testid="vote-dropdown"
+            data-testid="vote-dropdown-mobile"
           >
             <GlassCard variant="strong" padding="sm" className="w-full max-w-md">
               {renderContent()}
@@ -211,7 +211,7 @@ export function LocationVoteDropdown({
             className="hidden md:block w-full mt-6"
             role="region"
             aria-label="Vote for the next destination"
-            data-testid="vote-dropdown"
+            data-testid="vote-dropdown-desktop"
           >
             <GlassCard variant="strong" padding="sm" className="max-w-2xl mx-auto">
               {renderContent()}
