@@ -10,16 +10,24 @@ type GuidePass = {
   title: string
   status: 'Available now' | 'Coming soon'
   detail: string
+  /** Gradient behind the photo, and the whole card when there is no photo yet. */
   tone: string
+  image?: string
+  /**
+   * Which part of the photo to keep. The covers are portrait phone shots and the
+   * card is landscape, so the crop is severe and the subject sits at a different
+   * height in each one.
+   */
+  imagePosition?: string
   available?: boolean
 }
 
 const guidePasses: GuidePass[] = [
-  { slug: 'raja-ampat', title: 'Raja Ampat', status: 'Available now', detail: 'An island-by-island field guide for the crossings, reefs and stays that make sense.', tone: 'from-[#062733] via-[#0b6675] to-[#59b8c8]', available: true },
-  { slug: 'bali', title: 'Bali', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#3d2118] via-[#a94c2d] to-[#de9a4b]' },
-  { slug: 'lombok', title: 'Lombok', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#123f43] via-[#2e7a70] to-[#a6c67d]' },
-  { slug: 'sulawesi', title: 'Sulawesi', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#202448] via-[#525b94] to-[#c0a5cc]' },
-  { slug: 'java', title: 'Java', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#38281b] via-[#806343] to-[#d9ba83]' },
+  { slug: 'raja-ampat', title: 'Raja Ampat', status: 'Available now', detail: 'An island-by-island field guide for the crossings, reefs and stays that make sense.', tone: 'from-[#062733] via-[#0b6675] to-[#59b8c8]', image: '/guides/raja-ampat-cover.webp', imagePosition: 'center 62%', available: true },
+  { slug: 'bali', title: 'Bali', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#3d2118] via-[#a94c2d] to-[#de9a4b]', image: '/guides/bali-cover.webp', imagePosition: 'center 55%' },
+  { slug: 'lombok', title: 'Lombok', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#123f43] via-[#2e7a70] to-[#a6c67d]', image: '/guides/lombok-cover.webp', imagePosition: 'center 32%' },
+  { slug: 'sulawesi', title: 'Sulawesi', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#202448] via-[#525b94] to-[#c0a5cc]', image: '/guides/sulawesi-cover.webp', imagePosition: 'center 50%' },
+  { slug: 'java', title: 'Java', status: 'Coming soon', detail: 'A new Thu Tides guide is in the works.', tone: 'from-[#38281b] via-[#806343] to-[#d9ba83]', image: '/guides/java-cover.webp', imagePosition: 'center 42%' },
 ]
 
 export function GuidesWallet() {
@@ -52,8 +60,23 @@ export function GuidesWallet() {
                   className={`absolute inset-x-0 h-[18rem] overflow-hidden rounded-[1.7rem] bg-gradient-to-br ${guide.tone} p-6 text-left text-white shadow-[0_22px_50px_rgba(0,0,0,0.3)] outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-cerulean-2 sm:h-[19.5rem]`}
                   style={{ zIndex: isSelected ? 20 : 10 + index }}
                 >
-                  {guide.slug === 'raja-ampat' && <Image src="/guides/raja-ampat-cover.webp" alt="" fill sizes="(max-width: 640px) calc(100vw - 48px), 496px" className="object-cover opacity-35 mix-blend-luminosity" />}
-                  <span className="absolute inset-0 bg-[radial-gradient(circle_at_87%_9%,rgba(255,255,255,0.27),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.09),transparent_52%)]" />
+                  {/* Decorative: the card's title sits next to it as real text. */}
+                  {guide.image && (
+                    <Image
+                      src={guide.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) calc(100vw - 48px), 496px"
+                      style={{ objectPosition: guide.imagePosition }}
+                      className="object-cover"
+                      priority={index === 0}
+                    />
+                  )}
+                  {/* Scrim, so the title and status stay legible over any photo. */}
+                  {guide.image && (
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/25" />
+                  )}
+                  <span className="absolute inset-0 bg-[radial-gradient(circle_at_87%_9%,rgba(255,255,255,0.22),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_52%)]" />
                   <span className="relative flex h-full flex-col justify-between">
                     <span className="flex items-start justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.18em]"><span>Thu Tides</span><span className="rounded-full border border-white/35 px-2.5 py-1 text-[10px] tracking-[0.12em]">{guide.status}</span></span>
                     <span><span className="block text-5xl font-light leading-none tracking-tight sm:text-6xl">{guide.title}</span><span className="mt-3 block text-sm text-white/80">{guide.available ? 'Travel guide · $12' : 'Indonesia guide · in development'}</span></span>
