@@ -17,7 +17,6 @@ export function VideoLoopSection() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          threshold={0.1}
           rootMargin="200px 0px"
         />
 

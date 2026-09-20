@@ -159,13 +159,19 @@ describe('Voting System E2E Tests', () => {
     }, DROPDOWN, PERCENT.source);
   }
 
-  function clickFirstRow() {
-    return context.page.evaluate((sel: string, re: string) => {
-      const row = Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).find((b) =>
-        new RegExp(re).test(b.textContent || '')
-      );
-      row?.click();
-    }, DROPDOWN, PERCENT.source);
+  // A real mouse click (mousedown -> mouseup -> click), not element.click(). The
+  // document-level close handler listens on mousedown, so a synthetic click
+  // cannot see a panel that tears itself down when a row is pressed.
+  async function clickFirstRow() {
+    const rows = await context.page.$$(`${DROPDOWN} button`);
+    for (const row of rows) {
+      const text = await context.page.evaluate((el: Element) => el.textContent || '', row);
+      if (PERCENT.test(text)) {
+        await row.click();
+        return;
+      }
+    }
+    throw new Error('No location row found in the vote dropdown');
   }
 
   describe('Vote Dropdown Display', () => {
@@ -208,6 +214,19 @@ describe('Voting System E2E Tests', () => {
       });
       expect(seen.votes.length).toBe(1);
       expect(seen.votes[0]).toMatch(/^[a-z-]+$/);
+    });
+
+    it('should keep the panel open after voting so the result is visible', async () => {
+      // Regression: the close-on-outside-click handler used to test only the
+      // trigger, so pressing a location row closed the panel on mousedown and
+      // the voter never saw the confirmation or the updated percentages.
+      await openDropdown();
+      await waitForLocationRows();
+      await clickFirstRow();
+      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
+        timeout: 5000,
+      });
+      expect(await elementExists(context.page, DROPDOWN, 500)).toBe(true);
     });
 
     it('should show "You have already voted" message on duplicate vote attempt', async () => {

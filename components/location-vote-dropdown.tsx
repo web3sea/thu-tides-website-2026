@@ -42,7 +42,8 @@ export function LocationVoteDropdown({
     if (typeof window === 'undefined') return false
     return localStorage.getItem('thu-tides-voted') === 'true'
   })
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const mobileRef = useRef<HTMLDivElement>(null)
+  const desktopRef = useRef<HTMLDivElement>(null)
 
   const fetchResults = useCallback(async () => {
     setIsLoading(true)
@@ -60,6 +61,27 @@ export function LocationVoteDropdown({
       setIsLoading(false)
     }
   }, [])
+
+  // Close on a click outside the panels and the trigger. This lives here rather
+  // than in the parent because only this component knows where the panels are:
+  // a handler that tests the trigger alone treats a click on a location row as
+  // "outside" and tears the panel down mid-vote.
+  useEffect(() => {
+    if (!isOpen) return
+
+    function handlePointerDown(event: MouseEvent) {
+      const target = event.target as Node
+      const isInside =
+        mobileRef.current?.contains(target) ||
+        desktopRef.current?.contains(target) ||
+        triggerRef.current?.contains(target)
+
+      if (!isInside) onClose()
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    return () => document.removeEventListener('mousedown', handlePointerDown)
+  }, [isOpen, onClose, triggerRef])
 
   // Fetch results each time the dropdown opens so the poll stays fresh.
   useEffect(() => {
@@ -186,7 +208,7 @@ export function LocationVoteDropdown({
         <>
           {/* Mobile: Full-screen modal */}
           <motion.div
-            ref={dropdownRef}
+            ref={mobileRef}
             variants={dropdownVariants}
             initial="hidden"
             animate="visible"
@@ -204,6 +226,7 @@ export function LocationVoteDropdown({
 
           {/* Desktop: Inline accordion */}
           <motion.div
+            ref={desktopRef}
             variants={dropdownVariants}
             initial="hidden"
             animate="visible"

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -75,23 +75,8 @@ export function GigaHero({
     setDropdownOpen((prev) => !prev)
   }
 
-  // Click-outside handler to close dropdown
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        badgeRef.current &&
-        !badgeRef.current.contains(event.target as Node) &&
-        dropdownOpen
-      ) {
-        setDropdownOpen(false)
-      }
-    }
-
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [dropdownOpen])
+  // Click-outside is owned by LocationVoteDropdown, which knows where its panels
+  // are; handling it here could only see the trigger.
   return (
     <div
       className={cn(

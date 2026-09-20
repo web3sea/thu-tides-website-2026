@@ -30,9 +30,6 @@ export const metadata: Metadata = {
   creator: 'Thu Tides',
   publisher: 'Thu Tides',
   metadataBase: new URL('https://thutides.com'),
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
