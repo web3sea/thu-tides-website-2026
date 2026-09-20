@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { TextHoverEffect } from '@/components/ui/text-hover-effect'
-import { LocationVoteDropdown } from '@/components/location-vote-dropdown'
+import { LocationVoteDropdown, VOTE_PANEL_IDS } from '@/components/location-vote-dropdown'
 import { cn } from '@/lib/utils'
 
 export interface GigaHeroProps {
@@ -182,6 +182,8 @@ export function GigaHero({
               onClick={handleBadgeClick}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-2 hover:bg-white/20 transition-colors group cursor-pointer"
               aria-label={`${badge.text} - Click to vote`}
+              aria-expanded={dropdownOpen}
+              aria-controls={VOTE_PANEL_IDS}
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 uppercase">

@@ -6,6 +6,16 @@ import { GlassCard } from '@/components/ui/glass-card'
 import { toast } from 'sonner'
 import type { VoteResults } from '@/types/votes'
 
+const PANEL_ID_MOBILE = 'vote-panel-mobile'
+const PANEL_ID_DESKTOP = 'vote-panel-desktop'
+
+/**
+ * For the trigger's aria-controls. Both twins are named because they render
+ * together and CSS hides one; a display:none panel is out of the accessibility
+ * tree, so exactly one of these resolves at any viewport.
+ */
+export const VOTE_PANEL_IDS = `${PANEL_ID_MOBILE} ${PANEL_ID_DESKTOP}`
+
 interface LocationVoteDropdownProps {
   isOpen: boolean
   onClose: () => void
@@ -84,6 +94,68 @@ export function LocationVoteDropdown({
     document.addEventListener('mousedown', handleMouseDown)
     return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [isOpen, onClose, triggerRef])
+
+  // Escape closes, which the mouse-only handler above did not cover: a keyboard
+  // user could open the panel and then had no way to dismiss it.
+  useEffect(() => {
+    if (!isOpen) return
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.stopPropagation()
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
+  // The mobile panel is a modal dialog, so focus belongs inside it while it is open
+  // and back on the trigger afterwards. Tab is kept within the card: aria-modal tells
+  // a screen reader to stay, but it does not constrain the Tab key.
+  useEffect(() => {
+    if (!isOpen) return
+
+    const card = mobileRef.current
+    // Only the mobile twin is modal, and only when it is the visible one.
+    if (!card || card.offsetParent === null) return
+
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const focusables = () =>
+      Array.from(
+        card.querySelectorAll<HTMLElement>('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
+      ).filter((el) => el.offsetParent !== null)
+
+    // Focus the dialog itself rather than its first control. At this point the panel
+    // is still showing the loading spinner and has no focusable children, and it is
+    // the container a screen reader should announce anyway.
+    card.focus()
+
+    function handleTab(event: KeyboardEvent) {
+      if (event.key !== 'Tab') return
+
+      const items = focusables()
+      if (items.length === 0) return
+
+      const first = items[0]
+      const last = items[items.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleTab)
+    return () => {
+      document.removeEventListener('keydown', handleTab)
+      previouslyFocused?.focus()
+    }
+  }, [isOpen])
 
   // Fetch results each time the dropdown opens so the poll stays fresh.
   useEffect(() => {
@@ -208,11 +280,19 @@ export function LocationVoteDropdown({
             animate="visible"
             exit="exit"
             className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            role="region"
-            aria-label="Vote for the next destination"
             data-testid="vote-dropdown-mobile"
           >
-            <GlassCard ref={mobileRef} variant="strong" padding="sm" className="w-full max-w-md">
+            <GlassCard
+              ref={mobileRef}
+              id={PANEL_ID_MOBILE}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Vote for the next destination"
+              tabIndex={-1}
+              variant="strong"
+              padding="sm"
+              className="w-full max-w-md"
+            >
               {renderContent()}
             </GlassCard>
           </motion.div>
@@ -225,6 +305,7 @@ export function LocationVoteDropdown({
             animate="visible"
             exit="exit"
             className="hidden md:block w-full mt-6"
+            id={PANEL_ID_DESKTOP}
             role="region"
             aria-label="Vote for the next destination"
             data-testid="vote-dropdown-desktop"

@@ -301,6 +301,42 @@ describe('Voting System E2E Tests', () => {
   });
 
   describe('Dropdown Interaction', () => {
+    it('should expose open state on the trigger via aria-expanded', async () => {
+      const expanded = () =>
+        context.page.$eval(BADGE, (el: Element) => el.getAttribute('aria-expanded'));
+
+      expect(await expanded()).toBe('false');
+      await openDropdown();
+      expect(await expanded()).toBe('true');
+
+      // aria-controls must name an element that actually exists at this viewport.
+      const controlled = await context.page.$eval(BADGE, (el: Element) =>
+        (el.getAttribute('aria-controls') || '').split(/\s+/).filter(Boolean)
+      );
+      expect(controlled.length).toBeGreaterThan(0);
+      const present = await context.page.evaluate(
+        (ids: string[]) => ids.filter((id) => document.getElementById(id) !== null).length,
+        controlled
+      );
+      expect(present).toBeGreaterThan(0);
+    });
+
+    it('should close on Escape', async () => {
+      await openDropdown();
+      await waitForLocationRows();
+
+      await context.page.keyboard.press('Escape');
+
+      await context.page.waitForFunction(
+        (sel: string) => document.querySelector(sel) === null,
+        { timeout: 3000 },
+        DROPDOWN
+      );
+      expect(await context.page.$eval(BADGE, (el: Element) => el.getAttribute('aria-expanded'))).toBe(
+        'false'
+      );
+    });
+
     // The mobile panel is a card centred on a full-screen backdrop. Its ref is on the
     // card, so pressing the backdrop counts as outside -- this replaced a backdrop
     // onClick handler and nothing else covers it.
@@ -313,6 +349,39 @@ describe('Voting System E2E Tests', () => {
 
       afterAll(async () => {
         await context.page.setViewport(VIEWPORTS.desktop);
+      });
+
+      it('should be a modal dialog that takes focus and gives it back', async () => {
+        await openDropdown(DROPDOWN_MOBILE);
+        await waitForLocationRows(DROPDOWN_MOBILE);
+
+        const dialog = await context.page.$eval(`${DROPDOWN_MOBILE} [role="dialog"]`, (el: Element) => ({
+          ariaModal: el.getAttribute('aria-modal'),
+          label: el.getAttribute('aria-label'),
+        }));
+        expect(dialog.ariaModal).toBe('true');
+        expect(dialog.label).toBeTruthy();
+
+        // Focus moved into the dialog rather than staying on the trigger.
+        const focusInside = await context.page.evaluate((sel: string) => {
+          const panel = document.querySelector(sel);
+          return !!panel && !!document.activeElement && panel.contains(document.activeElement);
+        }, DROPDOWN_MOBILE);
+        expect(focusInside).toBe(true);
+
+        await context.page.keyboard.press('Escape');
+        await context.page.waitForFunction(
+          (sel: string) => document.querySelector(sel) === null,
+          { timeout: 3000 },
+          DROPDOWN_MOBILE
+        );
+
+        // ...and came back to the trigger on close.
+        const focusRestored = await context.page.evaluate(
+          (sel: string) => document.activeElement === document.querySelector(sel),
+          BADGE
+        );
+        expect(focusRestored).toBe(true);
       });
 
       it('should keep the mobile panel open while voting, then close on the backdrop', async () => {
