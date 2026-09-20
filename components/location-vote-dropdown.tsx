@@ -6,6 +6,9 @@ import { GlassCard } from '@/components/ui/glass-card'
 import { toast } from 'sonner'
 import type { VoteResults } from '@/types/votes'
 
+// One label for both responsive twins.
+const PANEL_LABEL = 'Vote for the next destination'
+
 interface LocationVoteDropdownProps {
   isOpen: boolean
   onClose: () => void
@@ -44,6 +47,21 @@ export function LocationVoteDropdown({
   })
   const mobileRef = useRef<HTMLDivElement>(null)
   const desktopRef = useRef<HTMLDivElement>(null)
+
+  // The mobile card when it is the visible twin, else null. offsetParent is null for
+  // a display:none subtree, which is exactly what the other breakpoint's Tailwind
+  // classes produce, so this also answers "is this viewport the modal one".
+  const modalCard = useCallback((): HTMLDivElement | null => {
+    const card = mobileRef.current
+    return card && card.offsetParent !== null ? card : null
+  }, [])
+
+  const focusablesIn = (card: HTMLElement) =>
+    Array.from(
+      card.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => el.offsetParent !== null)
 
   const fetchResults = useCallback(async () => {
     setIsLoading(true)
@@ -85,6 +103,79 @@ export function LocationVoteDropdown({
     return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [isOpen, onClose, triggerRef])
 
+  // Escape closes; the mouse-only handler above did not cover it, so a keyboard
+  // user could open the panel with no way out. Tab is also handled here: on mobile
+  // the panel is a modal dialog and aria-modal keeps a screen reader inside, but it
+  // does not constrain the Tab key.
+  //
+  // One listener rather than two, and the "am I the modal twin" test happens per
+  // event rather than once at setup: deciding it at setup meant opening at desktop
+  // width and then narrowing to mobile left a visible modal with no trap.
+  useEffect(() => {
+    if (!isOpen) return
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const card = modalCard()
+      if (!card) return
+
+      const items = focusablesIn(card)
+      if (items.length === 0) {
+        // Nothing to land on (still loading, or every row is now disabled), so keep
+        // focus on the dialog rather than letting Tab walk out behind it.
+        event.preventDefault()
+        card.focus()
+        return
+      }
+
+      // Focus outside the dialog entirely: pull it in rather than only wrapping at
+      // the edges. This is the case where the viewport narrowed into the modal
+      // breakpoint while focus sat on the trigger.
+      if (!card.contains(document.activeElement)) {
+        event.preventDefault()
+        ;(event.shiftKey ? items[items.length - 1] : items[0]).focus()
+        return
+      }
+
+      const first = items[0]
+      const last = items[items.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose, modalCard])
+
+  // Focus into the mobile dialog on open, and back to the trigger on close.
+  useEffect(() => {
+    if (!isOpen) return
+
+    const card = modalCard()
+    if (!card) return
+
+    const previouslyFocused = document.activeElement as HTMLElement | null
+
+    // The dialog itself, not its first control: at this point the panel is still
+    // showing its spinner and has no focusable children, and the container is what
+    // a screen reader should announce.
+    card.focus()
+
+    return () => previouslyFocused?.focus()
+  }, [isOpen, modalCard])
+
   // Fetch results each time the dropdown opens so the poll stays fresh.
   useEffect(() => {
     if (isOpen) {
@@ -124,6 +215,9 @@ export function LocationVoteDropdown({
       setResults(data.results)
       localStorage.setItem('thu-tides-voted', 'true')
       setHasVoted(true)
+      // Every row is about to become disabled, including the one holding focus, which
+      // would drop focus to <body> and leave the open dialog with nothing to contain.
+      modalCard()?.focus()
     } catch (error) {
       console.error('Error submitting vote:', error)
       toast.error('Failed to submit vote')
@@ -208,11 +302,18 @@ export function LocationVoteDropdown({
             animate="visible"
             exit="exit"
             className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            role="region"
-            aria-label="Vote for the next destination"
             data-testid="vote-dropdown-mobile"
           >
-            <GlassCard ref={mobileRef} variant="strong" padding="sm" className="w-full max-w-md">
+            <GlassCard
+              ref={mobileRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={PANEL_LABEL}
+              tabIndex={-1}
+              variant="strong"
+              padding="sm"
+              className="w-full max-w-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            >
               {renderContent()}
             </GlassCard>
           </motion.div>
@@ -226,7 +327,7 @@ export function LocationVoteDropdown({
             exit="exit"
             className="hidden md:block w-full mt-6"
             role="region"
-            aria-label="Vote for the next destination"
+            aria-label={PANEL_LABEL}
             data-testid="vote-dropdown-desktop"
           >
             <GlassCard variant="strong" padding="sm" className="max-w-2xl mx-auto">
