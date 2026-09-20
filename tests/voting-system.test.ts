@@ -25,6 +25,7 @@ import {
   waitForElement,
   BrowserContext,
   elementExists,
+  VIEWPORTS,
 } from './helpers/test-setup';
 import { buildResults, LOCATION_COUNT } from './fixtures/vote-results';
 
@@ -33,6 +34,7 @@ const BADGE = 'button[aria-label$="Click to vote"]';
 // viewport. Puppeteer's visible wait only inspects the first match of a selector, so the
 // two need distinct ids or the hidden mobile one shadows the visible desktop one.
 const DROPDOWN = '[data-testid="vote-dropdown-desktop"]';
+const DROPDOWN_MOBILE = '[data-testid="vote-dropdown-mobile"]';
 // Location rows are buttons whose text ends in a percentage, e.g. "Flores23.5%". Always
 // query them inside DROPDOWN: the hidden mobile panel holds an identical set of rows.
 const PERCENT = /\d+\.\d+%/;
@@ -223,9 +225,19 @@ describe('Voting System E2E Tests', () => {
       await openDropdown();
       await waitForLocationRows();
       await clickFirstRow();
-      await context.page.waitForFunction(() => document.body.textContent?.includes('Thanks for voting'), {
-        timeout: 5000,
-      });
+
+      // Scoped to the panel, not document.body: the point is that the footer is
+      // rendered INSIDE a panel that is still mounted.
+      await context.page.waitForFunction(
+        (sel: string) =>
+          (document.querySelector(sel)?.textContent || '').includes('Thanks for voting'),
+        { timeout: 5000 },
+        DROPDOWN
+      );
+
+      // Settle past the 200ms exit transition: elementExists would otherwise match
+      // a panel already animating away.
+      await new Promise((r) => setTimeout(r, 500));
       expect(await elementExists(context.page, DROPDOWN, 500)).toBe(true);
     });
 
@@ -289,12 +301,54 @@ describe('Voting System E2E Tests', () => {
   });
 
   describe('Dropdown Interaction', () => {
+    // The mobile panel is a card centred on a full-screen backdrop. Its ref is on the
+    // card, so pressing the backdrop counts as outside -- this replaced a backdrop
+    // onClick handler and nothing else covers it.
+    describe('at mobile viewport', () => {
+      beforeEach(async () => {
+        await context.page.setViewport(VIEWPORTS.mobile);
+        await context.page.goto(baseUrl);
+        await waitForElement(context.page, 'main');
+      });
+
+      afterAll(async () => {
+        await context.page.setViewport(VIEWPORTS.desktop);
+      });
+
+      it('should keep the mobile panel open while voting, then close on the backdrop', async () => {
+        const badge = await context.page.waitForSelector(BADGE, { visible: true, timeout: 10000 });
+        await badge!.click();
+        await context.page.waitForSelector(DROPDOWN_MOBILE, { visible: true, timeout: 5000 });
+
+        const rows = await context.page.$$(`${DROPDOWN_MOBILE} button`);
+        const row = rows.find(Boolean);
+        await row!.click();
+        await context.page.waitForFunction(
+          (sel: string) =>
+            (document.querySelector(sel)?.textContent || '').includes('Thanks for voting'),
+          { timeout: 5000 },
+          DROPDOWN_MOBILE
+        );
+        await new Promise((r) => setTimeout(r, 500));
+        expect(await elementExists(context.page, DROPDOWN_MOBILE, 500)).toBe(true);
+
+        // Top-left corner is backdrop, outside the centred card.
+        await context.page.mouse.click(5, 5);
+        await context.page.waitForFunction(
+          (sel: string) => document.querySelector(sel) === null,
+          { timeout: 3000 },
+          DROPDOWN_MOBILE
+        );
+      });
+    });
+
     it('should close dropdown when clicking outside', async () => {
       await openDropdown();
       await waitForLocationRows();
 
-      // The hero closes the panel on any mousedown outside the badge. Click the top-left
-      // corner of the viewport, which is empty; the footer's centre is a column of links.
+      // LocationVoteDropdown closes the panel on any mousedown outside its panels and
+      // the badge. Click the top-left corner of the viewport, which is empty; the
+      // footer's centre is a column of links.
       await context.page.mouse.click(5, 5);
 
       await context.page.waitForFunction(
