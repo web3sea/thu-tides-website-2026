@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createRateLimiter } from '@/lib/rate-limit'
 
 interface ContactFormData {
   name: string
@@ -7,22 +8,11 @@ interface ContactFormData {
   inquiry: string
 }
 
-// Simple in-memory rate limiter (per-instance; resets on cold start)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
-const RATE_LIMIT_WINDOW_MS = 60_000 // 1 minute
-const RATE_LIMIT_MAX = 5 // max requests per window
+// Per-instance by design; lib/rate-limit.ts documents that and how memory is bounded.
+const rateLimiter = createRateLimiter({ max: 5, windowMs: 60_000 })
 
 function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS })
-    return false
-  }
-
-  entry.count++
-  return entry.count > RATE_LIMIT_MAX
+  return rateLimiter.check(ip)
 }
 
 // Email format validation
@@ -158,73 +148,77 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Throws on failure, and does not catch: Promise.allSettled in the handler turns a
+// rejection into a warning on the response and logs it once. Swallowing it here made
+// a dead webhook indistinguishable from a delivered message, which is how an inquiry
+// gets lost silently.
 async function sendToSlack(data: ContactFormData) {
-  try {
-    const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
+  const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
 
-    if (!slackWebhookUrl) {
-      console.warn('SLACK_WEBHOOK_URL not configured')
-      return
-    }
+  // Not configured is a deliberate skip, not a failure: CI and local dev run
+  // without it and the form is meant to keep working.
+  if (!slackWebhookUrl) {
+    console.warn('SLACK_WEBHOOK_URL not configured')
+    return
+  }
 
-    const message = {
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '🎉 New Contact Form Inquiry',
-            emoji: true,
-          },
+  const message = {
+    blocks: [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: '🎉 New Contact Form Inquiry',
+          emoji: true,
         },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Name:*\n${escapeSlack(data.name)}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Email:*\n${escapeSlack(data.email)}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*WhatsApp:*\n${data.whatsapp ? escapeSlack(data.whatsapp) : 'Not provided'}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Inquiry:*\n${escapeSlack(data.inquiry)}`,
-          },
-        },
-        {
-          type: 'divider',
-        },
-      ],
-    }
-
-    const response = await fetchWithTimeout(slackWebhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(message),
-    })
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*Name:*\n${escapeSlack(data.name)}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Email:*\n${escapeSlack(data.email)}`,
+          },
+        ],
+      },
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*WhatsApp:*\n${data.whatsapp ? escapeSlack(data.whatsapp) : 'Not provided'}`,
+          },
+        ],
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Inquiry:*\n${escapeSlack(data.inquiry)}`,
+        },
+      },
+      {
+        type: 'divider',
+      },
+    ],
+  }
 
-    if (!response.ok) {
-      console.error('Slack notification failed:', response.statusText)
-    }
-  } catch (error) {
-    console.error('Slack integration error:', error)
+  const response = await fetchWithTimeout(slackWebhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Slack notification failed:', response.status, errorText)
+    throw new Error(`Slack webhook error: ${response.status}`)
   }
 }
 

@@ -19,9 +19,18 @@ function initializeFirebase() {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       })
-    } catch {
-      // Re-throw a sanitized error — don't log the raw parse failure
-      // which may contain partial credential material
+    } catch (error) {
+      // Log enough to diagnose without echoing the key: a parse failure's message
+      // can quote the input it choked on, so the message itself is not safe to
+      // print. The error class plus the key's shape is what actually narrows it
+      // down (wrong encoding, truncated value, JSON that is not a service account).
+      console.error('Firebase Admin initialization failed', {
+        cause: error instanceof Error ? error.name : typeof error,
+        keyLength: serviceAccountKey.length,
+        looksBase64: /^[A-Za-z0-9+/=\s]+$/.test(serviceAccountKey),
+      })
+      // Re-throw a sanitized error — don't surface the raw parse failure,
+      // which may contain partial credential material.
       throw new Error('Firebase Admin initialization failed')
     }
   } else if (process.env.NODE_ENV === 'development') {
@@ -30,7 +39,12 @@ function initializeFirebase() {
         credential: admin.credential.applicationDefault(),
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
       })
-    } catch {
+    } catch (error) {
+      // ADC errors carry no credential material, so the message is safe to log.
+      console.error(
+        'Firebase Admin initialization failed (ADC). Run: gcloud auth application-default login',
+        error instanceof Error ? error.message : String(error)
+      )
       throw new Error('Firebase Admin initialization failed (ADC)')
     }
   } else {
@@ -44,7 +58,7 @@ function getAdminDb(): admin.firestore.Firestore | null {
     initializeFirebase()
     return admin.apps.length > 0 ? admin.firestore() : null
   } catch {
-    // initializeFirebase() already logged the error; return null so callers
+    // initializeFirebase() has already logged the detail; return null so callers
     // can respond with a 503 instead of propagating an unhandled exception.
     return null
   }
