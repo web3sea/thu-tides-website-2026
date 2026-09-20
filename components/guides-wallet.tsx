@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import * as React from 'react'
 
@@ -89,7 +90,7 @@ export function GuidesWallet() {
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-cerulean-2">{selected.status}</p>
             <h2 className="mt-3 text-4xl font-light leading-none text-white">{selected.title}</h2>
             <p className="mt-4 text-base font-light leading-relaxed text-white/70">{selected.detail}</p>
-            {selected.available ? <a href="https://rajaampat.thutides.com" className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-brand-cerulean px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-cerulean-2">Explore Raja Ampat · $12</a> : <p className="mt-7 flex w-full items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-semibold text-white/55">Coming soon</p>}
+            {selected.available ? <Link href="/guides/raja-ampat" className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-brand-cerulean px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-cerulean-2">See what&apos;s inside · $12</Link> : <p className="mt-7 flex w-full items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-semibold text-white/55">Coming soon</p>}
           </motion.div>
         </div>
 
