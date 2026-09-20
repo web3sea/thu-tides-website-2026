@@ -112,7 +112,7 @@ describe('Voting System E2E Tests', () => {
     await waitForElement(context.page, 'main');
   });
 
-  async function openDropdown() {
+  async function openDropdown(panel: string = DROPDOWN) {
     const badge = await context.page.waitForSelector(BADGE, { visible: true, timeout: 10000 });
     expect(badge).not.toBeNull();
     // The badge is server-rendered inside a framer-motion fade-in, so it is visible before
@@ -128,23 +128,23 @@ describe('Voting System E2E Tests', () => {
     );
     await badge!.click();
     try {
-      await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 3000 });
+      await context.page.waitForSelector(panel, { visible: true, timeout: 3000 });
     } catch {
       // One retry covers the rare click that lands in the same tick as hydration,
       // but only if nothing opened; a second click on an open panel would close it.
-      if (!(await context.page.$(DROPDOWN))) await badge!.click();
-      await context.page.waitForSelector(DROPDOWN, { visible: true, timeout: 5000 });
+      if (!(await context.page.$(panel))) await badge!.click();
+      await context.page.waitForSelector(panel, { visible: true, timeout: 5000 });
     }
   }
 
-  async function waitForLocationRows() {
+  async function waitForLocationRows(panel: string = DROPDOWN) {
     await context.page.waitForFunction(
       (sel: string, re: string, n: number) =>
         Array.from(document.querySelectorAll<HTMLButtonElement>(`${sel} button`)).filter((b) =>
           new RegExp(re).test(b.textContent || '')
         ).length === n,
       { timeout: 5000 },
-      DROPDOWN,
+      panel,
       PERCENT.source,
       LOCATION_COUNT
     );
@@ -164,8 +164,8 @@ describe('Voting System E2E Tests', () => {
   // A real mouse click (mousedown -> mouseup -> click), not element.click(). The
   // document-level close handler listens on mousedown, so a synthetic click
   // cannot see a panel that tears itself down when a row is pressed.
-  async function clickFirstRow() {
-    const rows = await context.page.$$(`${DROPDOWN} button`);
+  async function clickFirstRow(panel: string = DROPDOWN) {
+    const rows = await context.page.$$(`${panel} button`);
     for (const row of rows) {
       const text = await context.page.evaluate((el: Element) => el.textContent || '', row);
       if (PERCENT.test(text)) {
@@ -173,7 +173,7 @@ describe('Voting System E2E Tests', () => {
         return;
       }
     }
-    throw new Error('No location row found in the vote dropdown');
+    throw new Error(`No location row found in ${panel}`);
   }
 
   describe('Vote Dropdown Display', () => {
@@ -316,13 +316,9 @@ describe('Voting System E2E Tests', () => {
       });
 
       it('should keep the mobile panel open while voting, then close on the backdrop', async () => {
-        const badge = await context.page.waitForSelector(BADGE, { visible: true, timeout: 10000 });
-        await badge!.click();
-        await context.page.waitForSelector(DROPDOWN_MOBILE, { visible: true, timeout: 5000 });
-
-        const rows = await context.page.$$(`${DROPDOWN_MOBILE} button`);
-        const row = rows.find(Boolean);
-        await row!.click();
+        await openDropdown(DROPDOWN_MOBILE);
+        await waitForLocationRows(DROPDOWN_MOBILE);
+        await clickFirstRow(DROPDOWN_MOBILE);
         await context.page.waitForFunction(
           (sel: string) =>
             (document.querySelector(sel)?.textContent || '').includes('Thanks for voting'),
