@@ -1,6 +1,9 @@
 /**
  * Contact API integration-failure tests (in-process)
  *
+ * The limiter's own window, boundary and memory behaviour is unit-tested in
+ * tests/lib/rate-limit.test.ts; the case here only checks the route is wired to it.
+ *
  * The sibling contact.test.ts drives a running dev server over HTTP, which means
  * it cannot control the route's env vars or intercept the route's outbound calls
  * (its header notes exactly that). This file imports the route handler directly
@@ -18,7 +21,6 @@ import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/contact/route';
 
 const SLACK_URL = 'https://hooks.slack.com/services/TEST/WEBHOOK/URL';
-const BREVO_CONTACTS = 'https://api.brevo.com/v3/contacts';
 
 const realFetch = global.fetch;
 const envBefore = { ...process.env };
@@ -27,13 +29,13 @@ const envBefore = { ...process.env };
 let ipCounter = 1;
 const uniqueIp = () => `10.1.${Math.floor(ipCounter / 255)}.${ipCounter++ % 255}`;
 
-function submit(overrides: Record<string, string> = {}) {
+function submit(overrides: Record<string, string> = {}, ip: string = uniqueIp()) {
   return POST(
     new NextRequest('http://localhost/api/contact', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        'x-real-ip': uniqueIp(),
+        'x-real-ip': ip,
       },
       body: JSON.stringify({
         name: 'Test User',
@@ -166,24 +168,11 @@ describe('Contact API rate limiting', () => {
 
   it('429s the sixth request from one IP and leaves other IPs alone', async () => {
     const ip = uniqueIp();
-    const fromIp = () =>
-      POST(
-        new NextRequest('http://localhost/api/contact', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-real-ip': ip },
-          body: JSON.stringify({
-            name: 'Test User',
-            email: 'test@example.com',
-            whatsapp: '',
-            inquiry: 'Test inquiry',
-          }),
-        })
-      );
 
     for (let i = 0; i < 5; i++) {
-      expect((await fromIp()).status).toBe(200);
+      expect((await submit({}, ip)).status).toBe(200);
     }
-    expect((await fromIp()).status).toBe(429);
+    expect((await submit({}, ip)).status).toBe(429);
 
     // A different IP has its own budget.
     expect((await submit()).status).toBe(200);

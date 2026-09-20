@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createRateLimiter } from '@/lib/rate-limit'
 
 interface ContactFormData {
   name: string
@@ -7,38 +8,11 @@ interface ContactFormData {
   inquiry: string
 }
 
-// Simple in-memory rate limiter. Two limits worth knowing: it is per-instance, so
-// the effective ceiling is RATE_LIMIT_MAX x the number of warm instances, and it
-// resets on a cold start. Good enough to blunt a naive flood on a low-volume form;
-// the votes route uses a Firestore transaction where the count has to be exact.
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
-const RATE_LIMIT_WINDOW_MS = 60_000 // 1 minute
-const RATE_LIMIT_MAX = 5 // max requests per window
-// Under Fluid Compute an instance is reused across many requests, so without a
-// sweep every IP ever seen stays in the map for the life of the instance.
-const RATE_LIMIT_SWEEP_THRESHOLD = 10_000
-
-function sweepExpired(now: number): void {
-  for (const [key, entry] of rateLimitMap) {
-    if (now > entry.resetTime) rateLimitMap.delete(key)
-  }
-}
+// Per-instance by design; lib/rate-limit.ts documents that and how memory is bounded.
+const rateLimiter = createRateLimiter({ max: 5, windowMs: 60_000 })
 
 function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-
-  if (rateLimitMap.size > RATE_LIMIT_SWEEP_THRESHOLD) sweepExpired(now)
-
-  const entry = rateLimitMap.get(ip)
-
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS })
-    return false
-  }
-
-  // Stop counting at the limit: the answer cannot change and the number is unused.
-  if (entry.count <= RATE_LIMIT_MAX) entry.count++
-  return entry.count > RATE_LIMIT_MAX
+  return rateLimiter.check(ip)
 }
 
 // Email format validation
@@ -174,81 +148,77 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Throws on failure. Promise.allSettled in the handler turns that into a warning on
-// the response; swallowing it here made a dead webhook indistinguishable from a
-// delivered message, which is how an inquiry gets lost silently.
+// Throws on failure, and does not catch: Promise.allSettled in the handler turns a
+// rejection into a warning on the response and logs it once. Swallowing it here made
+// a dead webhook indistinguishable from a delivered message, which is how an inquiry
+// gets lost silently.
 async function sendToSlack(data: ContactFormData) {
-  try {
-    const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
+  const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
 
-    // Not configured is a deliberate skip, not a failure: CI and local dev run
-    // without it and the form is meant to keep working.
-    if (!slackWebhookUrl) {
-      console.warn('SLACK_WEBHOOK_URL not configured')
-      return
-    }
+  // Not configured is a deliberate skip, not a failure: CI and local dev run
+  // without it and the form is meant to keep working.
+  if (!slackWebhookUrl) {
+    console.warn('SLACK_WEBHOOK_URL not configured')
+    return
+  }
 
-    const message = {
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '🎉 New Contact Form Inquiry',
-            emoji: true,
-          },
+  const message = {
+    blocks: [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: '🎉 New Contact Form Inquiry',
+          emoji: true,
         },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Name:*\n${escapeSlack(data.name)}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Email:*\n${escapeSlack(data.email)}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*WhatsApp:*\n${data.whatsapp ? escapeSlack(data.whatsapp) : 'Not provided'}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Inquiry:*\n${escapeSlack(data.inquiry)}`,
-          },
-        },
-        {
-          type: 'divider',
-        },
-      ],
-    }
-
-    const response = await fetchWithTimeout(slackWebhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(message),
-    })
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*Name:*\n${escapeSlack(data.name)}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Email:*\n${escapeSlack(data.email)}`,
+          },
+        ],
+      },
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*WhatsApp:*\n${data.whatsapp ? escapeSlack(data.whatsapp) : 'Not provided'}`,
+          },
+        ],
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Inquiry:*\n${escapeSlack(data.inquiry)}`,
+        },
+      },
+      {
+        type: 'divider',
+      },
+    ],
+  }
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Slack notification failed:', response.status, errorText)
-      throw new Error(`Slack webhook error: ${response.status}`)
-    }
-  } catch (error) {
-    console.error('Slack integration error:', error)
-    throw error // Re-throw to mark as rejected in Promise.allSettled
+  const response = await fetchWithTimeout(slackWebhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(message),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Slack notification failed:', response.status, errorText)
+    throw new Error(`Slack webhook error: ${response.status}`)
   }
 }
 
