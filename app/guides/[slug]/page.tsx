@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { GigaLayout } from '@/components/giga-layout'
 import { H1, H2, P } from '@/components/typography'
 import { guideBySlug, guidesOnSale } from '@/data/guides'
@@ -18,6 +18,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params
   const guide = guideBySlug(slug)
   if (!guide) return {}
+  if (guide.slug === 'raja-ampat') {
+    return {
+      alternates: { canonical: guide.appUrl },
+    }
+  }
   return {
     title: `${guide.title} Travel Guide`,
     description: guide.seoDescription ?? guide.description,
@@ -34,6 +39,7 @@ export default async function GuideSalesPage({ params }: Params) {
   const { slug } = await params
   const guide = guidesOnSale().find((g) => g.slug === slug)
   if (!guide) notFound()
+  if (guide.slug === 'raja-ampat' && guide.appUrl) permanentRedirect(guide.appUrl)
 
   return (
     <GigaLayout>
