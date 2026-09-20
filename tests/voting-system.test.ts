@@ -308,17 +308,16 @@ describe('Voting System E2E Tests', () => {
       expect(await expanded()).toBe('false');
       await openDropdown();
       expect(await expanded()).toBe('true');
+    });
 
-      // aria-controls must name an element that actually exists at this viewport.
-      const controlled = await context.page.$eval(BADGE, (el: Element) =>
-        (el.getAttribute('aria-controls') || '').split(/\s+/).filter(Boolean)
-      );
-      expect(controlled.length).toBeGreaterThan(0);
-      const present = await context.page.evaluate(
-        (ids: string[]) => ids.filter((id) => document.getElementById(id) !== null).length,
-        controlled
-      );
-      expect(present).toBeGreaterThan(0);
+    it('should not point aria-controls at an element that does not exist', async () => {
+      // The panels are unmounted while closed, so any IDREF here dangles in the
+      // common case. No aria-controls is correct; a broken one is not.
+      const dangling = await context.page.$eval(BADGE, (el: Element) => {
+        const ids = (el.getAttribute('aria-controls') || '').split(/\s+/).filter(Boolean);
+        return ids.filter((id) => document.getElementById(id) === null);
+      });
+      expect(dangling).toEqual([]);
     });
 
     it('should close on Escape', async () => {
@@ -384,6 +383,40 @@ describe('Voting System E2E Tests', () => {
         expect(focusRestored).toBe(true);
       });
 
+      it('should keep focus inside the dialog after voting disables the rows', async () => {
+        // The voted row gets `disabled`, so the element holding focus disappears from
+        // the tab order and focus used to fall to <body>, leaving the open dialog
+        // with nothing to contain.
+        await openDropdown(DROPDOWN_MOBILE);
+        await waitForLocationRows(DROPDOWN_MOBILE);
+        await clickFirstRow(DROPDOWN_MOBILE);
+        await context.page.waitForFunction(
+          (sel: string) =>
+            (document.querySelector(sel)?.textContent || '').includes('Thanks for voting'),
+          { timeout: 5000 },
+          DROPDOWN_MOBILE
+        );
+
+        const active = await context.page.evaluate((sel: string) => {
+          const panel = document.querySelector(sel);
+          return {
+            tag: document.activeElement?.tagName ?? null,
+            inside: !!panel && !!document.activeElement && panel.contains(document.activeElement),
+          };
+        }, DROPDOWN_MOBILE);
+
+        expect(active.tag).not.toBe('BODY');
+        expect(active.inside).toBe(true);
+
+        // And Tab still cannot walk out behind the dialog.
+        await context.page.keyboard.press('Tab');
+        const stillInside = await context.page.evaluate((sel: string) => {
+          const panel = document.querySelector(sel);
+          return !!panel && !!document.activeElement && panel.contains(document.activeElement);
+        }, DROPDOWN_MOBILE);
+        expect(stillInside).toBe(true);
+      });
+
       it('should keep the mobile panel open while voting, then close on the backdrop', async () => {
         await openDropdown(DROPDOWN_MOBILE);
         await waitForLocationRows(DROPDOWN_MOBILE);
@@ -405,6 +438,52 @@ describe('Voting System E2E Tests', () => {
           DROPDOWN_MOBILE
         );
       });
+    });
+
+    it('should trap focus if the viewport narrows into the modal breakpoint', async () => {
+      // The "am I the modal twin" test used to run once when the panel opened, so
+      // opening at desktop and then narrowing left a visible modal with no trap.
+      await openDropdown();
+      await waitForLocationRows();
+
+      let inside = false;
+      try {
+        // Width only, keeping isMobile false: toggling mobile emulation on an already
+        // loaded page needs a reload to take effect, and "the viewport narrows" is a
+        // pure width change as far as the responsive CSS is concerned.
+        await context.page.setViewport({
+          width: VIEWPORTS.mobile.width,
+          height: VIEWPORTS.mobile.height,
+          deviceScaleFactor: 1,
+          isMobile: false,
+        });
+        // Not waitForSelector({ visible: true }): a viewport change mutates no DOM, it
+        // only re-evaluates the media query, and waitForSelector polls on mutation so
+        // it would never look again. waitForFunction polls per frame.
+        await context.page.waitForFunction(
+          (sel: string) => {
+            const el = document.querySelector(sel);
+            return !!el && getComputedStyle(el).display !== 'none';
+          },
+          { timeout: 5000 },
+          DROPDOWN_MOBILE
+        );
+        await waitForLocationRows(DROPDOWN_MOBILE);
+
+        // Walk further than there are rows; focus must never leave the dialog.
+        for (let i = 0; i < LOCATION_COUNT + 3; i++) {
+          await context.page.keyboard.press('Tab');
+        }
+
+        inside = await context.page.evaluate((sel: string) => {
+          const panel = document.querySelector(sel);
+          return !!panel && !!document.activeElement && panel.contains(document.activeElement);
+        }, DROPDOWN_MOBILE);
+      } finally {
+        // Restore even on failure, or the mobile viewport leaks into later tests.
+        await context.page.setViewport(VIEWPORTS.desktop);
+      }
+      expect(inside).toBe(true);
     });
 
     it('should close dropdown when clicking outside', async () => {
