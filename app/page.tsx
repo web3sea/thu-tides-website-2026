@@ -10,9 +10,14 @@ import { CollabSection } from '@/components/collab-section'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Home',
+  // Absolute: this page shares the root layout's segment, so the '%s | Thu Tides'
+  // template does not apply to it.
+  title: {
+    absolute: 'Thu Tides - Professional Travel & Underwater Photography for Hotels & Resorts',
+  },
   description: 'Professional travel and underwater photography for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines. View our portfolio of underwater, aerial, and hospitality photography.',
   keywords: ['travel photography', 'underwater photography Indonesia', 'hotel photography', 'dive resort photography', 'aerial photography', 'coastal hospitality', 'Indonesia travel photography', 'Philippines photography'],
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'Thu Tides - Professional Travel & Underwater Photography',
     description: 'Professional photography and video content for coastal hotels, dive resorts, and liveaboards across Indonesia and the Philippines.',

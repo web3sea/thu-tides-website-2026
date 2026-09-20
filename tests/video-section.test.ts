@@ -296,11 +296,11 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
     expect(criticalErrors.length).toBe(0);
   }, TEST_TIMEOUT);
 
-  // Skip in CI: headless Chromium doesn't reliably fire IntersectionObserver
-  // for elements just outside the viewport boundary (rootMargin preload zone).
-  // Run locally with pnpm test to verify preload behaviour.
-  const rootMarginTest = process.env.CI ? test.skip : test
-  rootMarginTest('should respect IntersectionObserver rootMargin (preload behavior)', async () => {
+  // Previously skipped in CI as "flaky in headless Chromium". The real cause was
+  // LazyVideo pairing rootMargin with threshold 0.1: the section parks 50px inside
+  // the 200px preload margin, which is exactly 10% of the 500px container, so the
+  // observer sat on the threshold boundary. With threshold 0 this is deterministic.
+  test('should respect IntersectionObserver rootMargin (preload behavior)', async () => {
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
     await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -330,7 +330,10 @@ describe('VideoLoopSection - Lazy Loading Tests', () => {
       const videoSection = Array.from(document.querySelectorAll('section')).find(s =>
         s.querySelector('.bg-gradient-to-t') && s.querySelector('svg')
       );
-      return videoSection?.querySelector('video') !== null;
+      // Explicit about a missing section: `videoSection?.querySelector(...) !== null`
+      // is true when the section isn't found, so the test used to pass on a miss.
+      if (!videoSection) return false;
+      return videoSection.querySelector('video') !== null;
     });
 
     expect(hasVideoBeforeVisible).toBe(true);

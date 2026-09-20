@@ -42,7 +42,8 @@ export function LocationVoteDropdown({
     if (typeof window === 'undefined') return false
     return localStorage.getItem('thu-tides-voted') === 'true'
   })
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const mobileRef = useRef<HTMLDivElement>(null)
+  const desktopRef = useRef<HTMLDivElement>(null)
 
   const fetchResults = useCallback(async () => {
     setIsLoading(true)
@@ -60,6 +61,29 @@ export function LocationVoteDropdown({
       setIsLoading(false)
     }
   }, [])
+
+  // Close on a click outside the panels and the trigger. This lives here rather
+  // than in the parent because only this component knows where the panels are:
+  // a handler that tests the trigger alone treats a click on a location row as
+  // "outside" and tears the panel down mid-vote. Both refs point at the panels
+  // themselves -- on mobile that is the card, not the full-screen backdrop it
+  // sits on, so that pressing the backdrop still counts as outside.
+  useEffect(() => {
+    if (!isOpen) return
+
+    function handleMouseDown(event: MouseEvent) {
+      const target = event.target as Node
+      const isInside =
+        mobileRef.current?.contains(target) ||
+        desktopRef.current?.contains(target) ||
+        triggerRef.current?.contains(target)
+
+      if (!isInside) onClose()
+    }
+
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [isOpen, onClose, triggerRef])
 
   // Fetch results each time the dropdown opens so the poll stays fresh.
   useEffect(() => {
@@ -106,13 +130,6 @@ export function LocationVoteDropdown({
     } finally {
       setIsVoting(false)
       setSelectedLocation(null)
-    }
-  }
-
-  // Handle backdrop click on mobile
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose()
     }
   }
 
@@ -186,24 +203,23 @@ export function LocationVoteDropdown({
         <>
           {/* Mobile: Full-screen modal */}
           <motion.div
-            ref={dropdownRef}
             variants={dropdownVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={handleBackdropClick}
             role="region"
             aria-label="Vote for the next destination"
             data-testid="vote-dropdown-mobile"
           >
-            <GlassCard variant="strong" padding="sm" className="w-full max-w-md">
+            <GlassCard ref={mobileRef} variant="strong" padding="sm" className="w-full max-w-md">
               {renderContent()}
             </GlassCard>
           </motion.div>
 
           {/* Desktop: Inline accordion */}
           <motion.div
+            ref={desktopRef}
             variants={dropdownVariants}
             initial="hidden"
             animate="visible"

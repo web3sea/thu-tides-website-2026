@@ -20,8 +20,13 @@ export interface LazyVideoProps extends React.VideoHTMLAttributes<HTMLVideoEleme
   poster?: string
 
   /**
-   * Threshold for intersection observer (0-1)
-   * @default 0.1
+   * Threshold for intersection observer (0-1).
+   *
+   * Leave at 0 for preloading: a non-zero threshold requires that fraction of
+   * the element to be inside the rootMargin-expanded root before the observer
+   * fires, which cancels out the preload for elements taller than the margin.
+   *
+   * @default 0
    */
   threshold?: number
 
@@ -63,7 +68,7 @@ export function LazyVideo({
   src,
   srcWebm,
   poster,
-  threshold = 0.1,
+  threshold = 0,
   rootMargin = '200px 0px',
   className = '',
   ...videoProps
