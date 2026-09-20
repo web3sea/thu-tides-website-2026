@@ -12,7 +12,7 @@ Before merging ANY pull request to `main`, you MUST complete this checklist:
 PR Merge Checklist:
 ☐ 1. Feature branch created and pushed
 ☐ 2. Pull request created on GitHub
-☐ 3. 🔴 CODE REVIEW EXECUTED: /code-review-excellence ← DO THIS NOW
+☐ 3. 🔴 CODE REVIEW EXECUTED: /code-review ← DO THIS NOW
 ☐ 4. All 🔴 [blocking] issues resolved
 ☐ 5. All 🟡 [important] issues resolved
 ☐ 6. Tests passing: pnpm test:all
@@ -26,7 +26,7 @@ PR Merge Checklist:
 
 **Command to invoke code review:**
 ```
-/code-review-excellence
+/code-review
 ```
 
 **This is MANDATORY. No exceptions. See "Pull Request Workflow Requirements" section below.**
@@ -317,12 +317,12 @@ tests/
 test-voting-responsive.js  # Standalone voting system responsive tests (Puppeteer)
 test-responsive-simple.js  # Simplified responsive test runner
 
-docs/
-  FIREBASE_SETUP.md              # Complete Firebase setup guide
-  IMPLEMENTATION_COMPLETE.md     # Location voting system documentation
-  VOTING_SYSTEM_TESTING.md       # Testing guide for voting feature
-  RACE_CONDITION_FIX.md          # Technical notes on Firestore transaction fix
-  QUICK_START.md                 # Quick start guide for developers
+# Markdown lives at the repo root, not in a docs/ folder. The ones worth reading:
+FIREBASE_SETUP.md              # Complete Firebase setup guide
+IMPLEMENTATION_COMPLETE.md     # Location voting system documentation
+VOTING_SYSTEM_TESTING.md       # Testing guide for voting feature
+RACE_CONDITION_FIX.md          # Technical notes on Firestore transaction fix
+QUICK_START.md                 # Quick start guide for developers
 
 public/                 # Static assets (images, videos, logos, favicons)
 ```
@@ -371,7 +371,10 @@ public/                 # Static assets (images, videos, logos, favicons)
 - **Admin SDK:** `lib/firebase-admin.ts` - server-side vote validation
 - **Collections:**
   - `votes` - stores vote counts per location (11 documents)
-  - `voter_ips` - tracks hashed IP addresses to prevent duplicate voting
+  - `vote_ips` - tracks hashed IP addresses to prevent duplicate voting
+  - `rate_limits` - per-hashed-IP request counter with a resetTime, written on every
+    POST. Neither this nor `vote_ips` is ever cleaned up; both want a Firestore TTL
+    policy on their timestamp field.
 - **Security:** SHA-256 IP hashing, Firestore security rules, rate limiting (10/min per IP)
 - **API Endpoints:**
   - `GET /api/votes/results` - fetch current vote percentages (cached 60s)
@@ -420,7 +423,7 @@ the coraltriangle team. If the 1Password service account is rate-limited, run th
 - **Project ID:** prj_gaaH855ee0JEsS7KUsp1ZsCOVd41
 - **Team:** coraltriangle (Team ID: team_j6i26igCnr23k5HYZyL5ewKi)
 - **Auto-deploys:** Pushes to `main` branch trigger production deployments
-- **⚠️ BEFORE MERGING TO MAIN:** MUST run `/code-review-excellence` on ALL PRs (see Pull Request Workflow Requirements)
+- **⚠️ BEFORE MERGING TO MAIN:** MUST run `/code-review` on ALL PRs (see Pull Request Workflow Requirements)
 - Environment variables must be configured in Vercel dashboard for production/preview
 
 ## Development Workflows
@@ -524,7 +527,7 @@ The contact form in `CollabSection` is a critical user interaction point. Use ag
 
 ### 🔴 MANDATORY: Code Review MUST Run BEFORE Merge
 
-**EVERY SINGLE PULL REQUEST MUST BE REVIEWED USING THE `/code-review-excellence` SKILL.**
+**EVERY SINGLE PULL REQUEST MUST BE REVIEWED USING THE `/code-review` SKILL.**
 
 **This is NON-NEGOTIABLE. No exceptions. No shortcuts.**
 
@@ -548,7 +551,7 @@ The contact form in `CollabSection` is a critical user interaction point. Use ag
    gh pr create --title "..." --body "..."
 
 5. 🔴 IMMEDIATELY INVOKE CODE REVIEW SKILL 🔴
-   /code-review-excellence
+   /code-review
 
    ⚠️ DO THIS AS SOON AS PR IS CREATED ⚠️
    ⚠️ DO NOT SKIP THIS STEP ⚠️
@@ -574,14 +577,14 @@ The contact form in `CollabSection` is a critical user interaction point. Use ag
 
 **Command:**
 ```
-/code-review-excellence
+/code-review
 ```
 
-**Or with branch name:**
+**The argument is the fixed point to diff against, not the branch to review:**
 ```bash
 Skill tool with:
-- skill: "code-review-excellence"
-- args: "feature/your-branch-name"
+- skill: "code-review"
+- args: "main"          # or a SHA, tag, HEAD~5 ...
 ```
 
 **When to invoke:** IMMEDIATELY after creating the PR, BEFORE any merge consideration.
@@ -590,7 +593,9 @@ Skill tool with:
 
 ### What Code Review Checks
 
-The `/code-review-excellence` skill provides comprehensive review:
+The `/code-review` skill reviews the diff on two axes, Standards (does this follow
+the repo's documented standards?) and Spec (does it implement what was asked?), each
+in its own sub-agent so neither pollutes the other's context. Between them they cover:
 - ✅ Code quality and maintainability
 - ✅ Security vulnerabilities
 - ✅ Performance issues
